@@ -1,10 +1,8 @@
-package de.cerus.cookieclicker.desktop;
+package passi.skittleclicker.desktop;
 
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import de.cerus.cookieclicker.CookieClickerGame;
+import passi.skittleclicker.SkittleClickerGame;
 
 public class DesktopLauncher {
 
@@ -14,7 +12,8 @@ public class DesktopLauncher {
 		config.setTitle("Skittle Clicker");
 		config.setWindowedMode(800, 480);
 		config.useVsync(true);
+		config.setWindowSizeLimits(800,480,1920,1080);
 		config.setWindowIcon("skittle_icon32.png");
-		new Lwjgl3Application(new CookieClickerGame(), config);
+		new Lwjgl3Application(new SkittleClickerGame(), config);
 	}
 }

@@ -18,7 +18,7 @@
  *
  */
 
-package de.cerus.cookieclicker.data;
+package passi.skittleclicker.data;
 
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
@@ -28,7 +28,7 @@ import java.io.*;
 
 public class Data {
 
-    private static File file = new File(String.format("%s//CookieClicker//data.json", System.getenv("APPDATA")));;
+    private static File file = new File(String.format("%s//SkittleClicker//data.json", System.getenv("APPDATA")));;
 
     public static Object[] loadProgress() {
         if (!file.exists()) {
@@ -40,7 +40,7 @@ public class Data {
             JsonValue value = reader.parse(new FileInputStream(file));
 
             return new Object[] {
-                    value.get("cookies") == null ? 0 : value.get("cookies").asLong(),
+                    value.get("skittles") == null ? 0 : value.get("skittles").asLong(),
                     value.get("clickers") == null ? 0 : value.get("clickers").asLong(),
                     value.get("grandmas") == null ? 0 : value.get("grandmas").asLong(),
                     value.get("bakeries") == null ? 0 : value.get("bakeries").asLong(),
@@ -53,13 +53,13 @@ public class Data {
         return new Object[]{0, 0, 0, 0};
     }
 
-    public static void saveProgress(long cookies, long clickers, long grandmas, long bakeries, long factories) {
+    public static void saveProgress(long skittles, long clickers, long grandmas, long bakeries, long factories) {
         try {
             file.getParentFile().mkdirs();
             file.createNewFile();
 
             JsonValue value = new JsonValue(JsonValue.ValueType.object);
-            value.addChild("cookies", new JsonValue(cookies));
+            value.addChild("skittles", new JsonValue(skittles));
             value.addChild("clickers", new JsonValue(clickers));
             value.addChild("grandmas", new JsonValue(grandmas));
             value.addChild("bakeries", new JsonValue(bakeries));

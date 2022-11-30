@@ -18,7 +18,7 @@
  *
  */
 
-package de.cerus.cookieclicker.components;
+package passi.skittleclicker.components;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

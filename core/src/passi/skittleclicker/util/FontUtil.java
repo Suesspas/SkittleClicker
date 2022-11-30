@@ -18,7 +18,7 @@
  *
  */
 
-package de.cerus.cookieclicker.util;
+package passi.skittleclicker.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.BitmapFontLoader;

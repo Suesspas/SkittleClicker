@@ -18,26 +18,26 @@
  *
  */
 
-package de.cerus.cookieclicker.screens;
+package passi.skittleclicker.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
-import de.cerus.cookieclicker.CookieClickerGame;
-import de.cerus.cookieclicker.util.ContributorUtil;
-import de.cerus.cookieclicker.util.FontUtil;
+import passi.skittleclicker.SkittleClickerGame;
+import passi.skittleclicker.util.ContributorUtil;
+import passi.skittleclicker.util.FontUtil;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class CreditsScreen implements Screen {
-    private CookieClickerGame game;
+    private SkittleClickerGame game;
     private OrthographicCamera camera;
 
-    public CreditsScreen(CookieClickerGame game) {
+    public CreditsScreen(SkittleClickerGame game) {
         this.game = game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }

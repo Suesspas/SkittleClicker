@@ -18,25 +18,25 @@
  *
  */
 
-package de.cerus.cookieclicker.screens;
+package passi.skittleclicker.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Array;
-import de.cerus.cookieclicker.CookieClickerGame;
-import de.cerus.cookieclicker.components.Menu;
+import passi.skittleclicker.SkittleClickerGame;
+import passi.skittleclicker.components.Menu;
 
 public class ExitScreen implements Screen {
 
-    private CookieClickerGame game;
+    private SkittleClickerGame game;
     private OrthographicCamera camera;
     private Menu<String> menu;
 
     private GlyphLayout exitText;
 
-    public ExitScreen(CookieClickerGame game) {
+    public ExitScreen(SkittleClickerGame game) {
         this.game = game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.menu = new Menu<>(game.getFont(), new Array<String>() {

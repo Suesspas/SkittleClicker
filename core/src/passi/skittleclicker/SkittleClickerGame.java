@@ -1,16 +1,16 @@
-package de.cerus.cookieclicker;
+package passi.skittleclicker;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import de.cerus.cookieclicker.screens.GameScreen;
-import de.cerus.cookieclicker.screens.MenuScreen;
-import de.cerus.cookieclicker.util.ContributorUtil;
-import de.cerus.cookieclicker.util.FontUtil;
+import passi.skittleclicker.screens.GameScreen;
+import passi.skittleclicker.screens.MenuScreen;
+import passi.skittleclicker.util.ContributorUtil;
+import passi.skittleclicker.util.FontUtil;
 
-public class CookieClickerGame extends Game {
+public class SkittleClickerGame extends Game {
 
     private SpriteBatch batch;
 
@@ -61,6 +61,7 @@ public class CookieClickerGame extends Game {
     }
 
     public void deleteSaveData() {
+        gameScreen.deleteSaveData();
     }
 
     public void changeScreen(int screen){

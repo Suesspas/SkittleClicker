@@ -1,6 +1,6 @@
-package de.cerus.cookieclicker.objects;
+package passi.skittleclicker.objects;
 
-public class MiniCookie {
+public class MiniSkittle {
 
     private float x;
 
@@ -20,7 +20,7 @@ public class MiniCookie {
         return color;
     }
 
-    public MiniCookie(float x, float y, float rotation, int color) {
+    public MiniSkittle(float x, float y, float rotation, int color) {
         this.x = x;
         this.y = y;
         this.rotation = rotation;

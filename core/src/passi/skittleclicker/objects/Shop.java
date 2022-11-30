@@ -18,7 +18,7 @@
  *
  */
 
-package de.cerus.cookieclicker.objects;
+package passi.skittleclicker.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -28,9 +28,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
-import de.cerus.cookieclicker.CookieClickerGame;
-import de.cerus.cookieclicker.fixes.CustomShapeRenderer;
-import de.cerus.cookieclicker.util.FontUtil;
+import passi.skittleclicker.SkittleClickerGame;
+import passi.skittleclicker.fixes.CustomShapeRenderer;
+import passi.skittleclicker.util.FontUtil;
 
 public class Shop implements Disposable {
 
@@ -61,20 +61,20 @@ public class Shop implements Disposable {
     private float buyFactoryButtonHeight = buyTexture.getHeight();
 
     private float animationAlpha = 0.0f;
-    private long cookies = 0;
+    private long skittles = 0;
     private long clicker = 0;
     private long grandmas = 0;
     private long bakeries = 0;
     private long factories = 0;
 
-    private final long baseCookiesPerClicker = 1;
-    private final long baseCookiesPerGrandma = 3;
-    private final long baseCookiesPerBakerie = 10;
-    private final long baseCookiesPerFactory = 50;
+    private final long baseSkittlesPerClicker = 1;
+    private final long baseSkittlesPerGrandma = 3;
+    private final long baseSkittlesPerBakerie = 10;
+    private final long baseSkittlesPerFactory = 50;
 
-    private long cookiesPerClick = 1;
+    private long skittlesPerClick = 1;
 
-    public void render(CookieClickerGame game, OrthographicCamera camera) {
+    public void render(SkittleClickerGame game, OrthographicCamera camera) {
         if (!visible) {
             return;
         }
@@ -117,7 +117,7 @@ public class Shop implements Disposable {
         );
         game.getBatch().setColor(1, 1, 1, 1);
 
-        if (clicker >= MAX_CLICKER || cookies < 5) {
+        if (clicker >= MAX_CLICKER || skittles < 5) {
             FontUtil.KOMIKA.setColor(Color.RED);
             game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
         }
@@ -143,7 +143,7 @@ public class Shop implements Disposable {
         );
         game.getBatch().setColor(Color.WHITE);
 
-        if (grandmas >= MAX_GRANDMAS || cookies < 100) {
+        if (grandmas >= MAX_GRANDMAS || skittles < 100) {
             FontUtil.KOMIKA.setColor(Color.RED);
             game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
         }
@@ -169,7 +169,7 @@ public class Shop implements Disposable {
         );
         game.getBatch().setColor(Color.WHITE);
 
-        if (bakeries >= MAX_BAKERIES || cookies < 250) {
+        if (bakeries >= MAX_BAKERIES || skittles < 250) {
             FontUtil.KOMIKA.setColor(Color.RED);
             game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
         }
@@ -195,7 +195,7 @@ public class Shop implements Disposable {
         );
         game.getBatch().setColor(Color.WHITE);
 
-        if (factories >= MAX_FACTORIES || cookies < 1000) {
+        if (factories >= MAX_FACTORIES || skittles < 1000) {
             FontUtil.KOMIKA.setColor(Color.RED);
             game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
         }
@@ -233,8 +233,8 @@ public class Shop implements Disposable {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
                 && buyClickerRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
                 && clicker < MAX_CLICKER
-                && cookies >= 5) {
-            cookies -= 5;
+                && skittles >= 5) {
+            skittles -= 5;
             clicker++;
 
             buyClickerButtonHeight -= 5;
@@ -249,8 +249,8 @@ public class Shop implements Disposable {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
                 && buyGrandmaRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
                 && grandmas < MAX_GRANDMAS
-                && cookies >= 100) {
-            cookies -= 100;
+                && skittles >= 100) {
+            skittles -= 100;
             grandmas++;
 
             buyGrandmaButtonHeight -= 5;
@@ -265,8 +265,8 @@ public class Shop implements Disposable {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
                 && buyBakeryRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
                 && bakeries < MAX_BAKERIES
-                && cookies >= 250) {
-            cookies -= 250;
+                && skittles >= 250) {
+            skittles -= 250;
             bakeries++;
 
             buyBakeryButtonHeight -= 5;
@@ -281,8 +281,8 @@ public class Shop implements Disposable {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
                 && buyFactoryRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
                 && factories < MAX_FACTORIES
-                && cookies >= 1000) {
-            cookies -= 1000;
+                && skittles >= 1000) {
+            skittles -= 1000;
             factories++;
 
             buyFactoryButtonHeight -= 5;
@@ -322,17 +322,17 @@ public class Shop implements Disposable {
         this.clicker = clicker;
     }
 
-    public long getCookies() {
-        return cookies;
+    public long getSkittles() {
+        return skittles;
     }
 
-    public long getCookiesPerSecond(){
-        return (clicker*baseCookiesPerClicker)+ (grandmas * baseCookiesPerGrandma)
-                + (bakeries * baseCookiesPerBakerie) + (factories * baseCookiesPerFactory);
+    public long getSkittlesPerSecond(){
+        return (clicker* baseSkittlesPerClicker)+ (grandmas * baseSkittlesPerGrandma)
+                + (bakeries * baseSkittlesPerBakerie) + (factories * baseSkittlesPerFactory);
     }
 
-    public void setCookies(long cookies) {
-        this.cookies = cookies;
+    public void setSkittles(long skittles) {
+        this.skittles = skittles;
     }
 
     public long getGrandmas() {
@@ -366,11 +366,11 @@ public class Shop implements Disposable {
         buyTexture.dispose();
     }
 
-    public void updateCookies() {
-        cookies += getCookiesPerSecond();
+    public void updateSkittles() {
+        skittles += getSkittlesPerSecond();
     }
 
     public void click() {
-        cookies += cookiesPerClick;
+        skittles += skittlesPerClick;
     }
 }

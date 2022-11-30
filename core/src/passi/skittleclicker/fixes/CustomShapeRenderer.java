@@ -18,7 +18,7 @@
  *
  */
 
-package de.cerus.cookieclicker.fixes;
+package passi.skittleclicker.fixes;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 

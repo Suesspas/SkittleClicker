@@ -18,7 +18,7 @@
  *
  */
 
-package de.cerus.cookieclicker.screens;
+package passi.skittleclicker.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -29,12 +29,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
-import de.cerus.cookieclicker.CookieClickerGame;
-import de.cerus.cookieclicker.data.Data;
-import de.cerus.cookieclicker.fixes.CustomShapeRenderer;
-import de.cerus.cookieclicker.objects.MiniCookie;
-import de.cerus.cookieclicker.objects.Shop;
-import de.cerus.cookieclicker.util.FontUtil;
+import passi.skittleclicker.SkittleClickerGame;
+import passi.skittleclicker.data.Data;
+import passi.skittleclicker.fixes.CustomShapeRenderer;
+import passi.skittleclicker.objects.MiniSkittle;
+import passi.skittleclicker.objects.Shop;
+import passi.skittleclicker.util.FontUtil;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -43,41 +43,41 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static de.cerus.cookieclicker.data.Data.saveProgress;
+import static passi.skittleclicker.data.Data.saveProgress;
 
 public class GameScreen implements Screen {
 
-    private static float COOKIE_WIDTH = 200;
-    private static float COOKIE_HEIGHT = 200;
-    private static float COOKIE_MAX_WIDTH = 200;
-    private static float COOKIE_MAX_HEIGHT = 200;
+    private static float SKITTLE_WIDTH = 200;
+    private static float SKITTLE_HEIGHT = 200;
+    private static float SKITTLE_MAX_WIDTH = 200;
+    private static float SKITTLE_MAX_HEIGHT = 200;
 
     private CustomShapeRenderer shapeRenderer;
 
-    private CookieClickerGame game;
+    private SkittleClickerGame game;
     private OrthographicCamera camera;
     private Shop shop;
     private DecimalFormat format;
 
-    private Texture cookieTexture;
+    private Texture skittleTexture;
 
-    private List<Texture> miniCookieTextures;
+    private List<Texture> miniSkittleTextures;
     private Texture shopTexture;
     private Texture clickerTexture;
 
-    private Ellipse cookieRepresentation;
+    private Ellipse skittleRepresentation;
     private Rectangle shopRepresentation;
 
-    private double cookiesPerSecond;
+    private double skittlesPerSecond;
     private int clickerAnimationIndex;
 
-    private Queue<MiniCookie> cookies = new ConcurrentLinkedQueue<>();
-    private int amountMiniCookies;
-    private static int MINICOOKIE_WIDTH = 25;
-    private static int MINICOOKIE_HEIGHT = 25;
-    private static float MINICOOKIE_THRESHOLD = -1;
-    private static float MINICOOKIE_SPEED = 0.8f;
-    private static float MINICOOKIE_ROTATION_SPEED = 0.25f;
+    private Queue<MiniSkittle> skittles = new ConcurrentLinkedQueue<>();
+    private int amountMiniSkittles;
+    private static int MINISKITTLE_WIDTH = 25;
+    private static int MINISKITTLE_HEIGHT = 25;
+    private static float MINISKITTLE_THRESHOLD = -1;
+    private static float MINISKITTLE_SPEED = 0.4f;//0.8f;
+    private static float MINISKITTLE_ROTATION_SPEED = 0.25f;
 
     private float generalRotation = 0;
 
@@ -85,22 +85,22 @@ public class GameScreen implements Screen {
     boolean paused;
     ScheduledExecutorService service;
 
-    public GameScreen(CookieClickerGame game, boolean continueGame) {
+    public GameScreen(SkittleClickerGame game, boolean continueGame) {
         this.game = game;
         this.camera = new OrthographicCamera();
         this.shop = new Shop();
         this.format = new DecimalFormat("#,###");
 
-        this.cookieTexture = new Texture(Gdx.files.internal("big_skittle.png"));
-        this.miniCookieTextures = new ArrayList<>();
-        miniCookieTextures.add(new Texture(Gdx.files.internal("skittle_red.png")));
-        miniCookieTextures.add(new Texture(Gdx.files.internal("skittle_green.png")));
-        miniCookieTextures.add(new Texture(Gdx.files.internal("skittle_purple.png")));
+        this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
+        this.miniSkittleTextures = new ArrayList<>();
+        miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_red.png")));
+        miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_green.png")));
+        miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_purple.png")));
 
         this.shopTexture = new Texture(Gdx.files.internal("shop.png"));
         this.clickerTexture = new Texture(Gdx.files.internal("pointer.png"));
 
-        this.cookieRepresentation = new Ellipse();
+        this.skittleRepresentation = new Ellipse();
         this.shopRepresentation = new Rectangle();
 
         this.shapeRenderer = new CustomShapeRenderer();
@@ -112,7 +112,7 @@ public class GameScreen implements Screen {
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> saveProgress(
-                shop.getCookies(),
+                shop.getSkittles(),
                 shop.getClicker(),
                 shop.getGrandmas(),
                 shop.getBakeries(),
@@ -133,38 +133,6 @@ public class GameScreen implements Screen {
         service = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() / 4);
 
         scheduleService(service);
-
-
-//        service.scheduleAtFixedRate(new Runnable() {
-//            private int index = 0;
-//            private long lastCookies = 0;
-//
-//            @Override
-//            public void run() {
-//                cookiesPerSecond = shop.getCookies() - lastCookies;
-//                lastCookies = shop.getCookies();
-////                cookiesPerSecond = shop.getCookiesPerSecond();
-//
-//                if (index >= Shop.MAX_CLICKER) {
-//                    index = 0;
-//                }
-//
-//                clickerAnimationIndex = index;
-//
-//                addCookie();
-//
-//                if ((index + 1) <= shop.getClicker()) {
-//                    shop.setCookies(shop.getCookies() + 1);
-//                }
-//
-//                index++;
-//            }
-//        }, 1, 1, TimeUnit.SECONDS);
-//        scheduleService(service, shop.getClicker(), 1);
-//        scheduleService(service, shop.getGrandmas(), 1);
-//        scheduleService(service, shop.getBakeries(), 4);
-//        scheduleService(service, shop.getFactories(), 10);
-
     }
 
     @Override
@@ -173,7 +141,7 @@ public class GameScreen implements Screen {
             service.shutdown();
             game.setScreen(new MenuScreen(game));
             saveProgress(
-                    shop.getCookies(),
+                    shop.getSkittles(),
                     shop.getClicker(),
                     shop.getGrandmas(),
                     shop.getBakeries(),
@@ -187,9 +155,9 @@ public class GameScreen implements Screen {
         camera.update();
         game.getBatch().setProjectionMatrix(camera.combined);
 
-        // Render mini cookies
+        // Render mini skittles
         game.getBatch().begin();
-        renderCookies();
+        renderSkittles();
         game.getBatch().end();
 
         renderClicker();
@@ -211,22 +179,22 @@ public class GameScreen implements Screen {
         game.getBatch().draw(shopTexture, shopRepresentation.x, shopRepresentation.y,
                 shopRepresentation.width, shopRepresentation.height);
 
-        cookieRepresentation.set((camera.viewportWidth / 2f) - (COOKIE_WIDTH / 2f) - (COOKIE_WIDTH < 200 ? 5 : 0),
-                (camera.viewportHeight / 2f) - (COOKIE_HEIGHT / 2f) - (COOKIE_HEIGHT < 200 ? 5 : 0), COOKIE_WIDTH, COOKIE_HEIGHT);
-        game.getBatch().draw(cookieTexture, cookieRepresentation.x, cookieRepresentation.y,
-                COOKIE_WIDTH, COOKIE_HEIGHT);
+        skittleRepresentation.set((camera.viewportWidth / 2f) - (SKITTLE_WIDTH / 2f) - (SKITTLE_WIDTH < 200 ? 5 : 0),
+                (camera.viewportHeight / 2f) - (SKITTLE_HEIGHT / 2f) - (SKITTLE_HEIGHT < 200 ? 5 : 0), SKITTLE_WIDTH, SKITTLE_HEIGHT);
+        game.getBatch().draw(skittleTexture, skittleRepresentation.x, skittleRepresentation.y,
+                SKITTLE_WIDTH, SKITTLE_HEIGHT);
 
-        game.getFont().draw(game.getBatch(), "Cookies per second: " + cookiesPerSecond,
+        game.getFont().draw(game.getBatch(), "Skittles per second: " + skittlesPerSecond,
                 camera.position.x - (camera.viewportWidth / 2f) + 10, camera.position.y -
                         (camera.viewportHeight / 2f) + 100);
-        game.getFont().draw(game.getBatch(), "Rendered cookies: " + amountMiniCookies,
+        game.getFont().draw(game.getBatch(), "Rendered skittles: " + amountMiniSkittles,
                 camera.position.x - (camera.viewportWidth / 2f) + 10, camera.position.y -
                         (camera.viewportHeight / 2f) + 70);
         game.getFont().draw(game.getBatch(), "FPS: " + Gdx.graphics.getFramesPerSecond(),
                 camera.position.x - (camera.viewportWidth / 2f) + 10, camera.position.y -
                         (camera.viewportHeight / 2f) + 40);
 
-        FontUtil.KOMIKA_20.draw(game.getBatch(), "Cookies: " + format.format(shop.getCookies()),
+        FontUtil.KOMIKA_20.draw(game.getBatch(), "Skittles: " + format.format(shop.getSkittles()),
                 camera.position.x - (camera.viewportWidth / 4f) + 10, camera.position.y +
                         (camera.viewportHeight / 2f) - 15);
 
@@ -234,28 +202,28 @@ public class GameScreen implements Screen {
 
         shop.render(game, camera);
 
-        // Remove disappeared cookies
-        cookies.forEach(miniCookie -> {
-            if (miniCookie.getY() <= -MINICOOKIE_HEIGHT) {
-                cookies.remove(miniCookie);
-                amountMiniCookies--;
+        // Remove disappeared skittles
+        skittles.forEach(miniSkittle -> {
+            if (miniSkittle.getY() <= -MINISKITTLE_HEIGHT) {
+                skittles.remove(miniSkittle);
+                amountMiniSkittles--;
             }
         });
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-                && cookieRepresentation.contains(getUnprojectedScreenCoords(100))
+                && skittleRepresentation.contains(getUnprojectedScreenCoords(100))
                 && shop.isNotVisible()) {
-            COOKIE_HEIGHT -= 10;
-            COOKIE_WIDTH -= 10;
+            SKITTLE_HEIGHT -= 10;
+            SKITTLE_WIDTH -= 10;
 
             shop.click();
             clicksPerSecond++;
-            addCookie();
+            addSkittle();
         } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)
-                && COOKIE_WIDTH < 200 && COOKIE_HEIGHT < 200
+                && SKITTLE_WIDTH < 200 && SKITTLE_HEIGHT < 200
                 && shop.isNotVisible()) {
-            COOKIE_WIDTH = 200;
-            COOKIE_HEIGHT = 200;
+            SKITTLE_WIDTH = 200;
+            SKITTLE_HEIGHT = 200;
         }
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
@@ -267,27 +235,12 @@ public class GameScreen implements Screen {
 
     private void loadDataForShop() {
         Object[] objects = Data.loadProgress();
-        shop.setCookies(objects[0] instanceof Long ? (Long) objects[0] : (Integer) objects[0]);
+        shop.setSkittles(objects[0] instanceof Long ? (Long) objects[0] : (Integer) objects[0]);
         shop.setClicker(objects[1] instanceof Long ? (Long) objects[1] : (Integer) objects[1]);
         shop.setGrandmas(objects[2] instanceof Long ? (Long) objects[2] : (Integer) objects[2]);
         shop.setBakeries(objects[3] instanceof Long ? (Long) objects[3] : (Integer) objects[3]);
         shop.setFactories(objects[4] instanceof Long ? (Long) objects[4] : (Integer) objects[4]);
     }
-
-//    private void scheduleService(ScheduledExecutorService service, long amount, int increase) {
-//        service.scheduleAtFixedRate(() -> {
-//            for (int i = 0; i < amount; i++) {
-//                try {
-//                    Thread.sleep(25);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                shop.setCookies(shop.getCookies() + increase);
-//                addCookie();
-//            }
-//        }, 500, 500, TimeUnit.MILLISECONDS);
-//    }
 
     private void scheduleService(ScheduledExecutorService service) {
         service.scheduleAtFixedRate(() -> {
@@ -296,10 +249,10 @@ public class GameScreen implements Screen {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            shop.updateCookies();
-            cookiesPerSecond = shop.getCookiesPerSecond() + clicksPerSecond;
+            shop.updateSkittles();
+            skittlesPerSecond = shop.getSkittlesPerSecond() + clicksPerSecond;
             clicksPerSecond = 0;
-            addCookie();
+            addSkittle();
         }, 1000, 1000, TimeUnit.MILLISECONDS);
     }
 
@@ -343,12 +296,12 @@ public class GameScreen implements Screen {
 
             game.getBatch().begin();
             Vector2 center = new Vector2(
-                    cookieRepresentation.x + COOKIE_MAX_WIDTH / 2f,
-                    cookieRepresentation.y + COOKIE_MAX_HEIGHT / 2f
+                    skittleRepresentation.x + SKITTLE_MAX_WIDTH / 2f,
+                    skittleRepresentation.y + SKITTLE_MAX_HEIGHT / 2f
             );
 
-            float x1 = cookieRepresentation.x + COOKIE_MAX_WIDTH / 2f - center.x;
-            float y1 = center.y - COOKIE_MAX_HEIGHT / 2f - ((30 + (50 * row)) - (clickerAnimationIndex == i ? 10 : 0)) - center.y;
+            float x1 = skittleRepresentation.x + SKITTLE_MAX_WIDTH / 2f - center.x;
+            float y1 = center.y - SKITTLE_MAX_HEIGHT / 2f - ((30 + (50 * row)) - (clickerAnimationIndex == i ? 10 : 0)) - center.y;
 
             float x2 = (float) (x1 * Math.cos(angle) - y1 * Math.sin(angle));
             float y2 = (float) (x1 * Math.sin(angle) + y1 * Math.cos(angle));
@@ -385,29 +338,29 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void renderCookies() {
-        cookies.forEach(miniCookie -> {
-            Texture miniCookieTexture;
-            switch (miniCookie.getColor()){
-                case RED: miniCookieTexture = miniCookieTextures.get(MiniCookie.Color.RED.ordinal());
+    private void renderSkittles() {
+        skittles.forEach(miniSkittle -> {
+            Texture miniSkittleTexture;
+            switch (miniSkittle.getColor()){
+                case RED: miniSkittleTexture = miniSkittleTextures.get(MiniSkittle.Color.RED.ordinal());
                     break;
-                case GREEN: miniCookieTexture = miniCookieTextures.get(MiniCookie.Color.GREEN.ordinal());
+                case GREEN: miniSkittleTexture = miniSkittleTextures.get(MiniSkittle.Color.GREEN.ordinal());
                     break;
-                case PURPLE: miniCookieTexture = miniCookieTextures.get(MiniCookie.Color.PURPLE.ordinal());
+                case PURPLE: miniSkittleTexture = miniSkittleTextures.get(MiniSkittle.Color.PURPLE.ordinal());
                     break;
-                default: miniCookieTexture = cookieTexture;
+                default: miniSkittleTexture = skittleTexture;
             }
-            game.getBatch().draw(miniCookieTexture, miniCookie.getX(), miniCookie.getY(), MINICOOKIE_WIDTH, MINICOOKIE_HEIGHT);
-            miniCookie.setY(miniCookie.getY() - MINICOOKIE_SPEED);
-            miniCookie.setRotation((miniCookie.getRotation() + MINICOOKIE_ROTATION_SPEED) % 360.0f);
+            game.getBatch().draw(miniSkittleTexture, miniSkittle.getX(), miniSkittle.getY(), MINISKITTLE_WIDTH, MINISKITTLE_HEIGHT);
+            miniSkittle.setY(miniSkittle.getY() - MINISKITTLE_SPEED);
+            miniSkittle.setRotation((miniSkittle.getRotation() + MINISKITTLE_ROTATION_SPEED) % 360.0f);
         });
     }
 
-    private void addCookie() {
-        if (MINICOOKIE_THRESHOLD == -1 || amountMiniCookies <= MINICOOKIE_THRESHOLD) {
-            cookies.add(new MiniCookie(MathUtils.random(5, camera.viewportWidth - 30), camera.viewportHeight + MINICOOKIE_HEIGHT,
-                    MathUtils.random(0.0f, 360.0f), MathUtils.random(0,MiniCookie.Color.values().length-1)));
-            amountMiniCookies++;
+    private void addSkittle() {
+        if (MINISKITTLE_THRESHOLD == -1 || amountMiniSkittles <= MINISKITTLE_THRESHOLD) {
+            skittles.add(new MiniSkittle(MathUtils.random(5, camera.viewportWidth - 30), camera.viewportHeight + MINISKITTLE_HEIGHT,
+                    MathUtils.random(0.0f, 360.0f), MathUtils.random(0, MiniSkittle.Color.values().length-1)));
+            amountMiniSkittles++;
         }
     }
 
@@ -436,17 +389,17 @@ public class GameScreen implements Screen {
     public void dispose() {
         shapeRenderer.dispose();
         shop.dispose();
-        cookieTexture.dispose();
+        skittleTexture.dispose();
         clickerTexture.dispose();
         shopTexture.dispose();
         for (Texture t:
-             miniCookieTextures) {
+                miniSkittleTextures) {
             t.dispose();
         }
     }
 
     public void deleteSaveData() {
-        shop.setCookies(0);
+        shop.setSkittles(0);
         shop.setClicker(0);
         shop.setGrandmas(0);
         shop.setBakeries(0);

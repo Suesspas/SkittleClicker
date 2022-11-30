@@ -18,7 +18,7 @@
  *
  */
 
-package de.cerus.cookieclicker.util;
+package passi.skittleclicker.util;
 
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
