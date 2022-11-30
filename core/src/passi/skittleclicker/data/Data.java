@@ -57,6 +57,8 @@ public class Data {
         try {
             file.getParentFile().mkdirs();
             file.createNewFile();
+            System.out.println("saving progress in " + file.getAbsolutePath());
+
 
             JsonValue value = new JsonValue(JsonValue.ValueType.object);
             value.addChild("skittles", new JsonValue(skittles));
@@ -64,6 +66,8 @@ public class Data {
             value.addChild("grandmas", new JsonValue(grandmas));
             value.addChild("bakeries", new JsonValue(bakeries));
             value.addChild("factories", new JsonValue(factories));
+
+            System.out.println("saved value: " + value);
 
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(value.toJson(JsonWriter.OutputType.json));

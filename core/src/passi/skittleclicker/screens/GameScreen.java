@@ -82,8 +82,10 @@ public class GameScreen implements Screen {
     private float generalRotation = 0;
 
     private int clicksPerSecond = 0;
-    boolean paused;
-    ScheduledExecutorService service;
+    private boolean paused;
+    private ScheduledExecutorService service;
+
+    private int autoSaveTimer;
 
     public GameScreen(SkittleClickerGame game, boolean continueGame) {
         this.game = game;
@@ -107,20 +109,22 @@ public class GameScreen implements Screen {
 
         this.paused = false;
 
+        this.autoSaveTimer = 0;
+
         if (continueGame) {
             loadDataForShop();
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> saveProgress(
-                shop.getSkittles(),
+        Runtime.getRuntime().addShutdownHook(new Thread(this::saveProgress));
+    }
+
+    void saveProgress(){
+        Data.saveProgress(shop.getSkittles(),
                 shop.getClicker(),
                 shop.getGrandmas(),
                 shop.getBakeries(),
-                shop.getFactories()
-        )));
+                shop.getFactories());
     }
-
-
 
     @Override
     public void show() {
@@ -140,13 +144,7 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             service.shutdown();
             game.setScreen(new MenuScreen(game));
-            saveProgress(
-                    shop.getSkittles(),
-                    shop.getClicker(),
-                    shop.getGrandmas(),
-                    shop.getBakeries(),
-                    shop.getFactories()
-            );
+            saveProgress();
         }
 
         Gdx.gl.glClearColor(0.21f/* + b*/, 0.53f/* + b*/, 0.70f/* + b*/, 1);
@@ -251,8 +249,15 @@ public class GameScreen implements Screen {
             }
             shop.updateSkittles();
             skittlesPerSecond = shop.getSkittlesPerSecond() + clicksPerSecond;
-            clicksPerSecond = 0;
             addSkittle();
+            clicksPerSecond = 0;
+
+            autoSaveTimer++;
+            if (autoSaveTimer > 60){
+                saveProgress();
+                autoSaveTimer = 0;
+                System.out.println("autosaved");
+            }
         }, 1000, 1000, TimeUnit.MILLISECONDS);
     }
 
@@ -371,12 +376,12 @@ public class GameScreen implements Screen {
 
     @Override
     public void pause() {
-        System.out.println("paused");
+
     }
 
     @Override
     public void resume() {
-        System.out.println("resumed");
+
     }
 
     @Override
