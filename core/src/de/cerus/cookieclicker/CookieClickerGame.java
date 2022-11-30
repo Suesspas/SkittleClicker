@@ -16,6 +16,14 @@ public class CookieClickerGame extends Game {
 
     private BitmapFont font;
 
+    public final static int MENU = 0;
+    public final static int PREFERENCES = 1;
+    public final static int APPLICATION = 2;
+    public final static int LOOT = 3;
+    public final static int ENDGAME = 4;
+
+    GameScreen gameScreen;
+
     @Override
     public void create() {
         FontUtil.init();
@@ -50,5 +58,44 @@ public class CookieClickerGame extends Game {
 
     public BitmapFont getFont() {
         return font;
+    }
+
+    public void deleteSaveData() {
+    }
+
+    public void changeScreen(int screen){
+        System.out.println(screen); //TODO changing screens back to mainmenu doesnt work after newgame?
+        switch(screen){
+//            case MENU:
+//                if(mainMenuScreen == null) {
+//                    mainMenuScreen = new MainMenuScreen(this);
+//                }
+//                this.setScreen(mainMenuScreen);
+//                break;
+//            case PREFERENCES:
+//                if(preferencesScreen == null) {
+//                    preferencesScreen = new PreferencesScreen(this);
+//                }
+//                this.setScreen(preferencesScreen);
+//                break;
+            case APPLICATION:
+                if(gameScreen == null) {
+                    gameScreen = new GameScreen(this, true);
+                }
+                this.setScreen(gameScreen);
+                break;
+//            case ENDGAME:
+//                if(endScreen == null) {
+//                    endScreen = new EndScreen(this);
+//                }
+//                this.setScreen(endScreen);
+//                break;
+//            case LOOT:
+//                if(lootBoxScreen == null) {
+//                    lootBoxScreen = new LootBoxScreen(this);
+//                }
+//                this.setScreen(lootBoxScreen);
+//                break;
+        }
     }
 }

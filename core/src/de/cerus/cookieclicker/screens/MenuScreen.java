@@ -44,6 +44,7 @@ public class MenuScreen implements Screen {
                 add("Play");
                 add("Settings");
                 add("Credits");
+                add("Delete Save Data");
                 add("Exit");
             }
         });
@@ -55,8 +56,12 @@ public class MenuScreen implements Screen {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         menu.setOnAction(s -> {
             switch (s) {
+                case "Delete Save Data":
+                    game.deleteSaveData();
+                    game.changeScreen(2);
+                    break;
                 case "Play":
-                    game.setScreen(new GameScreen(game));
+                    game.changeScreen(2);
                     break;
                 case "Settings":
                     game.setScreen(new SettingsScreen(game));
