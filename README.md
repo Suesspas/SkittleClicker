@@ -1,5 +1,6 @@
-# Cookie Clicker
-Cookie Clicker game written in Java with the [LibGDX](https://github.com/libgdx/libgdx/) library
+# Skittle Clicker
+Fork of https://github.com/cerus/cookie-clicker-game .
+Cookie Clicker type game written in Java with the [LibGDX](https://github.com/libgdx/libgdx/) library
 
 ![Image](https://i.imgur.com/gV6Bo2F.png)
 
