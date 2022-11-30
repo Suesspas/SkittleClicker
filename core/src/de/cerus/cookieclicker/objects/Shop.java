@@ -67,6 +67,13 @@ public class Shop implements Disposable {
     private long bakeries = 0;
     private long factories = 0;
 
+    private final long baseCookiesPerClicker = 1;
+    private final long baseCookiesPerGrandma = 3;
+    private final long baseCookiesPerBakerie = 10;
+    private final long baseCookiesPerFactory = 50;
+
+    private long cookiesPerClick = 1;
+
     public void render(CookieClickerGame game, OrthographicCamera camera) {
         if (!visible) {
             return;
@@ -319,6 +326,11 @@ public class Shop implements Disposable {
         return cookies;
     }
 
+    public long getCookiesPerSecond(){
+        return (clicker*baseCookiesPerClicker)+ (grandmas * baseCookiesPerGrandma)
+                + (bakeries * baseCookiesPerBakerie) + (factories * baseCookiesPerFactory);
+    }
+
     public void setCookies(long cookies) {
         this.cookies = cookies;
     }
@@ -352,5 +364,13 @@ public class Shop implements Disposable {
         shapeRenderer.dispose();
         closeTexture.dispose();
         buyTexture.dispose();
+    }
+
+    public void updateCookies() {
+        cookies += getCookiesPerSecond();
+    }
+
+    public void click() {
+        cookies += cookiesPerClick;
     }
 }

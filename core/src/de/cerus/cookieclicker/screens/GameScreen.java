@@ -43,6 +43,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static de.cerus.cookieclicker.data.Data.saveProgress;
+
 public class GameScreen implements Screen {
 
     private static float COOKIE_WIDTH = 200;
@@ -58,6 +60,8 @@ public class GameScreen implements Screen {
     private DecimalFormat format;
 
     private Texture cookieTexture;
+
+    private List<Texture> miniCookieTextures;
     private Texture shopTexture;
     private Texture clickerTexture;
 
@@ -77,13 +81,20 @@ public class GameScreen implements Screen {
 
     private float generalRotation = 0;
 
+    private int clicksPerSecond = 0;
+
     public GameScreen(CookieClickerGame game) {
         this.game = game;
         this.camera = new OrthographicCamera();
         this.shop = new Shop();
         this.format = new DecimalFormat("#,###");
 
-        this.cookieTexture = new Texture(Gdx.files.internal("cookie.png"));
+        this.cookieTexture = new Texture(Gdx.files.internal("big_skittle.png"));
+        this.miniCookieTextures = new ArrayList<>();
+        miniCookieTextures.add(new Texture(Gdx.files.internal("skittle_red.png")));
+        miniCookieTextures.add(new Texture(Gdx.files.internal("skittle_green.png")));
+        miniCookieTextures.add(new Texture(Gdx.files.internal("skittle_purple.png")));
+
         this.shopTexture = new Texture(Gdx.files.internal("shop.png"));
         this.clickerTexture = new Texture(Gdx.files.internal("pointer.png"));
 
@@ -93,6 +104,8 @@ public class GameScreen implements Screen {
         this.shapeRenderer = new CustomShapeRenderer();
     }
 
+    ScheduledExecutorService service = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() / 4);
+
     @Override
     public void show() {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -100,39 +113,54 @@ public class GameScreen implements Screen {
         loadDataForShop();
 
         clickerAnimationIndex = -1;
+        clicksPerSecond = 0;
 
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() / 4);
-        service.scheduleAtFixedRate(new Runnable() {
-            private int index = 0;
-            private long lastCookies = 0;
 
-            @Override
-            public void run() {
-                cookiesPerSecond = shop.getCookies() - lastCookies;
-                lastCookies = shop.getCookies();
-
-                if (index >= Shop.MAX_CLICKER) {
-                    index = 0;
-                }
-
-                clickerAnimationIndex = index;
-
-                addCookie();
-
-                if ((index + 1) <= shop.getClicker()) {
-                    shop.setCookies(shop.getCookies() + 1);
-                }
-
-                index++;
-            }
-        }, 1, 1, TimeUnit.SECONDS);
-        scheduleService(service, shop.getGrandmas(), 1);
-        scheduleService(service, shop.getBakeries(), 4);
-        scheduleService(service, shop.getFactories(), 10);
+//        service.scheduleAtFixedRate(new Runnable() {
+//            private int index = 0;
+//            private long lastCookies = 0;
+//
+//            @Override
+//            public void run() {
+//                cookiesPerSecond = shop.getCookies() - lastCookies;
+//                lastCookies = shop.getCookies();
+////                cookiesPerSecond = shop.getCookiesPerSecond();
+//
+//                if (index >= Shop.MAX_CLICKER) {
+//                    index = 0;
+//                }
+//
+//                clickerAnimationIndex = index;
+//
+//                addCookie();
+//
+//                if ((index + 1) <= shop.getClicker()) {
+//                    shop.setCookies(shop.getCookies() + 1);
+//                }
+//
+//                index++;
+//            }
+//        }, 1, 1, TimeUnit.SECONDS);
+//        scheduleService(service, shop.getClicker(), 1);
+//        scheduleService(service, shop.getGrandmas(), 1);
+//        scheduleService(service, shop.getBakeries(), 4);
+//        scheduleService(service, shop.getFactories(), 10);
+        scheduleService(service);
     }
 
     @Override
     public void render(float delta) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.setScreen(new MenuScreen(game));
+            saveProgress(
+                    shop.getCookies(),
+                    shop.getClicker(),
+                    shop.getGrandmas(),
+                    shop.getBakeries(),
+                    shop.getFactories()
+            );
+        }
+
         Gdx.gl.glClearColor(0.21f/* + b*/, 0.53f/* + b*/, 0.70f/* + b*/, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -201,6 +229,8 @@ public class GameScreen implements Screen {
             COOKIE_WIDTH -= 10;
 
             shop.setCookies(shop.getCookies() + 1);
+            shop.click();
+            clicksPerSecond++;
             addCookie();
         } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)
                 && COOKIE_WIDTH < 200 && COOKIE_HEIGHT < 200
@@ -224,7 +254,7 @@ public class GameScreen implements Screen {
         shop.setBakeries(objects[3] instanceof Long ? (Long) objects[3] : (Integer) objects[3]);
         shop.setFactories(objects[4] instanceof Long ? (Long) objects[4] : (Integer) objects[4]);
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> Data.saveProgress(
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> saveProgress(
                 shop.getCookies(),
                 shop.getClicker(),
                 shop.getGrandmas(),
@@ -233,19 +263,33 @@ public class GameScreen implements Screen {
         )));
     }
 
-    private void scheduleService(ScheduledExecutorService service, long amount, int increase) {
-        service.scheduleAtFixedRate(() -> {
-            for (int i = 0; i < amount; i++) {
-                try {
-                    Thread.sleep(25);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//    private void scheduleService(ScheduledExecutorService service, long amount, int increase) {
+//        service.scheduleAtFixedRate(() -> {
+//            for (int i = 0; i < amount; i++) {
+//                try {
+//                    Thread.sleep(25);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                shop.setCookies(shop.getCookies() + increase);
+//                addCookie();
+//            }
+//        }, 500, 500, TimeUnit.MILLISECONDS);
+//    }
 
-                shop.setCookies(shop.getCookies() + increase);
-                addCookie();
+    private void scheduleService(ScheduledExecutorService service) {
+        service.scheduleAtFixedRate(() -> {
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }, 500, 500, TimeUnit.MILLISECONDS);
+            shop.updateCookies();
+            cookiesPerSecond = shop.getCookiesPerSecond() + clicksPerSecond;
+            clicksPerSecond = 0;
+            addCookie();
+        }, 1000, 1000, TimeUnit.MILLISECONDS);
     }
 
     private Vector2 getUnprojectedScreenCoords(float minus) {
@@ -332,7 +376,17 @@ public class GameScreen implements Screen {
 
     private void renderCookies() {
         cookies.forEach(miniCookie -> {
-            game.getBatch().draw(cookieTexture, miniCookie.getX(), miniCookie.getY(), MINICOOKIE_WIDTH, MINICOOKIE_HEIGHT);
+            Texture miniCookieTexture;
+            switch (miniCookie.getColor()){
+                case RED: miniCookieTexture = miniCookieTextures.get(MiniCookie.Color.RED.ordinal());
+                    break;
+                case GREEN: miniCookieTexture = miniCookieTextures.get(MiniCookie.Color.GREEN.ordinal());
+                    break;
+                case PURPLE: miniCookieTexture = miniCookieTextures.get(MiniCookie.Color.PURPLE.ordinal());
+                    break;
+                default: miniCookieTexture = cookieTexture;
+            }
+            game.getBatch().draw(miniCookieTexture, miniCookie.getX(), miniCookie.getY(), MINICOOKIE_WIDTH, MINICOOKIE_HEIGHT);
             miniCookie.setY(miniCookie.getY() - MINICOOKIE_SPEED);
             miniCookie.setRotation((miniCookie.getRotation() + MINICOOKIE_ROTATION_SPEED) % 360.0f);
         });
@@ -340,7 +394,8 @@ public class GameScreen implements Screen {
 
     private void addCookie() {
         if (MINICOOKIE_THRESHOLD == -1 || amountMiniCookies <= MINICOOKIE_THRESHOLD) {
-            cookies.add(new MiniCookie(MathUtils.random(5, camera.viewportWidth - 30), camera.viewportHeight + MINICOOKIE_HEIGHT, MathUtils.random(0.0f, 360.0f)));
+            cookies.add(new MiniCookie(MathUtils.random(5, camera.viewportWidth - 30), camera.viewportHeight + MINICOOKIE_HEIGHT,
+                    MathUtils.random(0.0f, 360.0f), MathUtils.random(0,MiniCookie.Color.values().length-1)));
             amountMiniCookies++;
         }
     }

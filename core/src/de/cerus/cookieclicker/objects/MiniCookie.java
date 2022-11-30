@@ -8,10 +8,23 @@ public class MiniCookie {
 
     private float rotation;
 
-    public MiniCookie(float x, float y, float rotation) {
+    public enum Color{
+        RED,
+        GREEN,
+        PURPLE
+    }
+
+    Color color;
+
+    public Color getColor() {
+        return color;
+    }
+
+    public MiniCookie(float x, float y, float rotation, int color) {
         this.x = x;
         this.y = y;
         this.rotation = rotation;
+        this.color = Color.values()[color];
     }
 
     public float getX() {
