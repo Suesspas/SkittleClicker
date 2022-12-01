@@ -5,13 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import passi.skittleclicker.screens.GameScreen;
-import passi.skittleclicker.screens.MenuScreen;
-import passi.skittleclicker.screens.PreferencesScreen;
-import passi.skittleclicker.screens.SettingsScreen;
+import passi.skittleclicker.screens.*;
 import passi.skittleclicker.util.AppPreferences;
 import passi.skittleclicker.util.ContributorUtil;
 import passi.skittleclicker.util.FontUtil;
+import sun.applet.Main;
 
 public class SkittleClickerGame extends Game {
 
@@ -20,12 +18,12 @@ public class SkittleClickerGame extends Game {
     private BitmapFont font;
 
     public final static int MENU = 0;
-    public final static int SETTINGS = 1;
+    public final static int PREFERENCES = 1;
     public final static int APPLICATION = 2;
-    public final static int LOOT = 3;
+    public final static int EXIT = 3;
     public final static int ENDGAME = 4;
 
-    public MenuScreen menuScreen;
+    public MainMenuScreen menuScreen;
     public GameScreen gameScreen;
     public SettingsScreen settingsScreen;
     public PreferencesScreen preferencesScreen;
@@ -40,19 +38,14 @@ public class SkittleClickerGame extends Game {
         font = FontUtil.KOMIKA;
         preferences = new AppPreferences();
 
-        setScreen(new MenuScreen(this));
+        setScreen(new MainMenuScreen(this));
     }
 
-    int test = 0;
     @Override
     public void render() {
         if (screen == null || !(screen instanceof GameScreen)) {
             Gdx.gl.glClearColor(0, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        }
-        test++;
-        if (test > 200){
-            test = 0;
         }
 
         super.render();
@@ -82,11 +75,11 @@ public class SkittleClickerGame extends Game {
         switch(screen){
             case MENU:
                 if(menuScreen == null) {
-                    menuScreen = new MenuScreen(this);
+                    menuScreen = new MainMenuScreen(this);
                 }
                 this.setScreen(menuScreen);
                 break;
-            case SETTINGS:
+            case PREFERENCES:
                 if(preferencesScreen == null) {
                     preferencesScreen = new PreferencesScreen(this);
                 }
@@ -94,7 +87,7 @@ public class SkittleClickerGame extends Game {
                 break;
             case APPLICATION:
                 if(gameScreen == null) {
-                    gameScreen = new GameScreen(this, true);
+                    gameScreen = new GameScreen(this);
                 }
                 this.setScreen(gameScreen);
                 break;
@@ -104,12 +97,9 @@ public class SkittleClickerGame extends Game {
 //                }
 //                this.setScreen(endScreen);
 //                break;
-//            case LOOT:
-//                if(lootBoxScreen == null) {
-//                    lootBoxScreen = new LootBoxScreen(this);
-//                }
-//                this.setScreen(lootBoxScreen);
-//                break;
+            case EXIT:
+                this.setScreen(new ExitScreen(this));
+                break;
         }
     }
 

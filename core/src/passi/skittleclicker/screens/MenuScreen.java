@@ -51,7 +51,7 @@ public class MenuScreen implements Screen {
         this.menuText = new GlyphLayout(game.getFont(), "Menu");
 
         if (game.gameScreen == null)
-            game.gameScreen = new GameScreen(game, true);
+            game.gameScreen = new GameScreen(game);
     }
 
     @Override
@@ -67,13 +67,13 @@ public class MenuScreen implements Screen {
                     game.changeScreen(SkittleClickerGame.APPLICATION);
                     break;
                 case "Settings":
-                    game.changeScreen(SkittleClickerGame.SETTINGS);
+                    game.changeScreen(SkittleClickerGame.PREFERENCES);
                     break;
                 case "Credits":
                     game.setScreen(new CreditsScreen(game));
                     break;
                 case "Exit":
-                    game.setScreen(new ExitScreen(game));
+                    game.changeScreen(SkittleClickerGame.EXIT);
                     break;
             }
         });

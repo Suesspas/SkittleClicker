@@ -2,6 +2,7 @@ package passi.skittleclicker.screens;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -196,6 +197,10 @@ public class PreferencesScreen implements Screen {
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
 
         stage.draw();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.changeScreen(SkittleClickerGame.MENU);
+        }
 
 /*
         if (Gdx.input.isTouched()) {

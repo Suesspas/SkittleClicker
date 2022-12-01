@@ -89,7 +89,7 @@ public class GameScreen implements Screen {
 
     private int autoSaveTimer;
 
-    public GameScreen(SkittleClickerGame game, boolean continueGame) {
+    public GameScreen(SkittleClickerGame game) {
         this.game = game;
         this.camera = new OrthographicCamera();
         this.shop = new Shop();
@@ -123,9 +123,9 @@ public class GameScreen implements Screen {
 
         this.autoSaveTimer = 0;
 
-        if (continueGame) {
-            loadDataForShop();
-        }
+//        if (continueGame) {
+        loadDataForShop();
+//        }
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::saveProgress));
     }
@@ -155,7 +155,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             service.shutdown();
-            game.setScreen(new MenuScreen(game));
+            game.changeScreen(SkittleClickerGame.MENU);
             saveProgress();
         }
 
