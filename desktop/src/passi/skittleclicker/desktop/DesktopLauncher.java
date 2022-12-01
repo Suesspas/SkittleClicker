@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import passi.skittleclicker.SkittleClickerGame;
 
 public class DesktopLauncher {
+	//gradle desktop/Tasks/build/jpackageImage for deploying
 
 	public static void main (String[] arg) {
 //		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();

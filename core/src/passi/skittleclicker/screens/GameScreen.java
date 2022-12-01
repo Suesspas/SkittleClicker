@@ -44,8 +44,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static passi.skittleclicker.data.Data.saveProgress;
-
 public class GameScreen implements Screen {
 
     private static float SKITTLE_WIDTH = 200;
@@ -132,10 +130,10 @@ public class GameScreen implements Screen {
 
     void saveProgress(){
         Data.saveProgress(shop.getSkittles(),
-                shop.getClicker(),
-                shop.getGrandmas(),
-                shop.getBakeries(),
-                shop.getFactories());
+                shop.getClickerNumber(),
+                shop.getGrannyNumber(),
+                shop.getBakeryNumber(),
+                shop.getFactoryNumber());
     }
 
     @Override
@@ -245,11 +243,12 @@ public class GameScreen implements Screen {
 
     private void loadDataForShop() {
         Object[] objects = Data.loadProgress();
-        shop.setSkittles(objects[0] instanceof Long ? (Long) objects[0] : (Integer) objects[0]);
-        shop.setClicker(objects[1] instanceof Long ? (Long) objects[1] : (Integer) objects[1]);
-        shop.setGrandmas(objects[2] instanceof Long ? (Long) objects[2] : (Integer) objects[2]);
-        shop.setBakeries(objects[3] instanceof Long ? (Long) objects[3] : (Integer) objects[3]);
-        shop.setFactories(objects[4] instanceof Long ? (Long) objects[4] : (Integer) objects[4]);
+        shop.setupShop(objects);
+//        shop.setSkittles(objects[0] instanceof Long ? (Long) objects[0] : (Integer) objects[0]);
+//        shop.setClicker(objects[1] instanceof Long ? (Long) objects[1] : (Integer) objects[1]);
+//        shop.setGrandmas(objects[2] instanceof Long ? (Long) objects[2] : (Integer) objects[2]);
+//        shop.setBakeries(objects[3] instanceof Long ? (Long) objects[3] : (Integer) objects[3]);
+//        shop.setFactories(objects[4] instanceof Long ? (Long) objects[4] : (Integer) objects[4]);
     }
 
     private void scheduleService(ScheduledExecutorService service) {
@@ -292,14 +291,14 @@ public class GameScreen implements Screen {
     }
 
     private void renderClicker() {
-        if (shop.getClicker() == 0) {
+        if (shop.getClickerNumber() == 0) {
             return;
         }
 
         generalRotation += 0.1f;
         int row = 0;
 
-        for (int i = 0; i < shop.getClicker(); i++) {
+        for (int i = 0; i < shop.getClickerNumber(); i++) {
             if (i == 18 || i == 36) {
                 row++;
             }
@@ -416,10 +415,6 @@ public class GameScreen implements Screen {
     }
 
     public void deleteSaveData() {
-        shop.setSkittles(0);
-        shop.setClicker(0);
-        shop.setGrandmas(0);
-        shop.setBakeries(0);
-        shop.setFactories(0);
+        shop.deleteSaveData();
     }
 }

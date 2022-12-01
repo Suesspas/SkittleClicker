@@ -32,6 +32,9 @@ import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.fixes.CustomShapeRenderer;
 import passi.skittleclicker.util.FontUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Shop implements Disposable {
 
     public static final int MAX_CLICKER = 54;
@@ -62,17 +65,24 @@ public class Shop implements Disposable {
 
     private float animationAlpha = 0.0f;
     private long skittles = 0;
-    private long clicker = 0;
-    private long grandmas = 0;
-    private long bakeries = 0;
-    private long factories = 0;
-
-    private final long baseSkittlesPerClicker = 1;
-    private final long baseSkittlesPerGrandma = 3;
-    private final long baseSkittlesPerBakerie = 10;
-    private final long baseSkittlesPerFactory = 50;
-
     private long skittlesPerClick = 1;
+    ShopGroup playerShopGroup;
+    ShopGroup clickerShopGroup;
+    ShopGroup grannyShopGroup;
+    ShopGroup bakeryShopGroup;
+    ShopGroup factoryShopGroup;
+
+    public Shop(){
+        List<Upgrade> upgrades = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            upgrades.add(new Upgrade("Upgrade " + i, 100 * i, 1 + i));
+        }
+        playerShopGroup = new ShopGroup(ShopGroup.Type.PLAYER, 1, upgrades, 1);
+        clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, upgrades, 54);
+        grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, upgrades, 20);
+        bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, upgrades, 20);
+        factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, upgrades, 20);
+    }
 
     public void render(SkittleClickerGame game, OrthographicCamera camera) {
         if (!visible) {
@@ -117,13 +127,13 @@ public class Shop implements Disposable {
         );
         game.getBatch().setColor(1, 1, 1, 1);
 
-        if (clicker >= MAX_CLICKER || skittles < 5) {
+        if (clickerShopGroup.getNumber() >= MAX_CLICKER || skittles < 5) {
             FontUtil.KOMIKA.setColor(Color.RED);
             game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
         }
         FontUtil.KOMIKA.draw(
                 game.getBatch(),
-                "Clicker: " + clicker + " / " + MAX_CLICKER + " [Cost: 5]",
+                "Clicker: " + clickerShopGroup.getNumber() + " / " + MAX_CLICKER + " [Cost: 5]",
                 camera.position.x - (camera.viewportWidth / 2.2f) + 20,
                 camera.position.y + (camera.viewportHeight / 2.2f) - 30
         );
@@ -143,13 +153,13 @@ public class Shop implements Disposable {
         );
         game.getBatch().setColor(Color.WHITE);
 
-        if (grandmas >= MAX_GRANDMAS || skittles < 100) {
+        if (grannyShopGroup.getNumber() >= MAX_GRANDMAS || skittles < 100) {
             FontUtil.KOMIKA.setColor(Color.RED);
             game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
         }
         FontUtil.KOMIKA.draw(
                 game.getBatch(),
-                "Grandma: " + grandmas + " / " + MAX_GRANDMAS + " [Cost: 100]",
+                "Grandma: " + grannyShopGroup.getNumber() + " / " + MAX_GRANDMAS + " [Cost: 100]",
                 camera.position.x - (camera.viewportWidth / 2.2f) + 20,
                 camera.position.y + (camera.viewportHeight / 2.2f) - 60
         );
@@ -169,13 +179,13 @@ public class Shop implements Disposable {
         );
         game.getBatch().setColor(Color.WHITE);
 
-        if (bakeries >= MAX_BAKERIES || skittles < 250) {
+        if (bakeryShopGroup.getNumber() >= MAX_BAKERIES || skittles < 250) {
             FontUtil.KOMIKA.setColor(Color.RED);
             game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
         }
         FontUtil.KOMIKA.draw(
                 game.getBatch(),
-                "Bakery: " + bakeries + " / " + MAX_BAKERIES + " [Cost: 250]",
+                "Bakery: " + bakeryShopGroup.getNumber() + " / " + MAX_BAKERIES + " [Cost: 250]",
                 camera.position.x - (camera.viewportWidth / 2.2f) + 20,
                 camera.position.y + (camera.viewportHeight / 2.2f) - 90
         );
@@ -195,13 +205,13 @@ public class Shop implements Disposable {
         );
         game.getBatch().setColor(Color.WHITE);
 
-        if (factories >= MAX_FACTORIES || skittles < 1000) {
+        if (factoryShopGroup.getNumber() >= MAX_FACTORIES || skittles < 1000) {
             FontUtil.KOMIKA.setColor(Color.RED);
             game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
         }
         FontUtil.KOMIKA.draw(
                 game.getBatch(),
-                "Factory: " + factories + " / " + MAX_FACTORIES + " [Cost: 1000]",
+                "Factory: " + factoryShopGroup.getNumber() + " / " + MAX_FACTORIES + " [Cost: 1000]",
                 camera.position.x - (camera.viewportWidth / 2.2f) + 20,
                 camera.position.y + (camera.viewportHeight / 2.2f) - 120
         );
@@ -232,10 +242,10 @@ public class Shop implements Disposable {
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
                 && buyClickerRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
-                && clicker < MAX_CLICKER
+                && clickerShopGroup.getNumber() < MAX_CLICKER
                 && skittles >= 5) {
             skittles -= 5;
-            clicker++;
+            clickerShopGroup.incrementNumber();
 
             buyClickerButtonHeight -= 5;
             buyClickerButtonWidth -= 5;
@@ -248,10 +258,10 @@ public class Shop implements Disposable {
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
                 && buyGrandmaRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
-                && grandmas < MAX_GRANDMAS
+                && grannyShopGroup.getNumber() < MAX_GRANDMAS
                 && skittles >= 100) {
             skittles -= 100;
-            grandmas++;
+            grannyShopGroup.incrementNumber();
 
             buyGrandmaButtonHeight -= 5;
             buyGrandmaButtonWidth -= 5;
@@ -264,10 +274,10 @@ public class Shop implements Disposable {
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
                 && buyBakeryRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
-                && bakeries < MAX_BAKERIES
+                && bakeryShopGroup.getNumber() < MAX_BAKERIES
                 && skittles >= 250) {
             skittles -= 250;
-            bakeries++;
+            bakeryShopGroup.incrementNumber();
 
             buyBakeryButtonHeight -= 5;
             buyBakeryButtonWidth -= 5;
@@ -280,10 +290,10 @@ public class Shop implements Disposable {
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
                 && buyFactoryRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
-                && factories < MAX_FACTORIES
+                && factoryShopGroup.getNumber() < MAX_FACTORIES
                 && skittles >= 1000) {
             skittles -= 1000;
-            factories++;
+            factoryShopGroup.incrementNumber();
 
             buyFactoryButtonHeight -= 5;
             buyFactoryButtonWidth -= 5;
@@ -307,6 +317,15 @@ public class Shop implements Disposable {
         return !visible;
     }
 
+    public void setupShop(Object[] objects){
+        setSkittles(objects[0] instanceof Long ? (Long) objects[0] : (Integer) objects[0]);
+        clickerShopGroup.setNumber(objects[1] instanceof Long ? (Long) objects[1] : (Integer) objects[1]);
+        grannyShopGroup.setNumber(objects[2] instanceof Long ? (Long) objects[2] : (Integer) objects[2]);
+        bakeryShopGroup.setNumber(objects[3] instanceof Long ? (Long) objects[3] : (Integer) objects[3]);
+        factoryShopGroup.setNumber(objects[4] instanceof Long ? (Long) objects[4] : (Integer) objects[4]);
+        //TODO add loading upgrades
+    }
+
     public void setVisible(boolean visible) {
         this.visible = visible;
         if (visible) {
@@ -314,51 +333,34 @@ public class Shop implements Disposable {
         }
     }
 
-    public long getClicker() {
-        return clicker;
+    public long getClickerNumber() {
+        return clickerShopGroup.getNumber();
     }
 
-    public void setClicker(long clicker) {
-        this.clicker = clicker;
-    }
 
     public long getSkittles() {
         return skittles;
     }
 
     public long getSkittlesPerSecond(){
-        return (clicker* baseSkittlesPerClicker)+ (grandmas * baseSkittlesPerGrandma)
-                + (bakeries * baseSkittlesPerBakerie) + (factories * baseSkittlesPerFactory);
+        return (clickerShopGroup.getSkittlesPerSecond())+ (grannyShopGroup.getSkittlesPerSecond())
+                + (bakeryShopGroup.getSkittlesPerSecond()) + (factoryShopGroup.getSkittlesPerSecond());
     }
 
     public void setSkittles(long skittles) {
         this.skittles = skittles;
     }
 
-    public long getGrandmas() {
-        return grandmas;
+    public long getGrannyNumber() {
+        return grannyShopGroup.getNumber();
+    }
+    public long getBakeryNumber() {
+        return bakeryShopGroup.getNumber();
     }
 
-    public void setGrandmas(long grandmas) {
-        this.grandmas = grandmas;
+    public long getFactoryNumber() {
+        return factoryShopGroup.getNumber();
     }
-
-    public long getBakeries() {
-        return bakeries;
-    }
-
-    public void setBakeries(long bakeries) {
-        this.bakeries = bakeries;
-    }
-
-    public long getFactories() {
-        return factories;
-    }
-
-    public void setFactories(long factories) {
-        this.factories = factories;
-    }
-
     @Override
     public void dispose() {
         shapeRenderer.dispose();
@@ -372,5 +374,14 @@ public class Shop implements Disposable {
 
     public void click() {
         skittles += skittlesPerClick;
+    }
+
+    public void deleteSaveData() {
+        setSkittles(0);
+        clickerShopGroup.setNumber(0);
+        grannyShopGroup.setNumber(0);
+        bakeryShopGroup.setNumber(0);
+        factoryShopGroup.setNumber(0);
+        //TODO set upgrade progress to 0
     }
 }
