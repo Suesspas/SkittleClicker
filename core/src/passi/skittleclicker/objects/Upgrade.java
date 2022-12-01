@@ -1,9 +1,9 @@
 package passi.skittleclicker.objects;
 
 public class Upgrade {
-    private String Name;
-    private long cost;
-    private double modifier; //Modifier for Skittles gain, usually > 1
+    private final String Name;
+    private final long cost;
+    private final double modifier; //Modifier for Skittles gain, usually > 1
     private boolean unlocked;
 
     public Upgrade(String name, long cost, double modifier) {

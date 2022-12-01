@@ -12,15 +12,17 @@ public class ShopGroup {
     };
     private final Type type;
     private long number;
+    private long cost;
     private final long MAX_NUMBER;
     private final long baseSkittles;
     private List<Upgrade> upgrades;
 
 
-    public ShopGroup(Type type, long baseSkittles, List<Upgrade> upgrades, long MAX_NUMBER) {
+    public ShopGroup(Type type, long baseSkittles, List<Upgrade> upgrades, long MAX_NUMBER, long cost) {
         this.type = type;
         this.number = 0;
         this.MAX_NUMBER = MAX_NUMBER;
+        this.cost = cost;
         this.baseSkittles = baseSkittles;
         this.upgrades = upgrades;
     }
@@ -51,8 +53,15 @@ public class ShopGroup {
         return baseSkittles;
     }
 
+    public long getCurrentCost() {
+        return cost * number;
+    }
+
     public List<Upgrade> getUpgrades() {
         return upgrades;
+    }
+    public long getMAX_NUMBER() {
+        return MAX_NUMBER;
     }
 
     public void setNumber(long number) {

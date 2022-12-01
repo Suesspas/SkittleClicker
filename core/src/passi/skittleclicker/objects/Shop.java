@@ -36,12 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Shop implements Disposable {
-
-    public static final int MAX_CLICKER = 54;
-    public static final int MAX_GRANDMAS = 20;
-    public static final int MAX_BAKERIES = 20;
-    public static final int MAX_FACTORIES = 20;
-
     private CustomShapeRenderer shapeRenderer = new CustomShapeRenderer();
     private boolean visible = false;
 
@@ -65,7 +59,6 @@ public class Shop implements Disposable {
 
     private float animationAlpha = 0.0f;
     private long skittles = 0;
-    private long skittlesPerClick = 1;
     ShopGroup playerShopGroup;
     ShopGroup clickerShopGroup;
     ShopGroup grannyShopGroup;
@@ -77,11 +70,11 @@ public class Shop implements Disposable {
         for (int i = 0; i < 5; i++) {
             upgrades.add(new Upgrade("Upgrade " + i, 100 * i, 1 + i));
         }
-        playerShopGroup = new ShopGroup(ShopGroup.Type.PLAYER, 1, upgrades, 1);
-        clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, upgrades, 54);
-        grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, upgrades, 20);
-        bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, upgrades, 20);
-        factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, upgrades, 20);
+        playerShopGroup = new ShopGroup(ShopGroup.Type.PLAYER, 1, upgrades, 1, 0);
+        clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, upgrades, 54, 5);
+        grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, upgrades, 20, 100);
+        bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, upgrades, 20, 250);
+        factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, upgrades, 20, 1000);
     }
 
     public void render(SkittleClickerGame game, OrthographicCamera camera) {
@@ -125,111 +118,11 @@ public class Shop implements Disposable {
                 closeRepresentation.width,
                 closeRepresentation.height
         );
-        game.getBatch().setColor(1, 1, 1, 1);
 
-        if (clickerShopGroup.getNumber() >= MAX_CLICKER || skittles < 5) {
-            FontUtil.KOMIKA.setColor(Color.RED);
-            game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
-        }
-        FontUtil.KOMIKA.draw(
-                game.getBatch(),
-                "Clicker: " + clickerShopGroup.getNumber() + " / " + MAX_CLICKER + " [Cost: 5]",
-                camera.position.x - (camera.viewportWidth / 2.2f) + 20,
-                camera.position.y + (camera.viewportHeight / 2.2f) - 30
-        );
-        FontUtil.KOMIKA.setColor(Color.WHITE);
-        buyClickerRepresentation.set(
-                camera.position.x - (camera.viewportWidth / 2.2f) + camera.viewportWidth / 2.2f * 2 - 110 - buyClickerButtonWidth / 2f,
-                camera.position.y + (camera.viewportHeight / 2.2f) - 40 - buyClickerButtonHeight / 2f,
-                buyClickerButtonWidth,
-                buyClickerButtonHeight
-        );
-        game.getBatch().draw(
-                buyTexture,
-                buyClickerRepresentation.x,
-                buyClickerRepresentation.y,
-                buyClickerRepresentation.width,
-                buyClickerRepresentation.height
-        );
-        game.getBatch().setColor(Color.WHITE);
-
-        if (grannyShopGroup.getNumber() >= MAX_GRANDMAS || skittles < 100) {
-            FontUtil.KOMIKA.setColor(Color.RED);
-            game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
-        }
-        FontUtil.KOMIKA.draw(
-                game.getBatch(),
-                "Grandma: " + grannyShopGroup.getNumber() + " / " + MAX_GRANDMAS + " [Cost: 100]",
-                camera.position.x - (camera.viewportWidth / 2.2f) + 20,
-                camera.position.y + (camera.viewportHeight / 2.2f) - 60
-        );
-        FontUtil.KOMIKA.setColor(Color.WHITE);
-        buyGrandmaRepresentation.set(
-                camera.position.x - (camera.viewportWidth / 2.2f) + camera.viewportWidth / 2.2f * 2 - 110 - buyGrandmaButtonWidth / 2f,
-                camera.position.y + (camera.viewportHeight / 2.2f) - 70 - buyGrandmaButtonHeight / 2f,
-                buyGrandmaButtonWidth,
-                buyGrandmaButtonHeight
-        );
-        game.getBatch().draw(
-                buyTexture,
-                buyGrandmaRepresentation.x,
-                buyGrandmaRepresentation.y,
-                buyGrandmaRepresentation.width,
-                buyGrandmaRepresentation.height
-        );
-        game.getBatch().setColor(Color.WHITE);
-
-        if (bakeryShopGroup.getNumber() >= MAX_BAKERIES || skittles < 250) {
-            FontUtil.KOMIKA.setColor(Color.RED);
-            game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
-        }
-        FontUtil.KOMIKA.draw(
-                game.getBatch(),
-                "Bakery: " + bakeryShopGroup.getNumber() + " / " + MAX_BAKERIES + " [Cost: 250]",
-                camera.position.x - (camera.viewportWidth / 2.2f) + 20,
-                camera.position.y + (camera.viewportHeight / 2.2f) - 90
-        );
-        FontUtil.KOMIKA.setColor(Color.WHITE);
-        buyBakeryRepresentation.set(
-                camera.position.x - (camera.viewportWidth / 2.2f) + camera.viewportWidth / 2.2f * 2 - 110 - buyBakeryButtonWidth / 2f,
-                camera.position.y + (camera.viewportHeight / 2.2f) - 100 - buyBakeryButtonHeight / 2f,
-                buyBakeryButtonWidth,
-                buyBakeryButtonHeight
-        );
-        game.getBatch().draw(
-                buyTexture,
-                buyBakeryRepresentation.x,
-                buyBakeryRepresentation.y,
-                buyBakeryRepresentation.width,
-                buyBakeryRepresentation.height
-        );
-        game.getBatch().setColor(Color.WHITE);
-
-        if (factoryShopGroup.getNumber() >= MAX_FACTORIES || skittles < 1000) {
-            FontUtil.KOMIKA.setColor(Color.RED);
-            game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
-        }
-        FontUtil.KOMIKA.draw(
-                game.getBatch(),
-                "Factory: " + factoryShopGroup.getNumber() + " / " + MAX_FACTORIES + " [Cost: 1000]",
-                camera.position.x - (camera.viewportWidth / 2.2f) + 20,
-                camera.position.y + (camera.viewportHeight / 2.2f) - 120
-        );
-        FontUtil.KOMIKA.setColor(Color.WHITE);
-        buyFactoryRepresentation.set(
-                camera.position.x - (camera.viewportWidth / 2.2f) + camera.viewportWidth / 2.2f * 2 - 110 - buyFactoryButtonWidth / 2f,
-                camera.position.y + (camera.viewportHeight / 2.2f) - 130 - buyFactoryButtonHeight / 2f,
-                buyFactoryButtonWidth,
-                buyFactoryButtonHeight
-        );
-        game.getBatch().draw(
-                buyTexture,
-                buyFactoryRepresentation.x,
-                buyFactoryRepresentation.y,
-                buyFactoryRepresentation.width,
-                buyFactoryRepresentation.height
-        );
-        game.getBatch().setColor(Color.WHITE);
+        renderShopGroup(game,camera, clickerShopGroup,30);
+        renderShopGroup(game,camera, grannyShopGroup,60);
+        renderShopGroup(game, camera, bakeryShopGroup,90);
+        renderShopGroup(game,camera, factoryShopGroup,120);
 
         game.getBatch().end();
 
@@ -240,69 +133,78 @@ public class Shop implements Disposable {
             setVisible(false);
         }
 
+        addButtonFunctionality(buyClickerRepresentation, camera, clickerShopGroup, buyClickerButtonHeight, buyClickerButtonWidth);
+
+        addButtonFunctionality(buyGrandmaRepresentation, camera, grannyShopGroup,  buyGrandmaButtonHeight, buyGrandmaButtonWidth);
+
+        addButtonFunctionality(buyBakeryRepresentation, camera, bakeryShopGroup,  buyBakeryButtonHeight, buyBakeryButtonWidth);
+
+        addButtonFunctionality(buyFactoryRepresentation, camera, factoryShopGroup,  buyFactoryButtonHeight, buyFactoryButtonWidth);
+    }
+
+    private void addButtonFunctionality(Rectangle buyClickerRepresentation, OrthographicCamera camera, ShopGroup shopGroup, float buyButtonHeight, float buyButtonWidth) {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
                 && buyClickerRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
-                && clickerShopGroup.getNumber() < MAX_CLICKER
-                && skittles >= 5) {
-            skittles -= 5;
-            clickerShopGroup.incrementNumber();
+                && shopGroup.getNumber() < shopGroup.getMAX_NUMBER()
+                && skittles >= shopGroup.getCurrentCost()) {
+            skittles -= shopGroup.getCurrentCost();
+            shopGroup.incrementNumber();
 
-            buyClickerButtonHeight -= 5;
-            buyClickerButtonWidth -= 5;
+            buyButtonHeight -= 5;
+            buyButtonWidth -= 5;
         } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)
-                && buyClickerButtonWidth < buyTexture.getWidth()
-                && buyClickerButtonHeight < buyTexture.getHeight()) {
-            buyClickerButtonWidth = buyTexture.getWidth();
-            buyClickerButtonHeight = buyTexture.getHeight();
+                && buyButtonWidth < buyTexture.getWidth()
+                && buyButtonHeight < buyTexture.getHeight()) {
+            buyButtonWidth = buyTexture.getWidth();
+            buyButtonHeight = buyTexture.getHeight();
         }
+    }
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-                && buyGrandmaRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
-                && grannyShopGroup.getNumber() < MAX_GRANDMAS
-                && skittles >= 100) {
-            skittles -= 100;
-            grannyShopGroup.incrementNumber();
+    private void renderShopGroup(SkittleClickerGame game, OrthographicCamera camera, ShopGroup shopGroup, int yOffset) {
 
-            buyGrandmaButtonHeight -= 5;
-            buyGrandmaButtonWidth -= 5;
-        } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)
-                && buyGrandmaButtonWidth < buyTexture.getWidth()
-                && buyGrandmaButtonHeight < buyTexture.getHeight()) {
-            buyGrandmaButtonWidth = buyTexture.getWidth();
-            buyGrandmaButtonHeight = buyTexture.getHeight();
+        if (shopGroup.getNumber() >= shopGroup.getMAX_NUMBER() || skittles < shopGroup.getCurrentCost()) {
+            FontUtil.KOMIKA.setColor(Color.RED);
+            game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -0.5f));
         }
+        FontUtil.KOMIKA.draw(
+                game.getBatch(),
+                "Bakery: " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER() + " [Cost: "+ shopGroup.getCurrentCost()+"]",
+                camera.position.x - (camera.viewportWidth / 2.2f) + 20,
+                camera.position.y + (camera.viewportHeight / 2.2f) - yOffset
+        );
+        FontUtil.KOMIKA.setColor(Color.WHITE);
+        switch (shopGroup.getType()){
+            case CLICKER:
+                renderShopGroupButton(buyClickerRepresentation, camera, buyClickerButtonWidth, 40, buyClickerButtonHeight, game);
+                break;
+            case GRANNY:
+                renderShopGroupButton(buyGrandmaRepresentation, camera, buyGrandmaButtonWidth, 70, buyGrandmaButtonHeight, game);
+                break;
+            case BAKERY:
+                renderShopGroupButton(buyBakeryRepresentation, camera, buyBakeryButtonWidth, 100, buyBakeryButtonHeight, game);
+                break;
+            case FACTORY:
+                renderShopGroupButton(buyFactoryRepresentation, camera, buyFactoryButtonWidth, 130, buyFactoryButtonHeight, game);
+                break;
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-                && buyBakeryRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
-                && bakeryShopGroup.getNumber() < MAX_BAKERIES
-                && skittles >= 250) {
-            skittles -= 250;
-            bakeryShopGroup.incrementNumber();
-
-            buyBakeryButtonHeight -= 5;
-            buyBakeryButtonWidth -= 5;
-        } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)
-                && buyBakeryButtonWidth < buyTexture.getWidth()
-                && buyBakeryButtonHeight < buyTexture.getHeight()) {
-            buyBakeryButtonWidth = buyTexture.getWidth();
-            buyBakeryButtonHeight = buyTexture.getHeight();
         }
+        game.getBatch().setColor(Color.WHITE);
+    }
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-                && buyFactoryRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
-                && factoryShopGroup.getNumber() < MAX_FACTORIES
-                && skittles >= 1000) {
-            skittles -= 1000;
-            factoryShopGroup.incrementNumber();
-
-            buyFactoryButtonHeight -= 5;
-            buyFactoryButtonWidth -= 5;
-        } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)
-                && buyFactoryButtonWidth < buyTexture.getWidth()
-                && buyFactoryButtonHeight < buyTexture.getHeight()) {
-            buyFactoryButtonWidth = buyTexture.getWidth();
-            buyFactoryButtonHeight = buyTexture.getHeight();
-        }
+    private void renderShopGroupButton(Rectangle buyBakeryRepresentation, OrthographicCamera camera, float buyShopGroupButtonWidth, int x, float buyShopGroupButtonHeight, SkittleClickerGame game) {
+        buyBakeryRepresentation.set(
+                camera.position.x - (camera.viewportWidth / 2.2f) + camera.viewportWidth / 2.2f * 2 - 110 - buyShopGroupButtonWidth / 2f,
+                camera.position.y + (camera.viewportHeight / 2.2f) - x - buyShopGroupButtonHeight / 2f,
+                buyShopGroupButtonWidth,
+                buyShopGroupButtonHeight
+        );
+        game.getBatch().draw(
+                buyTexture,
+                buyBakeryRepresentation.x,
+                buyBakeryRepresentation.y,
+                buyBakeryRepresentation.width,
+                buyBakeryRepresentation.height
+        );
     }
 
     private Vector2 getUnprojectedScreenCoords(Camera camera, float minus) {
@@ -373,7 +275,7 @@ public class Shop implements Disposable {
     }
 
     public void click() {
-        skittles += skittlesPerClick;
+        skittles += playerShopGroup.getBaseSkittles();
     }
 
     public void deleteSaveData() {
