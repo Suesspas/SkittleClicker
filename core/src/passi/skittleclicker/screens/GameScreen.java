@@ -23,6 +23,7 @@ package passi.skittleclicker.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -67,6 +68,7 @@ public class GameScreen implements Screen {
 
     private Ellipse skittleRepresentation;
     private Rectangle shopRepresentation;
+    public Music bgm;
 
     private double skittlesPerSecond;
     private int clickerAnimationIndex;
@@ -106,6 +108,16 @@ public class GameScreen implements Screen {
         this.shopRepresentation = new Rectangle();
 
         this.shapeRenderer = new CustomShapeRenderer();
+
+        bgm = Gdx.audio.newMusic(Gdx.files.internal("arcade.wav"));
+        bgm.setLooping(true);
+        bgm.setVolume(game.getPreferences().getMusicVolume());
+//        bgm.setVolume(0.005f);
+        if (game.getPreferences().isMusicEnabled()) {
+            bgm.play();
+        } else {
+            bgm.stop();
+        }
 
         this.paused = false;
 

@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import passi.skittleclicker.screens.GameScreen;
 import passi.skittleclicker.screens.MenuScreen;
+import passi.skittleclicker.screens.PreferencesScreen;
+import passi.skittleclicker.screens.SettingsScreen;
+import passi.skittleclicker.util.AppPreferences;
 import passi.skittleclicker.util.ContributorUtil;
 import passi.skittleclicker.util.FontUtil;
 
@@ -17,12 +20,16 @@ public class SkittleClickerGame extends Game {
     private BitmapFont font;
 
     public final static int MENU = 0;
-    public final static int PREFERENCES = 1;
+    public final static int SETTINGS = 1;
     public final static int APPLICATION = 2;
     public final static int LOOT = 3;
     public final static int ENDGAME = 4;
 
-    GameScreen gameScreen;
+    public MenuScreen menuScreen;
+    public GameScreen gameScreen;
+    public SettingsScreen settingsScreen;
+    public PreferencesScreen preferencesScreen;
+    private AppPreferences preferences;
 
     @Override
     public void create() {
@@ -31,15 +38,21 @@ public class SkittleClickerGame extends Game {
 
         batch = new SpriteBatch();
         font = FontUtil.KOMIKA;
+        preferences = new AppPreferences();
 
         setScreen(new MenuScreen(this));
     }
 
+    int test = 0;
     @Override
     public void render() {
         if (screen == null || !(screen instanceof GameScreen)) {
             Gdx.gl.glClearColor(0, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        }
+        test++;
+        if (test > 200){
+            test = 0;
         }
 
         super.render();
@@ -67,18 +80,18 @@ public class SkittleClickerGame extends Game {
     public void changeScreen(int screen){
         System.out.println(screen); //TODO changing screens back to mainmenu doesnt work after newgame?
         switch(screen){
-//            case MENU:
-//                if(mainMenuScreen == null) {
-//                    mainMenuScreen = new MainMenuScreen(this);
-//                }
-//                this.setScreen(mainMenuScreen);
-//                break;
-//            case PREFERENCES:
-//                if(preferencesScreen == null) {
-//                    preferencesScreen = new PreferencesScreen(this);
-//                }
-//                this.setScreen(preferencesScreen);
-//                break;
+            case MENU:
+                if(menuScreen == null) {
+                    menuScreen = new MenuScreen(this);
+                }
+                this.setScreen(menuScreen);
+                break;
+            case SETTINGS:
+                if(preferencesScreen == null) {
+                    preferencesScreen = new PreferencesScreen(this);
+                }
+                this.setScreen(preferencesScreen);
+                break;
             case APPLICATION:
                 if(gameScreen == null) {
                     gameScreen = new GameScreen(this, true);
@@ -98,5 +111,9 @@ public class SkittleClickerGame extends Game {
 //                this.setScreen(lootBoxScreen);
 //                break;
         }
+    }
+
+    public AppPreferences getPreferences() {
+        return this.preferences;
     }
 }

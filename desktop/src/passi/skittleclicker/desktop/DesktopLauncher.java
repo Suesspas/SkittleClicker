@@ -1,5 +1,6 @@
 package passi.skittleclicker.desktop;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 //import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -23,6 +24,8 @@ public class DesktopLauncher {
 		config.title = "Skittle Clicker";
 		config.width = 854;
 		config.height = 480;
+		config.addIcon("skittle_icon32.png", Files.FileType.Internal);
+		config.addIcon("skittle_icon16.png", Files.FileType.Internal);
 		new LwjglApplication(new SkittleClickerGame(), config);
 	}
 }
