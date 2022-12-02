@@ -4,12 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.util.AutoFocusScrollPane;
@@ -31,14 +29,29 @@ public class TestScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+
+        // temporary until we have asset manager in
+        Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
+
         // Create a table that fills the screen. Everything else will go inside this table.
+        Table rootTable = new Table();
+        rootTable.setFillParent(true);
+        rootTable.setDebug(true);
+
+        Table clickerPart = new Table();
+        clickerPart.setFillParent(false);
+        clickerPart.setDebug(false);
+        clickerPart.add(new TextButton("Clicker part", skin));
+
+        Table shopGroupDisplayPart = new Table();
+        shopGroupDisplayPart.setFillParent(false);
+        shopGroupDisplayPart.setDebug(false);
+        shopGroupDisplayPart.add(new TextButton("Shop Group display part", skin));
+
         Table table = new Table();
         table.setFillParent(false);
         table.setDebug(false);
 //        stage.addActor(table);
-
-        // temporary until we have asset manager in
-        Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
 
 //        ScrollPane scrollPane = new ScrollPane(table);
 //        scrollPane.setFillParent(true);
@@ -46,8 +59,13 @@ public class TestScreen implements Screen {
 
         AutoFocusScrollPane autoFocusScrollPane = new AutoFocusScrollPane(table);
 //        autoFocusScrollPane.setActor(table);
-        autoFocusScrollPane.setFillParent(true);
-        stage.addActor(autoFocusScrollPane);
+        autoFocusScrollPane.setFillParent(false);
+
+        rootTable.add(clickerPart).expand();//maxWidth(10).expand();//.width(rootTable.getWidth()/3);
+        rootTable.add(shopGroupDisplayPart).expand();
+        rootTable.add(autoFocusScrollPane).expand();
+
+        stage.addActor(rootTable);
 
         //create buttons
         TextButton playGame = new TextButton("Play Game", skin);
@@ -111,12 +129,6 @@ public class TestScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
-        game.getBatch().setProjectionMatrix(camera.combined);
-        game.getBatch().begin();
-        //game.batch.draw(background,0,0);
-        game.getFont().draw(game.getBatch(), "Skittle Clicker Game v0.0.1 ", Gdx.graphics.getWidth() - 200, 20);
-        game.getFont().draw(game.getBatch(), ""+delta, Gdx.graphics.getWidth() - 200, 50);
-        game.getBatch().end();
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         stage.draw();
