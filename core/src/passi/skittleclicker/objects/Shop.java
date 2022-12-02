@@ -27,6 +27,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.utils.Disposable;
 import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.fixes.CustomShapeRenderer;
@@ -123,6 +124,10 @@ public class Shop implements Disposable {
         renderShopGroup(game,camera, grannyShopGroup,60);
         renderShopGroup(game, camera, bakeryShopGroup,90);
         renderShopGroup(game,camera, factoryShopGroup,120);
+        for (int i = 0; i < 15; i++) {
+            renderShopGroup(game,camera, factoryShopGroup,120+(30*i));
+        }
+
 
         game.getBatch().end();
 

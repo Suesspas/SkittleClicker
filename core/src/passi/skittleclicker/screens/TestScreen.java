@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import passi.skittleclicker.SkittleClickerGame;
+import passi.skittleclicker.util.AutoFocusScrollPane;
 
 public class TestScreen implements Screen {
 
@@ -39,9 +40,14 @@ public class TestScreen implements Screen {
         // temporary until we have asset manager in
         Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
 
-        ScrollPane scrollPane = new ScrollPane(table);
-        scrollPane.setFillParent(true);
-        stage.addActor(scrollPane);
+//        ScrollPane scrollPane = new ScrollPane(table);
+//        scrollPane.setFillParent(true);
+//        stage.addActor(scrollPane);
+
+        AutoFocusScrollPane autoFocusScrollPane = new AutoFocusScrollPane(table);
+//        autoFocusScrollPane.setActor(table);
+        autoFocusScrollPane.setFillParent(true);
+        stage.addActor(autoFocusScrollPane);
 
         //create buttons
         TextButton playGame = new TextButton("Play Game", skin);
