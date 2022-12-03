@@ -5,10 +5,12 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import passi.skittleclicker.objects.ShopGroup;
 
 public class GreyedOutImageButton extends ImageButton {
     private boolean isGreyedOut; // A flag that determines whther or not this should be greyed out
     private final ShaderProgram shader;
+//    private final ShopGroup shopGroup;
     public GreyedOutImageButton(ImageButtonStyle style, ShaderProgram shader) {
         super(style);
 //        addListener(new ClickListener() {
@@ -25,15 +27,7 @@ public class GreyedOutImageButton extends ImageButton {
 
     public GreyedOutImageButton(Drawable up, Drawable down, ShaderProgram shader) {
         super(up, down);
-//        addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                // When clicked, toggle the grey effect
-//                Gdx.app.log("ClickListener", "Click");
-//                setIsGreyedOut(!getIsGreyedOut());
-//            }
-//        });
-        isGreyedOut = false;
+        this.setIsGreyedOut(false);
         this.shader = shader;
     }
 
@@ -42,6 +36,7 @@ public class GreyedOutImageButton extends ImageButton {
     }
 
     public void setIsGreyedOut(boolean isGreyedOut) {
+        this.setDisabled(isGreyedOut);
         this.isGreyedOut = isGreyedOut;
     }
 

@@ -21,7 +21,7 @@ public class DesktopLauncher {
 //		new Lwjgl3Application(new SkittleClickerGame(), config);
 		//TODO for some reason new lwjgl3 does not shut down correctly on exit and does not save progress
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.backgroundFPS = 30;
+//		config.backgroundFPS = 30;
 		config.title = "Skittle Clicker";
 		config.width = 1600;//854;
 		config.height = 900;//480;

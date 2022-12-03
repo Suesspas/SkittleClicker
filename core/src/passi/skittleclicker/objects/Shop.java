@@ -65,6 +65,7 @@ public class Shop implements Disposable {
     ShopGroup grannyShopGroup;
     ShopGroup bakeryShopGroup;
     ShopGroup factoryShopGroup;
+    List<ShopGroup> shopGroups;
 
     public Shop(){
         List<Upgrade> upgrades = new ArrayList<>();
@@ -76,6 +77,15 @@ public class Shop implements Disposable {
         grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, upgrades, 20, 100);
         bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, upgrades, 20, 250);
         factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, upgrades, 20, 1000);
+        //Order in which shopGroups are added has to be the same as order of buttons #jank
+        shopGroups = new ArrayList<>();
+        shopGroups.add(clickerShopGroup);
+        shopGroups.add(grannyShopGroup);
+        shopGroups.add(bakeryShopGroup);
+        shopGroups.add(factoryShopGroup);
+        //player always last
+        shopGroups.add(playerShopGroup);
+
     }
 
     public void render(SkittleClickerGame game, OrthographicCamera camera) {
@@ -233,6 +243,10 @@ public class Shop implements Disposable {
         //TODO add loading upgrades
     }
 
+    public int numberOfShopGroups (){
+        return shopGroups.size();
+    }
+
     public void setVisible(boolean visible) {
         this.visible = visible;
         if (visible) {
@@ -244,6 +258,9 @@ public class Shop implements Disposable {
         return clickerShopGroup.getNumber();
     }
 
+    public List<ShopGroup> getShopGroups() {
+        return shopGroups;
+    }
 
     public long getSkittles() {
         return skittles;
@@ -290,5 +307,9 @@ public class Shop implements Disposable {
         bakeryShopGroup.setNumber(0);
         factoryShopGroup.setNumber(0);
         //TODO set upgrade progress to 0
+    }
+
+    public void pay(long cost) {
+        skittles -= cost;
     }
 }

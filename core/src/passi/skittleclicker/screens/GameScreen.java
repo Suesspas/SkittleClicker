@@ -42,6 +42,7 @@ import passi.skittleclicker.data.Data;
 import passi.skittleclicker.fixes.CustomShapeRenderer;
 import passi.skittleclicker.objects.MiniSkittle;
 import passi.skittleclicker.objects.Shop;
+import passi.skittleclicker.objects.ShopGroup;
 import passi.skittleclicker.util.AutoFocusScrollPane;
 import passi.skittleclicker.util.FontUtil;
 import passi.skittleclicker.util.GreyedOutImageButton;
@@ -88,7 +89,6 @@ public class GameScreen implements Screen {
     private static float MINISKITTLE_THRESHOLD = -1;
     private static float MINISKITTLE_SPEED = 0.4f;//0.8f;
     private static float MINISKITTLE_ROTATION_SPEED = 0.25f;
-    private final int NUMBER_OF_SHOPGROUPS = 10;
 
     private float generalRotation = 0;
 
@@ -101,6 +101,8 @@ public class GameScreen implements Screen {
     private final ShaderProgram shader;
 
     List<ClickListener> clickListeners; //TODO add to all buttons
+
+    List<GreyedOutImageButton> shopButtons;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -139,9 +141,12 @@ public class GameScreen implements Screen {
         }
 
         this.clickListeners = new ArrayList<>();
-        for (int i = 0; i < NUMBER_OF_SHOPGROUPS; i++) {
+        for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             clickListeners.add(new ClickListener());
         }
+
+
+        this.shopButtons = new ArrayList<>();
 
         this.autoSaveTimer = 0;
 
@@ -209,15 +214,13 @@ public class GameScreen implements Screen {
         //create buttons
         ImageButton imageButton1; //TODO load individual image Buttons
         ImageButton imageButton2;
-        List<GreyedOutImageButton> shopButtons = new ArrayList<>();
 
         //add buttons to table
-        for (int i = 0; i < NUMBER_OF_SHOPGROUPS; i++) {
+        for (int i = 0; i < shop.numberOfShopGroups()-1; i++) {
             shopTable.row().pad(10, 0, 10, 0);
             shopButtons.add(setupShopButton(clickListeners.get(i), "imageButtonTest.png",
                     "imageButtonTestPressed.png",1000, 100));
             shopTable.add(shopButtons.get(i)).fillX();
-            if (i % 2 == 0) shopButtons.get(i).setIsGreyedOut(true);
         }
 
         service = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() / 4);
@@ -236,8 +239,13 @@ public class GameScreen implements Screen {
 
         shopButton.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("Pressed ");
+            public void changed(ChangeEvent event, Actor actor) { //TODO make mapping instead of implicit pos in list
+                ShopGroup shopGroup = shop.getShopGroups().get(shopButtons.indexOf(shopButton));
+                if (shopGroup.getNumber() < shopGroup.getMAX_NUMBER()
+                        && shop.getSkittles() >= shopGroup.getCurrentCost()) {
+                    shop.pay(shopGroup.getCurrentCost());
+                    shopGroup.incrementNumber();
+                }
             }
         });
         shopButton.addListener(clickListener);
@@ -264,11 +272,7 @@ public class GameScreen implements Screen {
         game.getBatch().begin();
         renderSkittles();
 
-        for (int i = 0; i < clickListeners.size(); i++) {
-            if(clickListeners.get(i).isOver()){
-                renderToolTip(i);
-            }
-        }
+
         game.getBatch().end();
 
         renderClicker();
@@ -309,6 +313,17 @@ public class GameScreen implements Screen {
                 camera.position.x - (camera.viewportWidth / 2f) + 10,
                 camera.viewportHeight - 40);
 
+        int yOffset = 0;
+        for (int i = 0; i < shop.numberOfShopGroups()-1; i++) {
+            ShopGroup shopGroup = shop.getShopGroups().get(i);
+            game.getFont().draw(game.getBatch(), shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER() + " [Cost: "+ shopGroup.getCurrentCost()+"]",
+                    camera.position.x - (camera.viewportWidth / 2.2f) + 150,
+                    camera.position.y + (camera.viewportHeight / 2.2f) - yOffset
+            );
+            yOffset += 30;
+            shopButtons.get(i).setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
+        }
+
         game.getBatch().end();
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
@@ -340,15 +355,29 @@ public class GameScreen implements Screen {
             SKITTLE_HEIGHT = 200;
         }
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-                && shopRepresentation.contains(getUnprojectedScreenCoords(0))
-                && shop.isNotVisible()) {
-            shop.setVisible(shop.isNotVisible());
+        for (int i = 0; i < clickListeners.size(); i++) {
+            if(clickListeners.get(i).isOver()){
+                renderToolTip(i);
+            }
         }
     }
 
     private void renderToolTip(int i) {
         System.out.println("Mouse over "+i);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(140 / 255f, 140 / 255f, 140 / 255f, 1.0f);
+        shapeRenderer.roundedRect(
+                (2 * camera.viewportWidth / 3) - 100,
+                getUnprojectedScreenCoords(0).y - 50,
+                100,
+                100,
+                10
+        );
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     private void loadDataForShop() {
