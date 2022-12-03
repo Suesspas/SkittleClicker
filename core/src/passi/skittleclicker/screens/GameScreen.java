@@ -26,6 +26,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -43,6 +44,7 @@ import passi.skittleclicker.objects.MiniSkittle;
 import passi.skittleclicker.objects.Shop;
 import passi.skittleclicker.util.AutoFocusScrollPane;
 import passi.skittleclicker.util.FontUtil;
+import passi.skittleclicker.util.GreyedOutImageButton;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -96,6 +98,7 @@ public class GameScreen implements Screen {
     private int autoSaveTimer;
 
     private Stage stage;
+    private final ShaderProgram shader;
 
     List<ClickListener> clickListeners; //TODO add to all buttons
 
@@ -105,6 +108,10 @@ public class GameScreen implements Screen {
         this.shop = new Shop();
         this.stage = new Stage(new ScreenViewport());
         this.format = new DecimalFormat("#,###");
+        // temporary until we have asset manager in
+        Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
+
+        this.shader = new ShaderProgram(Gdx.files.internal("grey.vsh"), Gdx.files.internal("grey.fsh"));
 
         this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
 //        this.skittleTexture = scaleImage("big_skittle.png", 100, 100);
@@ -163,8 +170,6 @@ public class GameScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        // temporary until we have asset manager in
-        Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
 
         // Create a table that fills the screen. Everything else will go inside this table.
         Table rootTable = new Table();
@@ -204,12 +209,15 @@ public class GameScreen implements Screen {
         //create buttons
         ImageButton imageButton1; //TODO load individual image Buttons
         ImageButton imageButton2;
+        List<GreyedOutImageButton> shopButtons = new ArrayList<>();
 
         //add buttons to table
         for (int i = 0; i < NUMBER_OF_SHOPGROUPS; i++) {
             shopTable.row().pad(10, 0, 10, 0);
-            shopTable.add(setupShopButton(clickListeners.get(i),
-                    "imageButtonTest.png", "imageButtonTestPressed.png",1000, 100)).fillX();
+            shopButtons.add(setupShopButton(clickListeners.get(i), "imageButtonTest.png",
+                    "imageButtonTestPressed.png",1000, 100));
+            shopTable.add(shopButtons.get(i)).fillX();
+            if (i % 2 == 0) shopButtons.get(i).setIsGreyedOut(true);
         }
 
         service = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() / 4);
@@ -217,10 +225,10 @@ public class GameScreen implements Screen {
         scheduleService(service);
     }
 
-    private ImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath, int width, int height) {
+    private GreyedOutImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath, int width, int height) {
         Drawable drawable = new TextureRegionDrawable(new TextureRegion(scaleImage(imageUpPath,  width, height)));
         Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(scaleImage(imageDownPath, width, height)));
-        ImageButton shopButton = new ImageButton(drawable, drawablePressed);
+        GreyedOutImageButton shopButton = new GreyedOutImageButton(drawable, drawablePressed, shader);
 //        TextTooltip tooltip = new TextTooltip("You can press this", skin);
 //        tooltip.setInstant(true);
 //        shopButton.addListener(tooltip); The problem with tooltips is they are text only and not modifiable for updated quantities
