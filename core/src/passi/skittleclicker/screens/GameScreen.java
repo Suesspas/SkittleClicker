@@ -24,21 +24,29 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.data.Data;
 import passi.skittleclicker.fixes.CustomShapeRenderer;
 import passi.skittleclicker.objects.MiniSkittle;
 import passi.skittleclicker.objects.Shop;
+import passi.skittleclicker.util.AutoFocusScrollPane;
 import passi.skittleclicker.util.FontUtil;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -78,22 +86,28 @@ public class GameScreen implements Screen {
     private static float MINISKITTLE_THRESHOLD = -1;
     private static float MINISKITTLE_SPEED = 0.4f;//0.8f;
     private static float MINISKITTLE_ROTATION_SPEED = 0.25f;
+    private final int NUMBER_OF_SHOPGROUPS = 10;
 
     private float generalRotation = 0;
 
     private int clicksPerSecond = 0;
-    private boolean paused;
     private ScheduledExecutorService service;
 
     private int autoSaveTimer;
+
+    private Stage stage;
+
+    List<ClickListener> clickListeners; //TODO add to all buttons
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
         this.camera = new OrthographicCamera();
         this.shop = new Shop();
+        this.stage = new Stage(new ScreenViewport());
         this.format = new DecimalFormat("#,###");
 
         this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
+//        this.skittleTexture = scaleImage("big_skittle.png", 100, 100);
         this.miniSkittleTextures = new ArrayList<>();
         miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_red.png")));
         miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_green.png")));
@@ -101,6 +115,7 @@ public class GameScreen implements Screen {
 
         this.shopTexture = new Texture(Gdx.files.internal("shop.png"));
         this.clickerTexture = new Texture(Gdx.files.internal("pointer.png"));
+//        this.clickerTexture = scaleImage("pointer.png", 3, 3);
 
         this.skittleRepresentation = new Ellipse();
         this.shopRepresentation = new Rectangle();
@@ -110,14 +125,16 @@ public class GameScreen implements Screen {
         bgm = Gdx.audio.newMusic(Gdx.files.internal("arcade.wav"));
         bgm.setLooping(true);
         bgm.setVolume(game.getPreferences().getMusicVolume());
-//        bgm.setVolume(0.005f);
         if (game.getPreferences().isMusicEnabled()) {
             bgm.play();
         } else {
             bgm.stop();
         }
 
-        this.paused = false;
+        this.clickListeners = new ArrayList<>();
+        for (int i = 0; i < NUMBER_OF_SHOPGROUPS; i++) {
+            clickListeners.add(new ClickListener());
+        }
 
         this.autoSaveTimer = 0;
 
@@ -138,15 +155,85 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        paused = false;
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         clickerAnimationIndex = -1;
         clicksPerSecond = 0;
 
+
+        Gdx.input.setInputProcessor(stage);
+
+        // temporary until we have asset manager in
+        Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
+
+        // Create a table that fills the screen. Everything else will go inside this table.
+        Table rootTable = new Table();
+        rootTable.setFillParent(true);
+        rootTable.setDebug(true);
+
+        Table clickerTable = new Table();
+        clickerTable.setFillParent(false);
+        clickerTable.setDebug(false);
+//        clickerTable.add(new TextButton("Clicker part", skin));
+
+        Table imageTable = new Table();
+        imageTable.setFillParent(false);
+        imageTable.setDebug(false);
+        for (int i = 0; i < 20; i++) {
+            imageTable.add(new Image(new Texture("mousieHello86.png")));
+            imageTable.row();
+        }
+
+        Table shopTable = new Table();
+        shopTable.setFillParent(false);
+        shopTable.setDebug(false);
+
+
+        AutoFocusScrollPane scrollImageTable = new AutoFocusScrollPane(imageTable);
+        AutoFocusScrollPane scrollShopTable = new AutoFocusScrollPane(shopTable);
+        scrollShopTable.setFillParent(false);
+
+//        rootTable.add(new Image(new Texture("mousieHello86.png"))).expand().fill().maxHeight(100).colspan(3);
+//        rootTable.row();
+        rootTable.add(clickerTable).expand().uniform();
+        rootTable.add(scrollImageTable).expand().uniform();
+        rootTable.add(scrollShopTable).expand().uniform().fill();
+
+        stage.addActor(rootTable);
+
+        //create buttons
+        ImageButton imageButton1; //TODO load individual image Buttons
+        ImageButton imageButton2;
+
+        //add buttons to table
+        for (int i = 0; i < NUMBER_OF_SHOPGROUPS; i++) {
+            shopTable.row().pad(10, 0, 10, 0);
+            shopTable.add(setupShopButton(clickListeners.get(i),
+                    "imageButtonTest.png", "imageButtonTestPressed.png",1000, 100)).fillX();
+        }
+
         service = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() / 4);
 
         scheduleService(service);
+    }
+
+    private ImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath, int width, int height) {
+        Drawable drawable = new TextureRegionDrawable(new TextureRegion(scaleImage(imageUpPath,  width, height)));
+        Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(scaleImage(imageDownPath, width, height)));
+        ImageButton shopButton = new ImageButton(drawable, drawablePressed);
+//        TextTooltip tooltip = new TextTooltip("You can press this", skin);
+//        tooltip.setInstant(true);
+//        shopButton.addListener(tooltip); The problem with tooltips is they are text only and not modifiable for updated quantities
+        //TODO setVisible(false) for not yet unlocked
+
+        shopButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("Pressed ");
+            }
+        });
+        shopButton.addListener(clickListener);
+        return shopButton;
     }
 
     @Override
@@ -157,58 +244,69 @@ public class GameScreen implements Screen {
             saveProgress();
         }
 
+
         Gdx.gl.glClearColor(0.21f/* + b*/, 0.53f/* + b*/, 0.70f/* + b*/, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
         game.getBatch().setProjectionMatrix(camera.combined);
 
-        // Render mini skittles
+
+        // Render mini skittles and tooltips
         game.getBatch().begin();
         renderSkittles();
+
+        for (int i = 0; i < clickListeners.size(); i++) {
+            if(clickListeners.get(i).isOver()){
+                renderToolTip(i);
+            }
+        }
         game.getBatch().end();
 
         renderClicker();
 
         // Render shop and info bar
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.LIGHT_GRAY);
-        shapeRenderer.roundedRect(camera.position.x - (camera.viewportWidth / 4f),
-                camera.position.y + (camera.viewportHeight / 2f) - 45,
-                camera.viewportWidth / 2f, 40, 10);
-        shapeRenderer.end();
+//        shapeRenderer.setProjectionMatrix(camera.combined);
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//        shapeRenderer.setColor(Color.LIGHT_GRAY);
+//        shapeRenderer.roundedRect(camera.position.x - (camera.viewportWidth / 4f),
+//                camera.position.y + (camera.viewportHeight / 2f) - 45,
+//                camera.viewportWidth / 2f, 40, 10);
+//        shapeRenderer.end();
 
         // Render everything else
         game.getBatch().begin();
 
-        shopRepresentation.set(camera.position.x + (camera.viewportWidth / 4f) - 45,
-                camera.position.y + (camera.viewportHeight / 2f) - 42, 35, 35);
-        game.getBatch().draw(shopTexture, shopRepresentation.x, shopRepresentation.y,
-                shopRepresentation.width, shopRepresentation.height);
+//        shopRepresentation.set(camera.position.x + (camera.viewportWidth / 4f) - 45,
+//                camera.position.y + (camera.viewportHeight / 2f) - 42, 35, 35);
+//        game.getBatch().draw(shopTexture, shopRepresentation.x, shopRepresentation.y,
+//                shopRepresentation.width, shopRepresentation.height);
 
-        skittleRepresentation.set((camera.viewportWidth / 2f) - (SKITTLE_WIDTH / 2f) - (SKITTLE_WIDTH < 200 ? 5 : 0),
+        skittleRepresentation.set((camera.viewportWidth / 6f) - (SKITTLE_WIDTH / 2f) - (SKITTLE_WIDTH < 200 ? 5 : 0),
                 (camera.viewportHeight / 2f) - (SKITTLE_HEIGHT / 2f) - (SKITTLE_HEIGHT < 200 ? 5 : 0), SKITTLE_WIDTH, SKITTLE_HEIGHT);
         game.getBatch().draw(skittleTexture, skittleRepresentation.x, skittleRepresentation.y,
                 SKITTLE_WIDTH, SKITTLE_HEIGHT);
 
         game.getFont().draw(game.getBatch(), "Skittles per second: " + skittlesPerSecond,
-                camera.position.x - (camera.viewportWidth / 2f) + 10, camera.position.y -
-                        (camera.viewportHeight / 2f) + 100);
+                camera.position.x - (camera.viewportWidth / 2f) + 10,
+                camera.position.y - (camera.viewportHeight / 2f) + 100);
         game.getFont().draw(game.getBatch(), "Rendered skittles: " + amountMiniSkittles,
-                camera.position.x - (camera.viewportWidth / 2f) + 10, camera.position.y -
-                        (camera.viewportHeight / 2f) + 70);
+                camera.position.x - (camera.viewportWidth / 2f) + 10,
+                camera.position.y - (camera.viewportHeight / 2f) + 70);
         game.getFont().draw(game.getBatch(), "FPS: " + Gdx.graphics.getFramesPerSecond(),
-                camera.position.x - (camera.viewportWidth / 2f) + 10, camera.position.y -
-                        (camera.viewportHeight / 2f) + 40);
+                camera.position.x - (camera.viewportWidth / 2f) + 10,
+                camera.position.y - (camera.viewportHeight / 2f) + 40);
 
-        FontUtil.KOMIKA_20.draw(game.getBatch(), "Skittles: " + format.format(shop.getSkittles()),
-                camera.position.x - (camera.viewportWidth / 4f) + 10, camera.position.y +
-                        (camera.viewportHeight / 2f) - 15);
+        game.getFont().draw(game.getBatch(), "Skittles: " + format.format(shop.getSkittles()),
+                camera.position.x - (camera.viewportWidth / 2f) + 10,
+                camera.viewportHeight - 40);
 
         game.getBatch().end();
 
-        shop.render(game, camera);
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
+        stage.draw();
+
+//        shop.render(game, camera);
 
         // Remove disappeared skittles
         skittles.forEach(miniSkittle -> {
@@ -241,6 +339,10 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void renderToolTip(int i) {
+        System.out.println("Mouse over "+i);
+    }
+
     private void loadDataForShop() {
         Object[] objects = Data.loadProgress();
         shop.setupShop(objects);
@@ -267,7 +369,7 @@ public class GameScreen implements Screen {
             if (autoSaveTimer > 60){
                 saveProgress();
                 autoSaveTimer = 0;
-                System.out.println("autosaved");
+                System.out.println("auto saved");
             }
         }, 1000, 1000, TimeUnit.MILLISECONDS);
     }
@@ -366,23 +468,42 @@ public class GameScreen implements Screen {
                     break;
                 default: miniSkittleTexture = skittleTexture;
             }
-            game.getBatch().draw(miniSkittleTexture, miniSkittle.getX(), miniSkittle.getY(), MINISKITTLE_WIDTH, MINISKITTLE_HEIGHT);
+            game.getBatch().draw(miniSkittleTexture,
+                    miniSkittle.getX_relativePos()*camera.viewportWidth/3,
+                    miniSkittle.getY(),
+                    MINISKITTLE_WIDTH, MINISKITTLE_HEIGHT);
             miniSkittle.setY(miniSkittle.getY() - MINISKITTLE_SPEED);
             miniSkittle.setRotation((miniSkittle.getRotation() + MINISKITTLE_ROTATION_SPEED) % 360.0f);
         });
     }
 
     private void addSkittle() {
-        if (MINISKITTLE_THRESHOLD == -1 || amountMiniSkittles <= MINISKITTLE_THRESHOLD) {
-            skittles.add(new MiniSkittle(MathUtils.random(5, camera.viewportWidth - 30), camera.viewportHeight + MINISKITTLE_HEIGHT,
-                    MathUtils.random(0.0f, 360.0f), MathUtils.random(0, MiniSkittle.Color.values().length-1)));
+        if (MINISKITTLE_THRESHOLD == -1 || amountMiniSkittles <= MINISKITTLE_THRESHOLD) {//TODO width of left cell instead of viewport
+            skittles.add(new MiniSkittle(MathUtils.random(0, camera.viewportWidth - MINISKITTLE_WIDTH)/camera.viewportWidth,
+                    camera.viewportHeight + MINISKITTLE_HEIGHT,
+                    MathUtils.random(0.0f, 360.0f),
+                    MathUtils.random(0, MiniSkittle.Color.values().length-1)));
             amountMiniSkittles++;
         }
+    }
+
+    static Texture scaleImage(String path, int width, int height){
+        Pixmap original = new Pixmap(Gdx.files.internal(path));
+        Pixmap scaled = new Pixmap(width, height, original.getFormat());
+        scaled.drawPixmap(original,
+                0, 0, original.getWidth(), original.getHeight(),
+                0, 0, scaled.getWidth(), scaled.getHeight()
+        );
+        Texture texture = new Texture(scaled);
+        original.dispose();
+        scaled.dispose();
+        return texture;
     }
 
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -397,7 +518,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-        paused = true;
         System.out.println("hidden");
     }
 

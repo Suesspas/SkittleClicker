@@ -23,8 +23,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.backgroundFPS = 30;
 		config.title = "Skittle Clicker";
-		config.width = 854;
-		config.height = 480;
+		config.width = 1600;//854;
+		config.height = 900;//480;
 		config.addIcon("skittle_icon32.png", Files.FileType.Internal);
 		config.addIcon("skittle_icon16.png", Files.FileType.Internal);
 		new LwjglApplication(new SkittleClickerGame(), config);

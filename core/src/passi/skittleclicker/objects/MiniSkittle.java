@@ -2,7 +2,7 @@ package passi.skittleclicker.objects;
 
 public class MiniSkittle {
 
-    private float x;
+    private float x_relativePos;
 
     private float y;
 
@@ -20,19 +20,19 @@ public class MiniSkittle {
         return color;
     }
 
-    public MiniSkittle(float x, float y, float rotation, int color) {
-        this.x = x;
+    public MiniSkittle(float x_relativePos, float y, float rotation, int color) {
+        this.x_relativePos = x_relativePos;
         this.y = y;
         this.rotation = rotation;
         this.color = Color.values()[color];
     }
 
-    public float getX() {
-        return x;
+    public float getX_relativePos() {
+        return x_relativePos;
     }
 
-    public void setX(float x) {
-        this.x = x;
+    public void setX_relativePos(float x_relativePos) {
+        this.x_relativePos = x_relativePos;
     }
 
     public float getY() {

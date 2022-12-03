@@ -38,31 +38,31 @@ public class TestScreen implements Screen {
         rootTable.setFillParent(true);
         rootTable.setDebug(true);
 
-        Table clickerPart = new Table();
-        clickerPart.setFillParent(false);
-        clickerPart.setDebug(false);
-        clickerPart.add(new TextButton("Clicker part", skin));
+        Table clickerTable = new Table();
+        clickerTable.setFillParent(false);
+        clickerTable.setDebug(false);
+        clickerTable.add(new TextButton("Clicker part", skin));
 
-        Table shopGroupDisplayPart = new Table();
-        shopGroupDisplayPart.setFillParent(false);
-        shopGroupDisplayPart.setDebug(false);
-        shopGroupDisplayPart.add(new TextButton("Shop Group display part", skin));
+        Table imageTable = new Table();
+        imageTable.setFillParent(false);
+        imageTable.setDebug(false);
+        imageTable.add(new TextButton("Shop Group display part", skin));
 
-        Table table = new Table();
-        table.setFillParent(false);
-        table.setDebug(false);
+        Table shopTable = new Table();
+        shopTable.setFillParent(false);
+        shopTable.setDebug(false);
 //        stage.addActor(table);
 
 //        ScrollPane scrollPane = new ScrollPane(table);
 //        scrollPane.setFillParent(true);
 //        stage.addActor(scrollPane);
 
-        AutoFocusScrollPane autoFocusScrollPane = new AutoFocusScrollPane(table);
+        AutoFocusScrollPane autoFocusScrollPane = new AutoFocusScrollPane(shopTable);
 //        autoFocusScrollPane.setActor(table);
         autoFocusScrollPane.setFillParent(false);
 
-        rootTable.add(clickerPart).expand();//maxWidth(10).expand();//.width(rootTable.getWidth()/3);
-        rootTable.add(shopGroupDisplayPart).expand();
+        rootTable.add(clickerTable).expand();//maxWidth(10).expand();//.width(rootTable.getWidth()/3);
+        rootTable.add(imageTable).expand();
         rootTable.add(autoFocusScrollPane).expand();
 
         stage.addActor(rootTable);
@@ -75,16 +75,16 @@ public class TestScreen implements Screen {
 //        TextButton loot = new TextButton("Loot Boxes", skin);
 
         //add buttons to table
-        table.add(playGame).fillX().uniformX();
-        table.row().pad(10, 0, 10, 0);
-        table.add(preferences).fillX().uniformX();
-        table.row();
-        table.add(deleteSaveData).fillX().uniformX();
-        table.row().pad(10, 0, 10, 0);
-        table.add(exit).fillX().uniformX();
+        shopTable.add(playGame).fillX().uniformX();
+        shopTable.row().pad(10, 0, 10, 0);
+        shopTable.add(preferences).fillX().uniformX();
+        shopTable.row();
+        shopTable.add(deleteSaveData).fillX().uniformX();
+        shopTable.row().pad(10, 0, 10, 0);
+        shopTable.add(exit).fillX().uniformX();
         for (int i = 0; i < 10; i++) {
-            table.row().pad(10, 0, 10, 0);
-            table.add(new TextButton("Button " + i, skin)).fillX().uniformX();
+            shopTable.row().pad(10, 0, 10, 0);
+            shopTable.add(new TextButton("Button " + i, skin)).fillX().uniformX();
         }
 
         // create button listeners
