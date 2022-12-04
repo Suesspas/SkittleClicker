@@ -43,7 +43,6 @@ import passi.skittleclicker.fixes.CustomShapeRenderer;
 import passi.skittleclicker.objects.MiniSkittle;
 import passi.skittleclicker.objects.Shop;
 import passi.skittleclicker.objects.ShopGroup;
-import passi.skittleclicker.objects.Upgrade;
 import passi.skittleclicker.util.AutoFocusScrollPane;
 import passi.skittleclicker.util.FontUtil;
 import passi.skittleclicker.util.GreyedOutImageButton;
@@ -61,36 +60,32 @@ public class GameScreen implements Screen {
     private static final int MAX_DISPLAYED_UPGRADES = 5;
     private static float SKITTLE_WIDTH = 200;
     private static float SKITTLE_HEIGHT = 200;
-    private static float SKITTLE_MAX_WIDTH = 200;
-    private static float SKITTLE_MAX_HEIGHT = 200;
 
-    private CustomShapeRenderer shapeRenderer;
+    private final CustomShapeRenderer shapeRenderer;
 
-    private SkittleClickerGame game;
-    private OrthographicCamera camera;
-    private Shop shop;
-    private DecimalFormat format;
+    private final SkittleClickerGame game;
+    private final OrthographicCamera camera;
+    private final Shop shop;
+    private final DecimalFormat format;
 
-    private Texture skittleTexture;
+    private final Texture skittleTexture;
 
-    private List<Texture> miniSkittleTextures;
-    private Texture shopTexture;
-    private Texture clickerTexture;
+    private final List<Texture> miniSkittleTextures;
+    private final Texture shopTexture;
+    private final Texture clickerTexture;
 
-    private Ellipse skittleRepresentation;
-    private Rectangle shopRepresentation;
+    private final Ellipse skittleRepresentation;
     public Music bgm;
 
     private double skittlesPerSecond;
     private int clickerAnimationIndex;
 
-    private Queue<MiniSkittle> skittles = new ConcurrentLinkedQueue<>();
+    private final Queue<MiniSkittle> skittles = new ConcurrentLinkedQueue<>();
     private int amountMiniSkittles;
-    private static int MINISKITTLE_WIDTH = 25;
-    private static int MINISKITTLE_HEIGHT = 25;
-    private static float MINISKITTLE_THRESHOLD = -1;
-    private static float MINISKITTLE_SPEED = 0.4f;//0.8f;
-    private static float MINISKITTLE_ROTATION_SPEED = 0.25f;
+    private static final int MINISKITTLE_WIDTH = 25;
+    private static final int MINISKITTLE_HEIGHT = 25;
+    private static final float MINISKITTLE_SPEED = 0.4f;//0.8f;
+    private static final float MINISKITTLE_ROTATION_SPEED = 0.25f;
 
     private float generalRotation = 0;
 
@@ -99,7 +94,7 @@ public class GameScreen implements Screen {
 
     private int autoSaveTimer;
 
-    private Stage stage;
+    private final Stage stage;
     private final ShaderProgram shader;
 
     List<ClickListener> clickListeners; //TODO add to all buttons
@@ -132,7 +127,6 @@ public class GameScreen implements Screen {
 //        this.clickerTexture = scaleImage("pointer.png", 3, 3);
 
         this.skittleRepresentation = new Ellipse();
-        this.shopRepresentation = new Rectangle();
 
         this.shapeRenderer = new CustomShapeRenderer();
 
@@ -393,8 +387,7 @@ public class GameScreen implements Screen {
         });
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-                && skittleRepresentation.contains(getUnprojectedScreenCoords(100))
-                && shop.isNotVisible()) {
+                && skittleRepresentation.contains(getUnprojectedScreenCoords(100))) {
             SKITTLE_HEIGHT -= 10;
             SKITTLE_WIDTH -= 10;
 
@@ -402,8 +395,7 @@ public class GameScreen implements Screen {
             clicksPerSecond++;
             addSkittle();
         } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)
-                && SKITTLE_WIDTH < 200 && SKITTLE_HEIGHT < 200
-                && shop.isNotVisible()) {
+                && SKITTLE_WIDTH < 200 && SKITTLE_HEIGHT < 200) {
             SKITTLE_WIDTH = 200;
             SKITTLE_HEIGHT = 200;
         }
@@ -518,6 +510,8 @@ public class GameScreen implements Screen {
             double angle = Math.toRadians(rotation);
 
             game.getBatch().begin();
+            float SKITTLE_MAX_WIDTH = 200;
+            float SKITTLE_MAX_HEIGHT = 200;
             Vector2 center = new Vector2(
                     skittleRepresentation.x + SKITTLE_MAX_WIDTH / 2f,
                     skittleRepresentation.y + SKITTLE_MAX_HEIGHT / 2f
@@ -583,7 +577,8 @@ public class GameScreen implements Screen {
     }
 
     private void addSkittle() {
-        if (MINISKITTLE_THRESHOLD == -1 || amountMiniSkittles <= MINISKITTLE_THRESHOLD) {//TODO width of left cell instead of viewport
+        float MINISKITTLE_THRESHOLD = -1; //just in case the skittles bring bad performance
+        if (MINISKITTLE_THRESHOLD == -1 || amountMiniSkittles <= MINISKITTLE_THRESHOLD) {
             skittles.add(new MiniSkittle(MathUtils.random(0, camera.viewportWidth - MINISKITTLE_WIDTH)/camera.viewportWidth,
                     camera.viewportHeight + MINISKITTLE_HEIGHT,
                     MathUtils.random(0.0f, 360.0f),
@@ -629,7 +624,6 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         shapeRenderer.dispose();
-        shop.dispose();
         skittleTexture.dispose();
         clickerTexture.dispose();
         shopTexture.dispose();
