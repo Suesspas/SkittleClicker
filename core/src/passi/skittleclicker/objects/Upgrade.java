@@ -5,8 +5,10 @@ public class Upgrade {
     private final long cost;
     private final double modifier; //Modifier for Skittles gain, usually > 1
     private boolean unlocked;
+    ShopGroup.Type type;
 
-    public Upgrade(String name, long cost, double modifier) {
+    public Upgrade(ShopGroup.Type type, String name, long cost, double modifier) {
+        this.type = type;
         Name = name;
         this.cost = cost;
         this.modifier = modifier;

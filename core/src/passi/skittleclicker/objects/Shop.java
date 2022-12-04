@@ -66,17 +66,22 @@ public class Shop implements Disposable {
     ShopGroup bakeryShopGroup;
     ShopGroup factoryShopGroup;
     List<ShopGroup> shopGroups;
+    List<Upgrade> upgrades;
 
     public Shop(){
-        List<Upgrade> upgrades = new ArrayList<>();
+        upgrades = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            upgrades.add(new Upgrade("Upgrade " + i, 100 * i, 1 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * i, 1 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * i, 1 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * i, 1 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.FACTORY,"Upgrade " + i, 100 * i, 1 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + i, 100 * i, 1 + i));
         }
-        playerShopGroup = new ShopGroup(ShopGroup.Type.PLAYER, 1, upgrades, 1, 0);
-        clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, upgrades, 54, 5);
-        grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, upgrades, 20, 100);
-        bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, upgrades, 20, 250);
-        factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, upgrades, 20, 1000);
+        clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5);
+        grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100);
+        bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, 20, 250);
+        factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, 20, 1000);
+        playerShopGroup = new ShopGroup(ShopGroup.Type.PLAYER, 1,  1, 0);
         //Order in which shopGroups are added has to be the same as order of buttons #jank
         shopGroups = new ArrayList<>();
         shopGroups.add(clickerShopGroup);
@@ -247,6 +252,10 @@ public class Shop implements Disposable {
         return shopGroups.size();
     }
 
+    public int numberOfUpgrades(){
+        return upgrades.size();
+    }
+
     public void setVisible(boolean visible) {
         this.visible = visible;
         if (visible) {
@@ -260,6 +269,14 @@ public class Shop implements Disposable {
 
     public List<ShopGroup> getShopGroups() {
         return shopGroups;
+    }
+
+    public List<Upgrade> getUpgrades() {
+        return upgrades;
+    }
+
+    public Upgrade getUpgrade(int index) {
+        return upgrades.get(index);
     }
 
     public long getSkittles() {
@@ -311,5 +328,9 @@ public class Shop implements Disposable {
 
     public void pay(long cost) {
         skittles -= cost;
+    }
+
+    public void unlockUpgrade(int index) {
+        upgrades.get(index).unlock();
     }
 }

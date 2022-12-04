@@ -43,6 +43,7 @@ import passi.skittleclicker.fixes.CustomShapeRenderer;
 import passi.skittleclicker.objects.MiniSkittle;
 import passi.skittleclicker.objects.Shop;
 import passi.skittleclicker.objects.ShopGroup;
+import passi.skittleclicker.objects.Upgrade;
 import passi.skittleclicker.util.AutoFocusScrollPane;
 import passi.skittleclicker.util.FontUtil;
 import passi.skittleclicker.util.GreyedOutImageButton;
@@ -57,6 +58,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GameScreen implements Screen {
 
+    private static final int MAX_DISPLAYED_UPGRADES = 5;
     private static float SKITTLE_WIDTH = 200;
     private static float SKITTLE_HEIGHT = 200;
     private static float SKITTLE_MAX_WIDTH = 200;
@@ -141,10 +143,10 @@ public class GameScreen implements Screen {
         }
 
         this.clickListeners = new ArrayList<>();
-        for (int i = 0; i < shop.numberOfShopGroups(); i++) {
+        int numberOfClickListeners = shop.numberOfShopGroups() + shop.numberOfUpgrades();
+        for (int i = 0; i < numberOfClickListeners; i++) {
             clickListeners.add(new ClickListener());
         }
-
 
         this.shopButtons = new ArrayList<>();
 
@@ -201,7 +203,9 @@ public class GameScreen implements Screen {
 
         AutoFocusScrollPane scrollImageTable = new AutoFocusScrollPane(imageTable);
         AutoFocusScrollPane scrollShopTable = new AutoFocusScrollPane(shopTable);
+        scrollShopTable.setFlickScroll(false); //disables scroll by drag which scrolled horizontally
         scrollShopTable.setFillParent(false);
+        scrollImageTable.setFlickScroll(false);
 
 //        rootTable.add(new Image(new Texture("mousieHello86.png"))).expand().fill().maxHeight(100).colspan(3);
 //        rootTable.row();
@@ -216,11 +220,27 @@ public class GameScreen implements Screen {
         ImageButton imageButton2;
 
         //add buttons to table
+        HorizontalGroup upgradeGroup = new HorizontalGroup();
+        shopTable.add(upgradeGroup).left();
+
         for (int i = 0; i < shop.numberOfShopGroups()-1; i++) {
             shopTable.row().pad(10, 0, 10, 0);
             shopButtons.add(setupShopButton(clickListeners.get(i), "imageButtonTest.png",
                     "imageButtonTestPressed.png",1000, 100));
             shopTable.add(shopButtons.get(i)).fillX();
+        }
+
+        //TEST
+        for (int i = 0; i < 20; i++) {
+            shopTable.row().pad(10, 0, 10, 0);
+            shopTable.add(setupShopButton(clickListeners.get(i+10), "imageButtonTest.png",
+                    "imageButtonTestPressed.png",1000, 100)).fillX();
+        }
+
+        for (int i = 0; i < MAX_DISPLAYED_UPGRADES; i++) {
+            shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "imageButtonTestPressed.png",
+                    "imageButtonTest.png", 100, 100));
+            upgradeGroup.addActor(shopButtons.get(shop.numberOfShopGroups()-1+i));
         }
 
         service = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() / 4);
@@ -240,11 +260,24 @@ public class GameScreen implements Screen {
         shopButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) { //TODO make mapping instead of implicit pos in list
-                ShopGroup shopGroup = shop.getShopGroups().get(shopButtons.indexOf(shopButton));
-                if (shopGroup.getNumber() < shopGroup.getMAX_NUMBER()
-                        && shop.getSkittles() >= shopGroup.getCurrentCost()) {
-                    shop.pay(shopGroup.getCurrentCost());
-                    shopGroup.incrementNumber();
+                int index = shopButtons.indexOf(shopButton);
+                if (index == shop.numberOfShopGroups()-1){
+                    System.err.println("Player should not have a Button, probably wrong mapping");
+                    return;
+                }else if (index < shop.numberOfShopGroups()-1){
+                    ShopGroup shopGroup = shop.getShopGroups().get(index);
+                    if (shopGroup.getNumber() < shopGroup.getMAX_NUMBER()
+                            && shop.getSkittles() >= shopGroup.getCurrentCost()) {
+                        shop.pay(shopGroup.getCurrentCost());
+                        shopGroup.incrementNumber();
+                    }
+                } else {
+                    index -= shop.numberOfShopGroups();
+                     if (shop.getSkittles() >= shop.getUpgrades().get(index).getCost()){
+                            shop.unlockUpgrade(index);
+                            shop.pay(shop.getUpgrade(index).getCost());
+                            return;
+                    }
                 }
             }
         });
@@ -363,21 +396,30 @@ public class GameScreen implements Screen {
     }
 
     private void renderToolTip(int i) {
-        System.out.println("Mouse over "+i);
+        float x = (2 * camera.viewportWidth / 3) - 100;
+        float y = getUnprojectedScreenCoords(0).y - 50;
+        int width = 100;
+        int height = 50;
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(140 / 255f, 140 / 255f, 140 / 255f, 1.0f);
-        shapeRenderer.roundedRect(
-                (2 * camera.viewportWidth / 3) - 100,
-                getUnprojectedScreenCoords(0).y - 50,
-                100,
-                100,
-                10
-        );
+        shapeRenderer.roundedRect(x, y, width, height, 10);
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        String str;
+        game.getBatch().begin();
+        if (i < shop.numberOfShopGroups()){
+            ShopGroup shopGroup = shop.getShopGroups().get(i);
+            str = shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER() + " [Cost: "+ shopGroup.getCurrentCost()+"]";
+
+        }  else {
+            str = "Upgrade " + (i-shop.numberOfShopGroups());
+        }
+        game.getFont().draw(game.getBatch(), str, x, y);
+        game.getBatch().end();
     }
 
     private void loadDataForShop() {
@@ -406,7 +448,7 @@ public class GameScreen implements Screen {
             if (autoSaveTimer > 60){
                 saveProgress();
                 autoSaveTimer = 0;
-                System.out.println("auto saved");
+                System.out.println("auto saved"); //TODO auto save popup
             }
         }, 1000, 1000, TimeUnit.MILLISECONDS);
     }

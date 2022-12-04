@@ -3,6 +3,7 @@ package passi.skittleclicker.objects;
 import java.util.List;
 
 public class ShopGroup {
+
     enum Type {
         PLAYER,
         CLICKER,
@@ -15,16 +16,16 @@ public class ShopGroup {
     private long cost;
     private final long MAX_NUMBER;
     private final long baseSkittles;
-    private List<Upgrade> upgrades;
+    private double modifier;
 
 
-    public ShopGroup(Type type, long baseSkittles, List<Upgrade> upgrades, long MAX_NUMBER, long cost) {
+    public ShopGroup(Type type, long baseSkittles, long MAX_NUMBER, long cost) {
         this.type = type;
         this.number = 0;
         this.MAX_NUMBER = MAX_NUMBER;
         this.cost = cost;
         this.baseSkittles = baseSkittles;
-        this.upgrades = upgrades;
+        this.modifier = 1;
     }
 
     public long getSkittlesPerSecond(){
@@ -32,13 +33,11 @@ public class ShopGroup {
     }
 
     private double getModifier(){
-        double modifier = 1;
-        for (Upgrade u: upgrades) {
-            if (u.isUnlocked()){
-                modifier *= u.getModifier();
-            }
-        }
         return modifier;
+    }
+
+    private void updateModifier(double modifier){
+        this.modifier *= modifier;
     }
 
     public Type getType() {
@@ -57,9 +56,6 @@ public class ShopGroup {
         return cost * number;
     }
 
-    public List<Upgrade> getUpgrades() {
-        return upgrades;
-    }
     public long getMAX_NUMBER() {
         return MAX_NUMBER;
     }
