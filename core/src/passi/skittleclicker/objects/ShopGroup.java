@@ -28,14 +28,10 @@ public class ShopGroup {
     }
 
     public long getSkittlesPerSecond(){
-        return Math.round(number * baseSkittles * getModifier());
+        return Math.round(number * baseSkittles * modifier);
     }
 
-    private double getModifier(){
-        return modifier;
-    }
-
-    private void updateModifier(double modifier){
+    public void updateModifier(double modifier){
         this.modifier *= modifier;
     }
 

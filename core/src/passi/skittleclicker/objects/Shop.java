@@ -68,10 +68,10 @@ public class Shop implements Disposable {
     public Shop(){
         upgrades = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * i, 1 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * i, 1 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * i, 1 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.FACTORY,"Upgrade " + i, 100 * i, 1 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * i, 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * i, 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * i, 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.FACTORY,"Upgrade " + i, 100 * i, 2 + i));
         }
         ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5);
         ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100);
@@ -332,7 +332,15 @@ public class Shop implements Disposable {
     }
 
     public void unlockUpgrade(int index) {
-        upgrades.get(index).unlock();
+        Upgrade upgrade = upgrades.get(index);
+        upgrade.unlock();
+        for (ShopGroup s:
+             shopGroups) {
+            if (s.getType() == upgrade.getType()){
+                s.updateModifier(upgrade.getModifier());
+                return;
+            }
+        }
     }
 
     public void displayedUpgrade(int index){

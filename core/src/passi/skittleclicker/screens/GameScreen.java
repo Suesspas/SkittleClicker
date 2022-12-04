@@ -282,7 +282,7 @@ public class GameScreen implements Screen {
                          if (i == -1) {
                              System.out.println("no new upgrades found");
                          } else {
-                             System.out.println("removed and add " + (i+shop.numberOfShopGroups()));
+                             System.out.println("removed and add button number " + (i+shop.numberOfShopGroups()));
                              upgradeGroup.addActor(shopButtons.get(i + shop.numberOfShopGroups()));
                              shop.displayedUpgrade(i);
                          }
@@ -309,6 +309,8 @@ public class GameScreen implements Screen {
         camera.update();
         game.getBatch().setProjectionMatrix(camera.combined);
 
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
+        stage.draw();
 
         // Render mini skittles and tooltips
         game.getBatch().begin();
@@ -358,18 +360,23 @@ public class GameScreen implements Screen {
         int yOffset = 0;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             ShopGroup shopGroup = shop.getShopGroups().get(i);
-            game.getFont().draw(game.getBatch(), shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER() + " [Cost: "+ shopGroup.getCurrentCost()+"]",
+            game.getFont().draw(game.getBatch(), shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
+                            + " [Cost: "+ shopGroup.getCurrentCost()+"] skittles per sec " + shopGroup.getSkittlesPerSecond(),
                     camera.position.x - (camera.viewportWidth / 2.2f) + 150,
                     camera.position.y + (camera.viewportHeight / 2.2f) - yOffset
             );
             yOffset += 30;
-            shopButtons.get(i).setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
+
+            //render text on shop buttons
+            GreyedOutImageButton button = shopButtons.get(i);
+            FontUtil.KOMIKA.draw(game.getBatch(), shopGroup.getType() + " " + shopGroup.getNumber(),
+                    buttonToScreenCoords(button).x,
+                    buttonToScreenCoords(button).y);
+            button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
         }
 
         game.getBatch().end();
 
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
-        stage.draw();
 
 //        shop.render(game, camera);
 
@@ -402,6 +409,12 @@ public class GameScreen implements Screen {
                 renderToolTip(i);
             }
         }
+    }
+
+    private Vector2 buttonToScreenCoords(Button button){
+        Vector2 vector = button.localToScreenCoordinates(new Vector2(0, camera.viewportHeight + button.getMinHeight()));
+        vector.y = -vector.y;
+        return vector;
     }
 
     private void renderToolTip(int i) {

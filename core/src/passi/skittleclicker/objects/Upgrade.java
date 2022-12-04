@@ -5,13 +5,26 @@ public class Upgrade {
     private final long cost;
     private final double modifier; //Modifier for Skittles gain, usually > 1
     private boolean unlocked;
-    ShopGroup.Type type;
+    private final ShopGroup.Type type;
+    private String text;
 
     public Upgrade(ShopGroup.Type type, String name, long cost, double modifier) {
         this.type = type;
         Name = name;
         this.cost = cost;
         this.modifier = modifier;
+        this.unlocked = false;
+    }
+
+    public boolean isUnlocked() {
+        return unlocked;
+    }
+
+    public void unlock() {
+        this.unlocked = true;
+    }
+
+    public void lock() {
         this.unlocked = false;
     }
 
@@ -26,16 +39,11 @@ public class Upgrade {
     public long getCost() {
         return cost;
     }
-
-    public boolean isUnlocked() {
-        return unlocked;
+    public ShopGroup.Type getType() {
+        return type;
     }
 
-    public void unlock() {
-        this.unlocked = true;
-    }
-
-    public void lock() {
-        this.unlocked = false;
+    public String getText() {
+        return text;
     }
 }
