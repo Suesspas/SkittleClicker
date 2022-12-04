@@ -23,37 +23,54 @@ package passi.skittleclicker.data;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter;
+import passi.skittleclicker.objects.Upgrade;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Data {
 
     private static File file = new File(String.format("%s//SkittleClicker//data.json", System.getenv("APPDATA")));;
 
-    public static Object[] loadProgress() {
+    public static List<Object> loadProgress(int numberOfShopGroups, int numberOfUpgrades) {
+        List<Object> objects = new ArrayList<>();
         if (!file.exists()) {
-            return new Object[]{0, 0, 0, 0, 0};
+            for (int i = 0; i < numberOfShopGroups; i++) {
+                objects.add(0);
+            }
+            for (int i = 0; i < numberOfUpgrades; i++) {
+                objects.add(false);
+            }
         }
 
         try {
             JsonReader reader = new JsonReader();
-            JsonValue value = reader.parse(new FileInputStream(file));
+            JsonValue value = reader.parse(Files.newInputStream(file.toPath()));
+            objects.add(value.get("skittles") == null ? 0 : value.get("skittles").asLong());
+            objects.add(value.get("clickers") == null ? 0 : value.get("clickers").asLong());
+            objects.add(value.get("grandmas") == null ? 0 : value.get("grandmas").asLong());
+            objects.add(value.get("bakeries") == null ? 0 : value.get("bakeries").asLong());
+            objects.add(value.get("factories") == null ? 0 : value.get("factories").asLong());
 
-            return new Object[] {
-                    value.get("skittles") == null ? 0 : value.get("skittles").asLong(),
-                    value.get("clickers") == null ? 0 : value.get("clickers").asLong(),
-                    value.get("grandmas") == null ? 0 : value.get("grandmas").asLong(),
-                    value.get("bakeries") == null ? 0 : value.get("bakeries").asLong(),
-                    value.get("factories") == null ? 0 : value.get("factories").asLong()
-            };
+            for (int i = 5; i <= numberOfShopGroups; i++) {
+                objects.add(value.get("placeholder" + (i-4)) == null ? 0 : value.get("placeholder" + (i-4)).asLong());
+            }
+
+            for (int i = 0; i < numberOfUpgrades; i++) {
+                objects.add(value.get("upgrade" + i) != null && value.get("upgrade" + i).asBoolean());
+//                objects.add(true);
+            }
+            return objects;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return new Object[]{0, 0, 0, 0};
+        return null;
     }
 
-    public static void saveProgress(long skittles, long clickers, long grandmas, long bakeries, long factories) {
+    public static void saveProgress(long skittles, List<Long> shopGroups, List<Upgrade> upgradeList) {
         try {
             file.getParentFile().mkdirs();
             file.createNewFile();
@@ -62,10 +79,20 @@ public class Data {
 
             JsonValue value = new JsonValue(JsonValue.ValueType.object);
             value.addChild("skittles", new JsonValue(skittles));
-            value.addChild("clickers", new JsonValue(clickers));
-            value.addChild("grandmas", new JsonValue(grandmas));
-            value.addChild("bakeries", new JsonValue(bakeries));
-            value.addChild("factories", new JsonValue(factories));
+            value.addChild("clickers", new JsonValue(shopGroups.get(0)));
+            value.addChild("grandmas", new JsonValue(shopGroups.get(1)));
+            value.addChild("bakeries", new JsonValue(shopGroups.get(2)));
+            value.addChild("factories", new JsonValue(shopGroups.get(3)));
+            for (int i = 4; i < shopGroups.size(); i++) {
+                value.addChild("placeholder" + (i-3), new JsonValue(shopGroups.get(i)));
+            }
+
+            int i = 0;
+            for (Upgrade u:
+                 upgradeList) {
+                value.addChild("upgrade" + i, new JsonValue(u.isUnlocked()));
+                i++;
+            }
 
             System.out.println("saved value: " + value);
 

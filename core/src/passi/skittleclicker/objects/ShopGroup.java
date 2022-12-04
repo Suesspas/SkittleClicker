@@ -8,7 +8,15 @@ public class ShopGroup {
         CLICKER,
         GRANNY,
         BAKERY,
-        FACTORY
+        FACTORY,
+        PLACEHOLDER1,
+        PLACEHOLDER2,
+        PLACEHOLDER3,
+        PLACEHOLDER4,
+        PLACEHOLDER5,
+        PLACEHOLDER6,
+        PLACEHOLDER7,
+        PLACEHOLDER8,
     };
     private final Type type;
     private long number;
@@ -48,7 +56,7 @@ public class ShopGroup {
     }
 
     public long getCurrentCost() {
-        return cost * number;
+        return cost * (number+1);
     }
 
     public long getMAX_NUMBER() {

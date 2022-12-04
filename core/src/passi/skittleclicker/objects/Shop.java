@@ -46,30 +46,42 @@ public class Shop{
     public Shop(){
         upgrades = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * i, 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * i, 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * i, 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.FACTORY,"Upgrade " + i, 100 * i, 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * i+1, 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * i+1, 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * i+1, 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.FACTORY,"Upgrade " + i, 100 * i+1, 2 + i));
         }
         ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5);
         ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100);
         ShopGroup bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, 20, 250);
         ShopGroup factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, 20, 1000);
+
         //Order in which shopGroups are added has to be the same as order of buttons #jank
         shopGroups = new ArrayList<>();
         shopGroups.add(clickerShopGroup);
         shopGroups.add(grannyShopGroup);
         shopGroups.add(bakeryShopGroup);
         shopGroups.add(factoryShopGroup);
+        for (int i = 4; i < ShopGroup.Type.values().length; i++) {
+            shopGroups.add(new ShopGroup(ShopGroup.Type.values()[i], 100L *i, 42, 100L *i));
+        }
     }
 
-    public void setupShop(Object[] objects){
-        setSkittles(objects[0] instanceof Long ? (Long) objects[0] : (Integer) objects[0]);
-        shopGroups.get(0).setNumber(objects[1] instanceof Long ? (Long) objects[1] : (Integer) objects[1]);
-        shopGroups.get(1).setNumber(objects[2] instanceof Long ? (Long) objects[2] : (Integer) objects[2]);
-        shopGroups.get(2).setNumber(objects[3] instanceof Long ? (Long) objects[3] : (Integer) objects[3]);
-        shopGroups.get(3).setNumber(objects[4] instanceof Long ? (Long) objects[4] : (Integer) objects[4]);
-        //TODO add loading upgrades
+    public void setupShop(List<Object> objects){
+        setSkittles(objects.get(0) instanceof Long ? (Long) objects.get(0) : (Integer) objects.get(0));
+        shopGroups.get(0).setNumber(objects.get(1) instanceof Long ? (Long) objects.get(1) : (Integer) objects.get(1));
+        shopGroups.get(1).setNumber(objects.get(2) instanceof Long ? (Long) objects.get(2) : (Integer) objects.get(2));
+        shopGroups.get(2).setNumber(objects.get(3) instanceof Long ? (Long) objects.get(3) : (Integer) objects.get(3));
+        shopGroups.get(3).setNumber(objects.get(4) instanceof Long ? (Long) objects.get(4) : (Integer) objects.get(4));
+        for (int i = 4; i < numberOfShopGroups(); i++) {
+            shopGroups.get(i).setNumber(objects.get(i+1) instanceof Long ? (Long) objects.get(i+1) : (Integer) objects.get(i+1));
+        }
+
+        for (int i = 0; i < upgrades.size(); i++) {
+            if ((boolean)objects.get(shopGroups.size()+1+i)){
+                upgrades.get(i).unlock();
+            }
+        }
     }
 
     public int numberOfShopGroups (){
@@ -96,7 +108,7 @@ public class Shop{
         return upgrades.get(index);
     }
 
-    public long getSkittles() {
+    public long getSkittles() { //MAX signed long value about 5x10^15
         return skittles;
     }
 
