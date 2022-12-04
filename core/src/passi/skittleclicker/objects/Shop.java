@@ -23,11 +23,9 @@ package passi.skittleclicker.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.utils.Disposable;
 import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.fixes.CustomShapeRenderer;
@@ -60,106 +58,100 @@ public class Shop implements Disposable {
 
     private float animationAlpha = 0.0f;
     private long skittles = 0;
-    ShopGroup playerShopGroup;
-    ShopGroup clickerShopGroup;
-    ShopGroup grannyShopGroup;
-    ShopGroup bakeryShopGroup;
-    ShopGroup factoryShopGroup;
+    private static final long baseSkittlesPerClick = 1;
+    private double clickModifier = 1;
     List<ShopGroup> shopGroups;
     List<Upgrade> upgrades;
 
+    List<Integer> alreadyDisplayedUpgrades = new ArrayList<>();
+
     public Shop(){
         upgrades = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 20; i++) {
             upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * i, 1 + i));
             upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * i, 1 + i));
             upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * i, 1 + i));
             upgrades.add(new Upgrade(ShopGroup.Type.FACTORY,"Upgrade " + i, 100 * i, 1 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + i, 100 * i, 1 + i));
         }
-        clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5);
-        grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100);
-        bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, 20, 250);
-        factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, 20, 1000);
-        playerShopGroup = new ShopGroup(ShopGroup.Type.PLAYER, 1,  1, 0);
+        ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5);
+        ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100);
+        ShopGroup bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, 20, 250);
+        ShopGroup factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, 20, 1000);
         //Order in which shopGroups are added has to be the same as order of buttons #jank
         shopGroups = new ArrayList<>();
         shopGroups.add(clickerShopGroup);
         shopGroups.add(grannyShopGroup);
         shopGroups.add(bakeryShopGroup);
         shopGroups.add(factoryShopGroup);
-        //player always last
-        shopGroups.add(playerShopGroup);
-
     }
 
     public void render(SkittleClickerGame game, OrthographicCamera camera) {
-        if (!visible) {
-            return;
-        }
-
-        if (animationAlpha > 0) {
-            animationAlpha -= 0.10;
-        }
-
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(140 / 255f, 140 / 255f, 140 / 255f, 1.0f - animationAlpha);
-        shapeRenderer.roundedRect(
-                camera.position.x - (camera.viewportWidth / 2.2f),
-                camera.position.y - (camera.viewportHeight / 2.2f),
-                camera.viewportWidth / 2.2f * 2,
-                camera.viewportHeight / 2.2f * 2, 10
-        );
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
-
-        closeRepresentation.set(
-                camera.position.x - (camera.viewportWidth / 2.2f) + camera.viewportWidth / 2.2f * 2 - 30,
-                camera.position.y + (camera.viewportHeight / 2.2f) - 30,
-                25,
-                25
-        );
-
-
-        game.getBatch().begin();
-
-        game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -animationAlpha));
-        game.getBatch().draw(
-                closeTexture,
-                closeRepresentation.x,
-                closeRepresentation.y,
-                closeRepresentation.width,
-                closeRepresentation.height
-        );
-
-        renderShopGroup(game,camera, clickerShopGroup,30);
-        renderShopGroup(game,camera, grannyShopGroup,60);
-        renderShopGroup(game, camera, bakeryShopGroup,90);
-        renderShopGroup(game,camera, factoryShopGroup,120);
-        for (int i = 0; i < 15; i++) {
-            renderShopGroup(game,camera, factoryShopGroup,120+(30*i));
-        }
-
-
-        game.getBatch().end();
-
-
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-                && closeRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
-                || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            setVisible(false);
-        }
-
-        addButtonFunctionality(buyClickerRepresentation, camera, clickerShopGroup, buyClickerButtonHeight, buyClickerButtonWidth);
-
-        addButtonFunctionality(buyGrandmaRepresentation, camera, grannyShopGroup,  buyGrandmaButtonHeight, buyGrandmaButtonWidth);
-
-        addButtonFunctionality(buyBakeryRepresentation, camera, bakeryShopGroup,  buyBakeryButtonHeight, buyBakeryButtonWidth);
-
-        addButtonFunctionality(buyFactoryRepresentation, camera, factoryShopGroup,  buyFactoryButtonHeight, buyFactoryButtonWidth);
+//        if (!visible) {
+//            return;
+//        }
+//
+//        if (animationAlpha > 0) {
+//            animationAlpha -= 0.10;
+//        }
+//
+//        Gdx.gl.glEnable(GL20.GL_BLEND);
+//        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+//        shapeRenderer.setProjectionMatrix(camera.combined);
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//        shapeRenderer.setColor(140 / 255f, 140 / 255f, 140 / 255f, 1.0f - animationAlpha);
+//        shapeRenderer.roundedRect(
+//                camera.position.x - (camera.viewportWidth / 2.2f),
+//                camera.position.y - (camera.viewportHeight / 2.2f),
+//                camera.viewportWidth / 2.2f * 2,
+//                camera.viewportHeight / 2.2f * 2, 10
+//        );
+//        shapeRenderer.end();
+//        Gdx.gl.glDisable(GL20.GL_BLEND);
+//
+//        closeRepresentation.set(
+//                camera.position.x - (camera.viewportWidth / 2.2f) + camera.viewportWidth / 2.2f * 2 - 30,
+//                camera.position.y + (camera.viewportHeight / 2.2f) - 30,
+//                25,
+//                25
+//        );
+//
+//
+//        game.getBatch().begin();
+//
+//        game.getBatch().setColor(game.getBatch().getColor().add(0, 0, 0, -animationAlpha));
+//        game.getBatch().draw(
+//                closeTexture,
+//                closeRepresentation.x,
+//                closeRepresentation.y,
+//                closeRepresentation.width,
+//                closeRepresentation.height
+//        );
+//
+//        renderShopGroup(game,camera, clickerShopGroup,30);
+//        renderShopGroup(game,camera, grannyShopGroup,60);
+//        renderShopGroup(game, camera, bakeryShopGroup,90);
+//        renderShopGroup(game,camera, factoryShopGroup,120);
+//        for (int i = 0; i < 15; i++) {
+//            renderShopGroup(game,camera, factoryShopGroup,120+(30*i));
+//        }
+//
+//
+//        game.getBatch().end();
+//
+//
+//        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+//                && closeRepresentation.contains(getUnprojectedScreenCoords(camera, 0))
+//                || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+//            setVisible(false);
+//        }
+//
+//        addButtonFunctionality(buyClickerRepresentation, camera, clickerShopGroup, buyClickerButtonHeight, buyClickerButtonWidth);
+//
+//        addButtonFunctionality(buyGrandmaRepresentation, camera, grannyShopGroup,  buyGrandmaButtonHeight, buyGrandmaButtonWidth);
+//
+//        addButtonFunctionality(buyBakeryRepresentation, camera, bakeryShopGroup,  buyBakeryButtonHeight, buyBakeryButtonWidth);
+//
+//        addButtonFunctionality(buyFactoryRepresentation, camera, factoryShopGroup,  buyFactoryButtonHeight, buyFactoryButtonWidth);
     }
 
     private void addButtonFunctionality(Rectangle buyClickerRepresentation, OrthographicCamera camera, ShopGroup shopGroup, float buyButtonHeight, float buyButtonWidth) {
@@ -241,10 +233,10 @@ public class Shop implements Disposable {
 
     public void setupShop(Object[] objects){
         setSkittles(objects[0] instanceof Long ? (Long) objects[0] : (Integer) objects[0]);
-        clickerShopGroup.setNumber(objects[1] instanceof Long ? (Long) objects[1] : (Integer) objects[1]);
-        grannyShopGroup.setNumber(objects[2] instanceof Long ? (Long) objects[2] : (Integer) objects[2]);
-        bakeryShopGroup.setNumber(objects[3] instanceof Long ? (Long) objects[3] : (Integer) objects[3]);
-        factoryShopGroup.setNumber(objects[4] instanceof Long ? (Long) objects[4] : (Integer) objects[4]);
+        shopGroups.get(0).setNumber(objects[1] instanceof Long ? (Long) objects[1] : (Integer) objects[1]);
+        shopGroups.get(1).setNumber(objects[2] instanceof Long ? (Long) objects[2] : (Integer) objects[2]);
+        shopGroups.get(2).setNumber(objects[3] instanceof Long ? (Long) objects[3] : (Integer) objects[3]);
+        shopGroups.get(3).setNumber(objects[4] instanceof Long ? (Long) objects[4] : (Integer) objects[4]);
         //TODO add loading upgrades
     }
 
@@ -264,7 +256,7 @@ public class Shop implements Disposable {
     }
 
     public long getClickerNumber() {
-        return clickerShopGroup.getNumber();
+        return shopGroups.get(0).getNumber();
     }
 
     public List<ShopGroup> getShopGroups() {
@@ -284,8 +276,12 @@ public class Shop implements Disposable {
     }
 
     public long getSkittlesPerSecond(){
-        return (clickerShopGroup.getSkittlesPerSecond())+ (grannyShopGroup.getSkittlesPerSecond())
-                + (bakeryShopGroup.getSkittlesPerSecond()) + (factoryShopGroup.getSkittlesPerSecond());
+        long result = 0;
+        for (ShopGroup s:
+             shopGroups) {
+            result += s.getSkittlesPerSecond();
+        }
+        return result;
     }
 
     public void setSkittles(long skittles) {
@@ -293,14 +289,14 @@ public class Shop implements Disposable {
     }
 
     public long getGrannyNumber() {
-        return grannyShopGroup.getNumber();
+        return shopGroups.get(1).getNumber();
     }
     public long getBakeryNumber() {
-        return bakeryShopGroup.getNumber();
+        return shopGroups.get(2).getNumber();
     }
 
     public long getFactoryNumber() {
-        return factoryShopGroup.getNumber();
+        return shopGroups.get(3).getNumber();
     }
     @Override
     public void dispose() {
@@ -312,18 +308,23 @@ public class Shop implements Disposable {
     public void updateSkittles() {
         skittles += getSkittlesPerSecond();
     }
-
+    public void updateClickModifier(double modifier){
+        clickModifier *= modifier;
+    }
     public void click() {
-        skittles += playerShopGroup.getBaseSkittles();
+        skittles += baseSkittlesPerClick * clickModifier;
     }
 
     public void deleteSaveData() {
         setSkittles(0);
-        clickerShopGroup.setNumber(0);
-        grannyShopGroup.setNumber(0);
-        bakeryShopGroup.setNumber(0);
-        factoryShopGroup.setNumber(0);
-        //TODO set upgrade progress to 0
+        for (ShopGroup s:
+             shopGroups) {
+            s.setNumber(0);
+        }
+        for (Upgrade u:
+             upgrades) {
+            u.lock();
+        }
     }
 
     public void pay(long cost) {
@@ -332,5 +333,20 @@ public class Shop implements Disposable {
 
     public void unlockUpgrade(int index) {
         upgrades.get(index).unlock();
+    }
+
+    public void displayedUpgrade(int index){
+        alreadyDisplayedUpgrades.add(index);
+    }
+
+    public int getNewUpgradeIndex() {
+        for (int i = 0; i < upgrades.size(); i++) {
+            if (!alreadyDisplayedUpgrades.contains(i)) return i;
+        }
+        return -1;
+    }
+
+    public List<Integer> getAlreadyDisplayedUpgrades() {
+        return alreadyDisplayedUpgrades;
     }
 }

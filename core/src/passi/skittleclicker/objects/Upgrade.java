@@ -34,4 +34,8 @@ public class Upgrade {
     public void unlock() {
         this.unlocked = true;
     }
+
+    public void lock() {
+        this.unlocked = false;
+    }
 }

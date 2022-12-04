@@ -105,6 +105,7 @@ public class GameScreen implements Screen {
     List<ClickListener> clickListeners; //TODO add to all buttons
 
     List<GreyedOutImageButton> shopButtons;
+    HorizontalGroup upgradeGroup = new HorizontalGroup();
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -220,13 +221,12 @@ public class GameScreen implements Screen {
         ImageButton imageButton2;
 
         //add buttons to table
-        HorizontalGroup upgradeGroup = new HorizontalGroup();
         shopTable.add(upgradeGroup).left();
 
-        for (int i = 0; i < shop.numberOfShopGroups()-1; i++) {
+        for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopTable.row().pad(10, 0, 10, 0);
             shopButtons.add(setupShopButton(clickListeners.get(i), "imageButtonTest.png",
-                    "imageButtonTestPressed.png",1000, 100));
+                    "imageButtonTestPressed.png",1000, 100, false));
             shopTable.add(shopButtons.get(i)).fillX();
         }
 
@@ -234,13 +234,16 @@ public class GameScreen implements Screen {
         for (int i = 0; i < 20; i++) {
             shopTable.row().pad(10, 0, 10, 0);
             shopTable.add(setupShopButton(clickListeners.get(i+10), "imageButtonTest.png",
-                    "imageButtonTestPressed.png",1000, 100)).fillX();
+                    "imageButtonTestPressed.png",1000, 100, false)).fillX();
         }
 
-        for (int i = 0; i < MAX_DISPLAYED_UPGRADES; i++) {
+        for (int i = 0; i < shop.numberOfUpgrades(); i++) {
             shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "imageButtonTestPressed.png",
-                    "imageButtonTest.png", 100, 100));
-            upgradeGroup.addActor(shopButtons.get(shop.numberOfShopGroups()-1+i));
+                    "imageButtonTest.png", 100, 100, true));
+            if (i < MAX_DISPLAYED_UPGRADES) {
+                upgradeGroup.addActor(shopButtons.get(shop.numberOfShopGroups()+i));
+                shop.displayedUpgrade(i);
+            }
         }
 
         service = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() / 4);
@@ -248,7 +251,7 @@ public class GameScreen implements Screen {
         scheduleService(service);
     }
 
-    private GreyedOutImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath, int width, int height) {
+    private GreyedOutImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath, int width, int height, boolean isUpgrade) {
         Drawable drawable = new TextureRegionDrawable(new TextureRegion(scaleImage(imageUpPath,  width, height)));
         Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(scaleImage(imageDownPath, width, height)));
         GreyedOutImageButton shopButton = new GreyedOutImageButton(drawable, drawablePressed, shader);
@@ -261,10 +264,7 @@ public class GameScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) { //TODO make mapping instead of implicit pos in list
                 int index = shopButtons.indexOf(shopButton);
-                if (index == shop.numberOfShopGroups()-1){
-                    System.err.println("Player should not have a Button, probably wrong mapping");
-                    return;
-                }else if (index < shop.numberOfShopGroups()-1){
+                if (index < shop.numberOfShopGroups()){
                     ShopGroup shopGroup = shop.getShopGroups().get(index);
                     if (shopGroup.getNumber() < shopGroup.getMAX_NUMBER()
                             && shop.getSkittles() >= shopGroup.getCurrentCost()) {
@@ -274,9 +274,18 @@ public class GameScreen implements Screen {
                 } else {
                     index -= shop.numberOfShopGroups();
                      if (shop.getSkittles() >= shop.getUpgrades().get(index).getCost()){
-                            shop.unlockUpgrade(index);
-                            shop.pay(shop.getUpgrade(index).getCost());
-                            return;
+                         System.out.println("Upgrade" + index +" purchased");
+                         shop.unlockUpgrade(index);
+                         shop.pay(shop.getUpgrade(index).getCost());
+                         shopButton.remove();
+                         int i = shop.getNewUpgradeIndex();
+                         if (i == -1) {
+                             System.out.println("no new upgrades found");
+                         } else {
+                             System.out.println("removed and add " + (i+shop.numberOfShopGroups()));
+                             upgradeGroup.addActor(shopButtons.get(i + shop.numberOfShopGroups()));
+                             shop.displayedUpgrade(i);
+                         }
                     }
                 }
             }
@@ -347,7 +356,7 @@ public class GameScreen implements Screen {
                 camera.viewportHeight - 40);
 
         int yOffset = 0;
-        for (int i = 0; i < shop.numberOfShopGroups()-1; i++) {
+        for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             ShopGroup shopGroup = shop.getShopGroups().get(i);
             game.getFont().draw(game.getBatch(), shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER() + " [Cost: "+ shopGroup.getCurrentCost()+"]",
                     camera.position.x - (camera.viewportWidth / 2.2f) + 150,
