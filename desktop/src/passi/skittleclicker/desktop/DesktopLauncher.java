@@ -25,6 +25,8 @@ public class DesktopLauncher {
 		config.title = "Skittle Clicker";
 		config.width = 1600;//854;
 		config.height = 900;//480;
+//		config.fullscreen = true;
+		config.vSyncEnabled = true;
 		config.addIcon("skittle_icon32.png", Files.FileType.Internal);
 		config.addIcon("skittle_icon16.png", Files.FileType.Internal);
 		new LwjglApplication(new SkittleClickerGame(), config);

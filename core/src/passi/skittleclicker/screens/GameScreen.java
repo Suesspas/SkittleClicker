@@ -112,6 +112,8 @@ public class GameScreen implements Screen {
         this.camera = new OrthographicCamera();
         this.shop = new Shop();
         this.stage = new Stage(new ScreenViewport());
+
+
         this.format = new DecimalFormat("#,###");
         // temporary until we have asset manager in
         Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
@@ -157,28 +159,12 @@ public class GameScreen implements Screen {
         loadDataForShop();
 //        }
 
+        setupStage();
+
         Runtime.getRuntime().addShutdownHook(new Thread(this::saveProgress));
     }
 
-    void saveProgress(){
-        Data.saveProgress(shop.getSkittles(),
-                shop.getClickerNumber(),
-                shop.getGrannyNumber(),
-                shop.getBakeryNumber(),
-                shop.getFactoryNumber());
-    }
-
-    @Override
-    public void show() {
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        clickerAnimationIndex = -1;
-        clicksPerSecond = 0;
-
-
-        Gdx.input.setInputProcessor(stage);
-
-
+    private void setupStage() {
         // Create a table that fills the screen. Everything else will go inside this table.
         Table rootTable = new Table();
         rootTable.setFillParent(true);
@@ -245,6 +231,24 @@ public class GameScreen implements Screen {
                 shop.displayedUpgrade(i);
             }
         }
+    }
+
+    void saveProgress(){
+        Data.saveProgress(shop.getSkittles(),
+                shop.getClickerNumber(),
+                shop.getGrannyNumber(),
+                shop.getBakeryNumber(),
+                shop.getFactoryNumber());
+    }
+
+    @Override
+    public void show() {
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        clickerAnimationIndex = -1;
+        clicksPerSecond = 0;
+
+        Gdx.input.setInputProcessor(stage);
 
         service = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() / 4);
 
@@ -633,6 +637,7 @@ public class GameScreen implements Screen {
                 miniSkittleTextures) {
             t.dispose();
         }
+        stage.dispose();
     }
 
     public void deleteSaveData() {
