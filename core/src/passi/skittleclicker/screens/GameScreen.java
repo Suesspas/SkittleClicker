@@ -66,7 +66,7 @@ public class GameScreen implements Screen {
 
     private final SkittleClickerGame game;
     private final OrthographicCamera camera;
-    private final Shop shop;
+    private Shop shop;
     private final DecimalFormat format;
 
     private final Texture skittleTexture;
@@ -667,7 +667,8 @@ public class GameScreen implements Screen {
     }
 
     public void deleteSaveData() {
-        shop.deleteSaveData();
+//        shop.deleteSaveData();
+        shop = new Shop();
         int displayedUpgrades = upgradeGroup.getChildren().size;
         for (int i = 0; i < displayedUpgrades; i++) {
             upgradeGroup.removeActorAt(0, false);

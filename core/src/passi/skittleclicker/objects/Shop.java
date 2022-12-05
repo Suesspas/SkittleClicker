@@ -154,7 +154,7 @@ public class Shop{
         skittles += baseSkittlesPerClick * clickModifier * (goldenActive ? goldenModifier : 1);
     }
 
-    public void deleteSaveData() {
+    public void deleteSaveData() { //TODO probably just call Constructor, see if it works
         setSkittles(0);
         for (ShopGroup s:
              shopGroups) {
@@ -174,6 +174,7 @@ public class Shop{
     public void unlockUpgrade(int index) {
         Upgrade upgrade = upgrades.get(index);
         upgrade.unlock();
+
         for (ShopGroup s:
              shopGroups) {
             if (s.getType() == upgrade.getType()){
@@ -181,6 +182,7 @@ public class Shop{
                 return;
             }
         }
+
     }
 
     public void displayedUpgrade(int index){
