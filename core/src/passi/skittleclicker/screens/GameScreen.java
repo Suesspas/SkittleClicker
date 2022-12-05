@@ -224,17 +224,17 @@ public class GameScreen implements Screen {
             shopTable.add(shopButtons.get(i)).fillX();
         }
 
-        int count = 0;
+        int addedUpgrades = 0;
         for (int i = 0; i < shop.numberOfUpgrades(); i++) {
             shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "imageButtonTestPressed.png",
                         "imageButtonTest.png", 100, 100, true));
             if (shop.getUpgrades().get(i).isUnlocked()){
                 shop.displayedUpgrade(i);
             } else {
-                if (count < MAX_DISPLAYED_UPGRADES) {
+                if (addedUpgrades < MAX_DISPLAYED_UPGRADES) {
                     upgradeGroup.addActor(shopButtons.get(shop.numberOfShopGroups()+i));
                     shop.displayedUpgrade(i);
-                    count++;
+                    addedUpgrades++;
                 }
             }
         }
@@ -290,20 +290,24 @@ public class GameScreen implements Screen {
                          shop.unlockUpgrade(index);
                          shop.pay(shop.getUpgrade(index).getCost());
                          shopButton.remove();
-                         int i = shop.getNewUpgradeIndex();
-                         if (i == -1) {
-                             System.out.println("no new upgrades found");
-                         } else {
-                             System.out.println("removed and add button number " + (i+shop.numberOfShopGroups()));
-                             upgradeGroup.addActor(shopButtons.get(i + shop.numberOfShopGroups()));
-                             shop.displayedUpgrade(i);
-                         }
-                    }
+                         addNewShopButton();
+                     }
                 }
             }
         });
         shopButton.addListener(clickListener);
         return shopButton;
+    }
+
+    private void addNewShopButton() {
+        int i = shop.getNewUpgradeIndex();
+        if (i == -1) {
+            System.out.println("no new upgrades found");
+        } else {
+            System.out.println("removed and add button number " + (i+shop.numberOfShopGroups()));
+            upgradeGroup.addActor(shopButtons.get(i + shop.numberOfShopGroups()));
+            shop.displayedUpgrade(i);
+        }
     }
 
     @Override
@@ -664,5 +668,12 @@ public class GameScreen implements Screen {
 
     public void deleteSaveData() {
         shop.deleteSaveData();
+        int displayedUpgrades = upgradeGroup.getChildren().size;
+        for (int i = 0; i < displayedUpgrades; i++) {
+            upgradeGroup.removeActorAt(0, false);
+        }
+        for (int i = 0; i < MAX_DISPLAYED_UPGRADES; i++) {
+            addNewShopButton();
+        }
     }
 }

@@ -5,6 +5,9 @@ import java.util.List;
 public class ShopGroup {
 
     enum Type {
+        PLAYER,
+        GOLDEN,
+        ALL,
         CLICKER,
         GRANNY,
         BAKERY,

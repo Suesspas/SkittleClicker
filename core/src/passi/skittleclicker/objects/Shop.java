@@ -48,7 +48,10 @@ public class Shop{
 
     public Shop(){
         upgrades = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
+            upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + i, 100 * i+1, 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + i, 100 * i+1, 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade " + i, 100 * i+1, 2 + i));
             upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * i+1, 2 + i));
             upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * i+1, 2 + i));
             upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * i+1, 2 + i));
@@ -65,7 +68,8 @@ public class Shop{
         shopGroups.add(grannyShopGroup);
         shopGroups.add(bakeryShopGroup);
         shopGroups.add(factoryShopGroup);
-        for (int i = 4; i < ShopGroup.Type.values().length; i++) {
+        //placeholders
+        for (int i = 7; i < ShopGroup.Type.values().length; i++) {
             shopGroups.add(new ShopGroup(ShopGroup.Type.values()[i], 100L *i, 42, 100L *i));
         }
         this.goldenActive = false;
@@ -160,6 +164,7 @@ public class Shop{
              upgrades) {
             u.lock();
         }
+        alreadyDisplayedUpgrades.clear();
     }
 
     public void pay(long cost) {
