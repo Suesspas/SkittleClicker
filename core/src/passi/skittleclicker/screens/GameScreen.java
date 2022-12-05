@@ -228,8 +228,10 @@ public class GameScreen implements Screen {
         for (int i = 0; i < shop.numberOfUpgrades(); i++) {
             shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "imageButtonTestPressed.png",
                         "imageButtonTest.png", 100, 100, true));
-            if (count < MAX_DISPLAYED_UPGRADES) {
-                if (!shop.getUpgrades().get(i).isUnlocked()){
+            if (shop.getUpgrades().get(i).isUnlocked()){
+                shop.displayedUpgrade(i);
+            } else {
+                if (count < MAX_DISPLAYED_UPGRADES) {
                     upgradeGroup.addActor(shopButtons.get(shop.numberOfShopGroups()+i));
                     shop.displayedUpgrade(i);
                     count++;
