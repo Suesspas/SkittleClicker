@@ -52,15 +52,15 @@ runtime {
                'jdk.unsupported']
     distDir = file(buildDir)
 
-//    jpackage {
-//        //jpackageHome = '/usr/lib/jvm/open-jdk'
-//        mainJar = dist.archiveFileName.get()
-//        if (osName.contains('windows')) {
-//            imageOptions = ["--icon", file("../icons/icon.ico")]
-//        } else if (osName.contains('linux')) {
-//            imageOptions = ["--icon", file("../icons/icon.png")]
-//        } else if (osName.contains('mac')) {
-//            imageOptions = ["--icon", file("../icons/icon.icns")]
-//        }
-//    }
+    jpackage {
+        //jpackageHome = '/usr/lib/jvm/open-jdk'
+        mainJar = dist.archiveFileName.get()
+        if (osName.contains('windows')) {
+            imageOptions = ["--icon", file("../core/assets/skittle_icon32.ico")] as List<String>
+        } else if (osName.contains('linux')) {
+            imageOptions = ["--icon", file("../icons/icon.png")]
+        } else if (osName.contains('mac')) {
+            imageOptions = ["--icon", file("../icons/icon.icns")]
+        }
+    }
 }
