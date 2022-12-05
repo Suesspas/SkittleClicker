@@ -23,6 +23,7 @@ package passi.skittleclicker.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -38,6 +39,8 @@ public class Shop{
     private long skittles = 0;
     private static final long baseSkittlesPerClick = 1;
     private double clickModifier = 1;
+    private double goldenModifier = 10;
+    private boolean goldenActive;
     List<ShopGroup> shopGroups;
     List<Upgrade> upgrades;
 
@@ -65,6 +68,7 @@ public class Shop{
         for (int i = 4; i < ShopGroup.Type.values().length; i++) {
             shopGroups.add(new ShopGroup(ShopGroup.Type.values()[i], 100L *i, 42, 100L *i));
         }
+        this.goldenActive = false;
     }
 
     public void setupShop(List<Object> objects){
@@ -79,7 +83,7 @@ public class Shop{
 
         for (int i = 0; i < upgrades.size(); i++) {
             if ((boolean)objects.get(shopGroups.size()+1+i)){
-                upgrades.get(i).unlock();
+                unlockUpgrade(i);
             }
         }
     }
@@ -118,7 +122,7 @@ public class Shop{
              shopGroups) {
             result += s.getSkittlesPerSecond();
         }
-        return result;
+        return Math.round(result * (goldenActive ? goldenModifier : 1));
     }
 
     public void setSkittles(long skittles) {
@@ -143,7 +147,7 @@ public class Shop{
         clickModifier *= modifier;
     }
     public void click() {
-        skittles += baseSkittlesPerClick * clickModifier;
+        skittles += baseSkittlesPerClick * clickModifier * (goldenActive ? goldenModifier : 1);
     }
 
     public void deleteSaveData() {
@@ -187,5 +191,9 @@ public class Shop{
 
     public List<Integer> getAlreadyDisplayedUpgrades() {
         return alreadyDisplayedUpgrades;
+    }
+
+    public void goldenActive(boolean b) {
+        goldenActive = b;
     }
 }

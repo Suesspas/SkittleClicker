@@ -40,10 +40,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.data.Data;
 import passi.skittleclicker.fixes.CustomShapeRenderer;
+import passi.skittleclicker.objects.GoldenSkittle;
 import passi.skittleclicker.objects.MiniSkittle;
 import passi.skittleclicker.objects.Shop;
 import passi.skittleclicker.objects.ShopGroup;
-import passi.skittleclicker.objects.Upgrade;
 import passi.skittleclicker.util.AutoFocusScrollPane;
 import passi.skittleclicker.util.FontUtil;
 import passi.skittleclicker.util.GreyedOutImageButton;
@@ -70,12 +70,14 @@ public class GameScreen implements Screen {
     private final DecimalFormat format;
 
     private final Texture skittleTexture;
+    private final Texture goldenSkittleTexture;
 
     private final List<Texture> miniSkittleTextures;
     private final Texture shopTexture;
     private final Texture clickerTexture;
 
     private final Ellipse skittleRepresentation;
+    private final Ellipse goldenSkittleRepresentation;
     public Music bgm;
 
     private double skittlesPerSecond;
@@ -94,7 +96,6 @@ public class GameScreen implements Screen {
     private ScheduledExecutorService service;
 
     private int autoSaveTimer;
-
     private final Stage stage;
     private final ShaderProgram shader;
 
@@ -118,6 +119,7 @@ public class GameScreen implements Screen {
         this.shader = new ShaderProgram(Gdx.files.internal("grey.vsh"), Gdx.files.internal("grey.fsh"));
 
         this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
+        this.goldenSkittleTexture = new Texture(Gdx.files.internal("skittle_green.png"));
 //        this.skittleTexture = scaleImage("big_skittle.png", 100, 100);
         this.miniSkittleTextures = new ArrayList<>();
         miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_red.png")));
@@ -129,6 +131,7 @@ public class GameScreen implements Screen {
 //        this.clickerTexture = scaleImage("pointer.png", 3, 3);
 
         this.skittleRepresentation = new Ellipse();
+        this.goldenSkittleRepresentation = new Ellipse();
 
         this.shapeRenderer = new CustomShapeRenderer();
 
@@ -371,10 +374,19 @@ public class GameScreen implements Screen {
             menuBar.draw(game.getBatch(), 1); //making sure text is rendered behing menu bar
             button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
         }
+
+        if (GoldenSkittle.isInState(GoldenSkittle.State.SKITTLE)){
+            game.getBatch().draw(goldenSkittleTexture, goldenSkittleRepresentation.x, goldenSkittleRepresentation.y,
+                    goldenSkittleRepresentation.width, goldenSkittleRepresentation.height);
+        }
         game.getBatch().end();
 
+        for (int i = 0; i < clickListeners.size(); i++) {
+            if(clickListeners.get(i).isOver()){
+                renderToolTip(i);
+            }
+        }
 
-//        shop.render(game, camera);
 
         // Remove disappeared skittles
         miniSkittles.forEach(miniSkittle -> {
@@ -384,6 +396,7 @@ public class GameScreen implements Screen {
             }
         });
 
+        //Process user input
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
                 && skittleRepresentation.contains(getUnprojectedScreenCoords(100))) {
             SKITTLE_HEIGHT -= 10;
@@ -398,10 +411,13 @@ public class GameScreen implements Screen {
             SKITTLE_HEIGHT = 200;
         }
 
-        for (int i = 0; i < clickListeners.size(); i++) {
-            if(clickListeners.get(i).isOver()){
-                renderToolTip(i);
-            }
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+                && GoldenSkittle.isInState(GoldenSkittle.State.SKITTLE)
+                && goldenSkittleRepresentation.contains(getUnprojectedScreenCoords(goldenSkittleTexture.getWidth()/2f))) {
+//            clickedGoldenSkittle();
+            System.out.println("clicked golden skittle");
+            GoldenSkittle.clicked();
+            shop.goldenActive(true);
         }
     }
 
@@ -412,10 +428,10 @@ public class GameScreen implements Screen {
     }
 
     private void renderToolTip(int i) {
-        float x = (2 * camera.viewportWidth / 3) - 100;
-        float y = getUnprojectedScreenCoords(0).y - 50;
         int width = 100;
         int height = 50;
+        float x = (2 * camera.viewportWidth / 3) - width;
+        float y = Math.max(0, getUnprojectedScreenCoords(0).y - height);
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -463,6 +479,20 @@ public class GameScreen implements Screen {
                 saveProgress();
                 autoSaveTimer = 0;
                 System.out.println("auto saved"); //TODO auto save popup
+            }
+
+            GoldenSkittle.incrementTimer();
+            if (GoldenSkittle.isRespawnTime()){
+                GoldenSkittle.respawn();
+                goldenSkittleRepresentation.set(MathUtils.random(0, (2*camera.viewportWidth/3) - goldenSkittleTexture.getWidth()),
+                        MathUtils.random(0, camera.viewportHeight - goldenSkittleTexture.getHeight()), goldenSkittleTexture.getWidth(), goldenSkittleTexture.getHeight());
+            } else if (GoldenSkittle.isDespawnTime()){
+                System.out.println("failed to get golden skittle");
+                GoldenSkittle.despawn();
+            } else if (GoldenSkittle.isActiveEndTime()){
+                System.out.println("end of golden duration");
+                GoldenSkittle.activeEnd();
+                shop.goldenActive(false);
             }
         }, 1000, 1000, TimeUnit.MILLISECONDS);
     }
