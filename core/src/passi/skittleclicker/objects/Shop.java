@@ -40,6 +40,7 @@ public class Shop{
     private static final long baseSkittlesPerClick = 1;
     private double clickModifier = 1;
     private double goldenModifier = 10;
+    private double generalModifier = 1;
     private boolean goldenActive;
     List<ShopGroup> shopGroups;
     List<Upgrade> upgrades;
@@ -126,32 +127,26 @@ public class Shop{
              shopGroups) {
             result += s.getSkittlesPerSecond();
         }
-        return Math.round(result * (goldenActive ? goldenModifier : 1));
+        return Math.round(result * generalModifier * (goldenActive ? goldenModifier : 1));
     }
 
     public void setSkittles(long skittles) {
         this.skittles = skittles;
     }
-
-    public long getGrannyNumber() {
-        return shopGroups.get(1).getNumber();
-    }
-    public long getBakeryNumber() {
-        return shopGroups.get(2).getNumber();
-    }
-
-    public long getFactoryNumber() {
-        return shopGroups.get(3).getNumber();
-    }
-
     public void updateSkittles() {
         skittles += getSkittlesPerSecond();
     }
     public void updateClickModifier(double modifier){
         clickModifier *= modifier;
     }
+    public void updateGoldenModifier(double modifier){
+        goldenModifier *= modifier;
+    }
+    public void updateGeneralModifier(double modifier){
+        generalModifier *= modifier;
+    }
     public void click() {
-        skittles += baseSkittlesPerClick * clickModifier * (goldenActive ? goldenModifier : 1);
+        skittles += baseSkittlesPerClick * clickModifier * generalModifier *(goldenActive ? goldenModifier : 1);
     }
 
     public void deleteSaveData() { //TODO probably just call Constructor, see if it works
@@ -174,15 +169,20 @@ public class Shop{
     public void unlockUpgrade(int index) {
         Upgrade upgrade = upgrades.get(index);
         upgrade.unlock();
-
-        for (ShopGroup s:
-             shopGroups) {
-            if (s.getType() == upgrade.getType()){
-                s.updateModifier(upgrade.getModifier());
-                return;
+        ShopGroup.Type type = upgrade.getType();
+        switch (type) {
+            case PLAYER -> updateClickModifier(upgrade.getModifier());
+            case GOLDEN -> updateGoldenModifier(upgrade.getModifier());
+            case ALL -> updateGeneralModifier(upgrade.getModifier());
+            default -> {
+                for (ShopGroup s : shopGroups) {
+                    if (s.getType() == upgrade.getType()) {
+                        s.updateModifier(upgrade.getModifier());
+                        return;
+                    }
+                }
             }
         }
-
     }
 
     public void displayedUpgrade(int index){
