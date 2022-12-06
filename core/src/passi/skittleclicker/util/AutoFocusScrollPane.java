@@ -27,7 +27,7 @@ public class AutoFocusScrollPane extends ScrollPane {
             }
 
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                getStage().setScrollFocus(null);
+//                getStage().setScrollFocus(null); //removed so after clicking button in shop table focus remains
             }
         });
     }

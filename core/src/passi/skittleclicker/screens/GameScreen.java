@@ -175,7 +175,7 @@ public class GameScreen implements Screen {
         // Create a table that fills the screen. Everything else will go inside this table.
         Table rootTable = new Table();
         rootTable.setFillParent(true);
-        rootTable.setDebug(true);
+        rootTable.setDebug(false);
 
         Table clickerTable = new Table();
         clickerTable.setFillParent(false);
@@ -186,26 +186,37 @@ public class GameScreen implements Screen {
         imageTable.setFillParent(false);
         imageTable.setDebug(false);
 
+        Table middleTable = new Table();
+        middleTable.setFillParent(false);
+        middleTable.setDebug(false);
+
         Table shopTable = new Table();
         shopTable.setFillParent(false);
         shopTable.setDebug(false);
 
         AutoFocusScrollPane scrollImageTable = new AutoFocusScrollPane(imageTable);
         AutoFocusScrollPane scrollShopTable = new AutoFocusScrollPane(shopTable);
-        scrollShopTable.setFlickScroll(false); //disables scroll by drag which scrolled horizontally
+        scrollShopTable.setFlickScroll(true); //disables scroll by drag which scrolled horizontally
         scrollShopTable.setFillParent(false);
-        scrollImageTable.setFlickScroll(false);
+        scrollShopTable.setOverscroll(false, false);
+        scrollShopTable.setDebug(false);
+        scrollImageTable.setFlickScroll(true);
+        scrollImageTable.setOverscroll(false, false);
         scrollImageTable.setFillParent(false);
 
         menuBar = new Image(new Texture("imageButtonTestError.png"));
-        rootTable.add(menuBar).expand().fill().maxHeight(100).colspan(5);
-        rootTable.row();
+        middleTable.add(menuBar).expand().fill().height(50);
+        middleTable.row();
+        middleTable.add(scrollImageTable).expand().fill();
+
+//        rootTable.add(menuBar).expand().fill().maxHeight(100).colspan(5);
+//        rootTable.row();
         Texture border = new Texture("wood_border.png");
         rootTable.add(clickerTable).expand().uniform();
         rootTable.add(new Image(border)).expandY().fillY();
-        rootTable.add(scrollImageTable).expand().uniform().fill();
+        rootTable.add(middleTable).expand().uniform().fill();
         rootTable.add(new Image(border)).expandY().fillY();
-        rootTable.add(scrollShopTable).expand().uniform().fill();
+        rootTable.add(scrollShopTable).width(500);
 
         stage.addActor(rootTable);
 
@@ -215,27 +226,36 @@ public class GameScreen implements Screen {
 
         //add contents to tables
 
-        Texture imageTableCell = scaleImage("wood_border_horizontal.png", 390, 12);
+        Texture horizontalBorder = scaleImage("wood_border_horizontal.png", 390, 12);
+        imageTable.add(new Image(horizontalBorder)).expandX().fillX();
+        imageTable.row();
         for (int i = 0; i < 20; i++) {
             imageTable.add(new Image(new Texture("mousieHello86.png"))).fillX();
             imageTable.row();
-            imageTable.add(new Image(imageTableCell)).expandX().fillX();
+            imageTable.add(new Image(horizontalBorder)).expandX().fillX();
             imageTable.row();
         }
 
-        shopTable.add(upgradeGroup).left();
+        Image storeTitle = new Image(new Texture("imageButtonTestError.png"));
+        shopTable.add(storeTitle).expand().fill().height(50).maxWidth(500);
+        shopTable.row();
+        shopTable.add(new Image(horizontalBorder)).expandX().fill().maxWidth(500);
+        shopTable.row();
+        shopTable.add(upgradeGroup).left().maxWidth(500);
+        shopTable.row();
+        shopTable.add(new Image(horizontalBorder)).expandX().fill().maxWidth(500);
 
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopTable.row(); //.pad(10, 0, 10, 0);
-            shopButtons.add(setupShopButton(clickListeners.get(i), "imageButtonTest.png",
-                    "imageButtonTestPressed.png",1000, 100, false));
-            shopTable.add(shopButtons.get(i)).fillX();
+            shopButtons.add(setupShopButton(clickListeners.get(i), "button_wood_mousie.png",
+                    "button_wood_mousie2.png",500, 100, false));
+            shopTable.add(shopButtons.get(i)).fill().expand().left().maxWidth(500);
         }
 
         int addedUpgrades = 0;
         for (int i = 0; i < shop.numberOfUpgrades(); i++) {
-            shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "imageButtonTestPressed.png",
-                        "imageButtonTest.png", 100, 100, true));
+            shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "upgrade_wood.png",
+                    "upgrade_wood2.png", 100, 100, true));
             if (shop.getUpgrades().get(i).isUnlocked()){
                 shop.displayedUpgrade(i);
             } else {
@@ -275,9 +295,7 @@ public class GameScreen implements Screen {
         Drawable drawable = new TextureRegionDrawable(new TextureRegion(scaleImage(imageUpPath,  width, height)));
         Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(scaleImage(imageDownPath, width, height)));
         GreyedOutImageButton shopButton = new GreyedOutImageButton(drawable, drawablePressed, shader);
-//        TextTooltip tooltip = new TextTooltip("You can press this", skin);
-//        tooltip.setInstant(true);
-//        shopButton.addListener(tooltip); The problem with tooltips is they are text only and not modifiable for updated quantities
+
         //TODO setVisible(false) for not yet unlocked
 
         shopButton.addListener(new ChangeListener() {
@@ -298,7 +316,7 @@ public class GameScreen implements Screen {
                          shop.unlockUpgrade(index);
                          shop.pay(shop.getUpgrade(index).getCost());
                          shopButton.remove();
-                         addNewShopButton();
+                         addNewUpgradeButton();
                      }
                 }
             }
@@ -307,7 +325,7 @@ public class GameScreen implements Screen {
         return shopButton;
     }
 
-    private void addNewShopButton() {
+    private void addNewUpgradeButton() {
         int i = shop.getNewUpgradeIndex();
         if (i == -1) {
             System.out.println("no new upgrades found");
@@ -334,15 +352,16 @@ public class GameScreen implements Screen {
         game.getBatch().setProjectionMatrix(camera.combined);
 
         // Render mini skittles and tooltips
-        game.getBatch().begin();
-
         if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){
+            game.getBatch().begin();
             renderGoldLight();
+            game.getBatch().end();
+        } else if (game.getBatch().getColor() != Color.WHITE){
+            game.getBatch().setColor(Color.WHITE);
         }
+        game.getBatch().begin();
         renderSkittles();
-
         renderBigSkittle();
-
         game.getBatch().end();
 
         renderClicker();
@@ -352,6 +371,7 @@ public class GameScreen implements Screen {
 
         game.getBatch().begin();
 
+        //draw overlay info
         game.getFont().draw(game.getBatch(), "Skittles per second: " + skittlesPerSecond,
                 camera.position.x - (camera.viewportWidth / 2f) + 10,
                 camera.position.y - (camera.viewportHeight / 2f) + 100);
@@ -372,6 +392,7 @@ public class GameScreen implements Screen {
         int yOffset = 100;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             ShopGroup shopGroup = shop.getShopGroups().get(i);
+            //draw debug info
             FontUtil.KOMIKA_20.draw(game.getBatch(), shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
                             + " [Cost: "+ shopGroup.getCurrentCost()+"] skittles per sec " + shopGroup.getSkittlesPerSecond(),
                     camera.position.x - (camera.viewportWidth / 2.2f) - 50,
@@ -379,13 +400,13 @@ public class GameScreen implements Screen {
             );
             yOffset += 30;
 
-            //render text on shop buttons
+            //render text on shop buttons and disable
             GreyedOutImageButton button = shopButtons.get(i);
             Vector2 buttonScreenCoords = buttonToScreenCoords(button);
             FontUtil.KOMIKA.draw(game.getBatch(), shopGroup.getType() + " " + shopGroup.getNumber(),
                         buttonScreenCoords.x,
                         buttonScreenCoords.y);
-            menuBar.draw(game.getBatch(), 1); //making sure text is rendered behing menu bar
+//            menuBar.draw(game.getBatch(), 1); //making sure text is rendered behind menu bar,obsolete with new menu
             button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
         }
 
@@ -469,6 +490,7 @@ public class GameScreen implements Screen {
         }
         goldLightSprite.draw(game.getBatch());
         game.getBatch().setColor(c.r, c.g, c.b, 1f);
+//        game.getBatch().setColor(Color.WHITE);
     }
 
     private Vector2 buttonToScreenCoords(Button button){
@@ -721,7 +743,7 @@ public class GameScreen implements Screen {
             upgradeGroup.removeActorAt(0, false);
         }
         for (int i = 0; i < MAX_DISPLAYED_UPGRADES; i++) {
-            addNewShopButton();
+            addNewUpgradeButton();
         }
     }
 }
