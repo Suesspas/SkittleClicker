@@ -25,6 +25,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -59,8 +60,13 @@ import java.util.concurrent.TimeUnit;
 public class GameScreen implements Screen {
 
     private static final int MAX_DISPLAYED_UPGRADES = 5;
+    private static final float MAX_GOLDLIGHT_SCALE = 1.1f;
+    private static final float MIN_GOLDLIGHT_SCALE = 0.9f;
+    private boolean goldLightIsGrowing = true;
+    private final float goldLightGrowSpeed = 0.001f;
     private static float SKITTLE_WIDTH = 200;
     private static float SKITTLE_HEIGHT = 200;
+    private static final float LIGHT_RADIUS = 100;
 
     private final CustomShapeRenderer shapeRenderer;
 
@@ -71,9 +77,9 @@ public class GameScreen implements Screen {
 
     private final Texture skittleTexture;
     private final Texture goldenSkittleTexture;
-
+    private final Texture goldLightTexture;
+    private final Sprite goldLightSprite;
     private final List<Texture> miniSkittleTextures;
-    private final Texture shopTexture;
     private final Texture clickerTexture;
 
     private final Ellipse skittleRepresentation;
@@ -120,13 +126,15 @@ public class GameScreen implements Screen {
 
         this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
         this.goldenSkittleTexture = new Texture(Gdx.files.internal("skittle_green.png"));
+        this.goldLightTexture = scaleImage("gold_light2.png", (int)(SKITTLE_WIDTH + (2*LIGHT_RADIUS)), (int)(SKITTLE_HEIGHT+ (2*LIGHT_RADIUS)));
+        this.goldLightSprite = new Sprite(goldLightTexture);
+        goldLightSprite.setOrigin(goldLightSprite.getWidth()/2,goldLightSprite.getHeight()/2);
 //        this.skittleTexture = scaleImage("big_skittle.png", 100, 100);
         this.miniSkittleTextures = new ArrayList<>();
         miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_red.png")));
         miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_green.png")));
         miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_purple.png")));
 
-        this.shopTexture = new Texture(Gdx.files.internal("shop.png"));
         this.clickerTexture = new Texture(Gdx.files.internal("pointer.png"));
 //        this.clickerTexture = scaleImage("pointer.png", 3, 3);
 
@@ -152,7 +160,7 @@ public class GameScreen implements Screen {
 
         this.shopButtons = new ArrayList<>();
 
-        this.autoSaveTimer = 0;
+        this.autoSaveTimer = 58;
 
 //        if (continueGame) {
         loadDataForShop();
@@ -327,8 +335,13 @@ public class GameScreen implements Screen {
 
         // Render mini skittles and tooltips
         game.getBatch().begin();
+
+        if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){
+            renderGoldLight();
+        }
         renderSkittles();
 
+        renderBigSkittle();
 
         game.getBatch().end();
 
@@ -338,11 +351,6 @@ public class GameScreen implements Screen {
         stage.draw();
 
         game.getBatch().begin();
-
-        skittleRepresentation.set((camera.viewportWidth / 6f) - (SKITTLE_WIDTH / 2f) - (SKITTLE_WIDTH < 200 ? 5 : 0),
-                (camera.viewportHeight / 2f) - (SKITTLE_HEIGHT / 2f) - (SKITTLE_HEIGHT < 200 ? 5 : 0), SKITTLE_WIDTH, SKITTLE_HEIGHT);
-        game.getBatch().draw(skittleTexture, skittleRepresentation.x, skittleRepresentation.y,
-                SKITTLE_WIDTH, SKITTLE_HEIGHT);
 
         game.getFont().draw(game.getBatch(), "Skittles per second: " + skittlesPerSecond,
                 camera.position.x - (camera.viewportWidth / 2f) + 10,
@@ -387,6 +395,19 @@ public class GameScreen implements Screen {
         }
         game.getBatch().end();
 
+
+        if (autoSaveTimer < 2){
+            int width = 130;
+            int height = 50;
+            float x = (camera.viewportWidth/2) - ((float) width/2);
+            float y = 10;
+            renderRoundRect(x, y, width, height);
+            game.getBatch().begin();
+            game.getFont().draw(game.getBatch(), "AUTOSAVED", x, y+height);
+            game.getBatch().end();
+        }
+
+
         for (int i = 0; i < clickListeners.size(); i++) {
             if(clickListeners.get(i).isOver()){
                 renderToolTip(i);
@@ -427,6 +448,29 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void renderBigSkittle() {
+        skittleRepresentation.set((camera.viewportWidth / 6f) - (SKITTLE_WIDTH / 2f) - (SKITTLE_WIDTH < 200 ? 5 : 0),
+                (camera.viewportHeight / 2f) - (SKITTLE_HEIGHT / 2f) - (SKITTLE_HEIGHT < 200 ? 5 : 0), SKITTLE_WIDTH, SKITTLE_HEIGHT);
+        game.getBatch().draw(skittleTexture, skittleRepresentation.x, skittleRepresentation.y,
+                SKITTLE_WIDTH, SKITTLE_HEIGHT);
+    }
+
+    private void renderGoldLight(){
+        Color c = game.getBatch().getColor();
+        goldLightSprite.setPosition(skittleRepresentation.x - LIGHT_RADIUS, skittleRepresentation.y - LIGHT_RADIUS);
+        game.getBatch().setColor(255, 220, 0, 0.3f);
+        goldLightSprite.rotate(0.2f);
+        if (goldLightIsGrowing){
+            goldLightSprite.setScale(goldLightSprite.getScaleX() + goldLightGrowSpeed);
+            if (goldLightSprite.getScaleX() > MAX_GOLDLIGHT_SCALE) goldLightIsGrowing = false;
+        } else {
+            goldLightSprite.setScale(goldLightSprite.getScaleX() - goldLightGrowSpeed);
+            if (goldLightSprite.getScaleX() < MIN_GOLDLIGHT_SCALE) goldLightIsGrowing = true;
+        }
+        goldLightSprite.draw(game.getBatch());
+        game.getBatch().setColor(c.r, c.g, c.b, 1f);
+    }
+
     private Vector2 buttonToScreenCoords(Button button){
         Vector2 vector = button.localToScreenCoordinates(new Vector2(0, camera.viewportHeight + button.getMinHeight()));
         vector.y = -vector.y;
@@ -438,14 +482,7 @@ public class GameScreen implements Screen {
         int height = 50;
         float x = (2 * camera.viewportWidth / 3) - width;
         float y = Math.max(0, getUnprojectedScreenCoords(0).y - height);
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(140 / 255f, 140 / 255f, 140 / 255f, 1.0f);
-        shapeRenderer.roundedRect(x, y, width, height, 10);
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+        renderRoundRect(x, y, width, height);
 
         String str;
         game.getBatch().begin();
@@ -456,8 +493,19 @@ public class GameScreen implements Screen {
         }  else {
             str = "Upgrade " + (i-shop.numberOfShopGroups());
         }
-        game.getFont().draw(game.getBatch(), str, x, y);
+        game.getFont().draw(game.getBatch(), str, x, y+height);
         game.getBatch().end();
+    }
+
+    private void renderRoundRect(float x, float y, int width, int height) {
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(140 / 255f, 140 / 255f, 140 / 255f, 1.0f);
+        shapeRenderer.roundedRect(x, y, width, height, 10);
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     private void loadDataForShop() {
@@ -658,7 +706,6 @@ public class GameScreen implements Screen {
         shapeRenderer.dispose();
         skittleTexture.dispose();
         clickerTexture.dispose();
-        shopTexture.dispose();
         for (Texture t:
                 miniSkittleTextures) {
             t.dispose();

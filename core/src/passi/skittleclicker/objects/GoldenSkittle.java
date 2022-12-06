@@ -7,9 +7,9 @@ public abstract class GoldenSkittle {
     }
     private static State currentState = State.INACTIVE;
     private static int timer = 0;
-    private static final int RESPAWN_TIME = 10;
-    private static final int DESPAWN_TIME = 1;
-    private static final int ACTIVE_DURATION = 5;
+    private static final int RESPAWN_TIME = 3;
+    private static final int DESPAWN_TIME = 10;
+    private static final int ACTIVE_DURATION = 10;
 
     public static boolean isInState(State state) {
         return currentState == state;
