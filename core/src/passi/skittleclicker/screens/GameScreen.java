@@ -46,7 +46,6 @@ import passi.skittleclicker.objects.MiniSkittle;
 import passi.skittleclicker.objects.Shop;
 import passi.skittleclicker.objects.ShopGroup;
 import passi.skittleclicker.util.AutoFocusScrollPane;
-import passi.skittleclicker.util.FontUtil;
 import passi.skittleclicker.util.GreyedOutImageButton;
 
 import java.text.DecimalFormat;
@@ -110,6 +109,7 @@ public class GameScreen implements Screen {
     List<GreyedOutImageButton> shopButtons;
     HorizontalGroup upgradeGroup = new HorizontalGroup();
     Image menuBar;
+    Image storeTitle;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -229,14 +229,15 @@ public class GameScreen implements Screen {
         Texture horizontalBorder = scaleImage("wood_border_horizontal.png", 390, 12);
         imageTable.add(new Image(horizontalBorder)).expandX().fillX();
         imageTable.row();
+
         for (int i = 0; i < 20; i++) {
-            imageTable.add(new Image(new Texture("mousieHello86.png"))).fillX();
+            imageTable.add(new Image(scaleImage("valhalla_frame1.png", 500, 100))).fillX();
             imageTable.row();
             imageTable.add(new Image(horizontalBorder)).expandX().fillX();
             imageTable.row();
         }
 
-        Image storeTitle = new Image(new Texture("imageButtonTestError.png"));
+        storeTitle = new Image(new Texture("imageButtonTestError.png"));
         shopTable.add(storeTitle).expand().fill().height(50).maxWidth(500);
         shopTable.row();
         shopTable.add(new Image(horizontalBorder)).expandX().fill().maxWidth(500);
@@ -393,7 +394,7 @@ public class GameScreen implements Screen {
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             ShopGroup shopGroup = shop.getShopGroups().get(i);
             //draw debug info
-            FontUtil.KOMIKA_20.draw(game.getBatch(), shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
+            game.getFont().draw(game.getBatch(), shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
                             + " [Cost: "+ shopGroup.getCurrentCost()+"] skittles per sec " + shopGroup.getSkittlesPerSecond(),
                     camera.position.x - (camera.viewportWidth / 2.2f) - 50,
                     camera.position.y + (camera.viewportHeight / 2.2f) - 300 - yOffset
@@ -402,13 +403,16 @@ public class GameScreen implements Screen {
 
             //render text on shop buttons and disable
             GreyedOutImageButton button = shopButtons.get(i);
-            Vector2 buttonScreenCoords = buttonToScreenCoords(button);
-            FontUtil.KOMIKA.draw(game.getBatch(), shopGroup.getType() + " " + shopGroup.getNumber(),
+            Vector2 buttonScreenCoords = getScreenCoords(button);
+            game.getFont().draw(game.getBatch(), shopGroup.getType() + " " + shopGroup.getNumber(),
                         buttonScreenCoords.x,
                         buttonScreenCoords.y);
 //            menuBar.draw(game.getBatch(), 1); //making sure text is rendered behind menu bar,obsolete with new menu
             button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
         }
+        Vector2 shopNameScreenCoords = getScreenCoords(storeTitle);
+        game.getFont().draw(game.getBatch(), "Shop", shopNameScreenCoords.x, shopNameScreenCoords.y);
+        System.out.println("Shop drawn at " + shopNameScreenCoords.x + ", " + shopNameScreenCoords.y);
 
         for (Actor u:
              upgradeGroup.getChildren()) {
@@ -500,8 +504,8 @@ public class GameScreen implements Screen {
 //        game.getBatch().setColor(Color.WHITE);
     }
 
-    private Vector2 buttonToScreenCoords(Button button){
-        Vector2 vector = button.localToScreenCoordinates(new Vector2(0, camera.viewportHeight + button.getMinHeight()));
+    private Vector2 getScreenCoords(Actor actor){
+        Vector2 vector = actor.localToScreenCoordinates(new Vector2(0, camera.viewportHeight + actor.getHeight()));
         vector.y = -vector.y;
         return vector;
     }
