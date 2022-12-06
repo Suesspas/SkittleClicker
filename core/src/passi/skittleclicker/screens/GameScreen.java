@@ -410,6 +410,13 @@ public class GameScreen implements Screen {
             button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
         }
 
+        for (Actor u:
+             upgradeGroup.getChildren()) {
+            GreyedOutImageButton button = (GreyedOutImageButton) u;
+            int index = shopButtons.indexOf(button) - shop.numberOfShopGroups();
+            button.setIsGreyedOut(shop.getUpgrade(index).getCost() > shop.getSkittles());
+        }
+
         if (GoldenSkittle.isInState(GoldenSkittle.State.SKITTLE)){
             game.getBatch().draw(goldenSkittleTexture, goldenSkittleRepresentation.x, goldenSkittleRepresentation.y,
                     goldenSkittleRepresentation.width, goldenSkittleRepresentation.height);
@@ -513,7 +520,8 @@ public class GameScreen implements Screen {
             str = shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER() + " [Cost: "+ shopGroup.getCurrentCost()+"]";
 
         }  else {
-            str = "Upgrade " + (i-shop.numberOfShopGroups());
+            int upgradeIndex = i - shop.numberOfShopGroups();
+            str = "Upgrade " + upgradeIndex + " [Cost: "+ shop.getUpgrade(upgradeIndex).getCost() +"]";
         }
         game.getFont().draw(game.getBatch(), str, x, y+height);
         game.getBatch().end();

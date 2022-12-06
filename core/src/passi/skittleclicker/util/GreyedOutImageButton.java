@@ -2,15 +2,15 @@ package passi.skittleclicker.util;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import passi.skittleclicker.objects.ShopGroup;
 
 public class GreyedOutImageButton extends ImageButton {
-    private boolean isGreyedOut; // A flag that determines whther or not this should be greyed out
+    private boolean isGreyedOut; // A flag that determines whether this should be greyed out
     private final ShaderProgram shader;
-//    private final ShopGroup shopGroup;
     public GreyedOutImageButton(ImageButtonStyle style, ShaderProgram shader) {
         super(style);
 //        addListener(new ClickListener() {
@@ -31,18 +31,15 @@ public class GreyedOutImageButton extends ImageButton {
         this.shader = shader;
     }
 
-    public boolean getIsGreyedOut() {
-        return isGreyedOut;
-    }
-
     public void setIsGreyedOut(boolean isGreyedOut) {
         this.setDisabled(isGreyedOut);
+//        this.setTouchable(isGreyedOut? Touchable.disabled : Touchable.enabled); // disabling touchable prevents tooltips from rendering
         this.isGreyedOut = isGreyedOut;
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        if (getIsGreyedOut()) {
+        if (isGreyedOut) {
             batch.end();
             batch.setShader(shader); // Set our grey-out shader to the batch
             batch.begin();

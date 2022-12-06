@@ -50,13 +50,13 @@ public class Shop{
     public Shop(){
         upgrades = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + i, 100 * i+1, 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + i, 100 * i+1, 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade " + i, 100 * i+1, 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * i+1, 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * i+1, 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * i+1, 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.FACTORY,"Upgrade " + i, 100 * i+1, 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + i, 100 * (i+1), 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + i, 100 * (i+1), 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade " + i, 100 * (i+1), 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * (i+1), 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * (i+1), 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * (i+1), 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.FACTORY,"Upgrade " + i, 100 * (i+1), 2 + i));
         }
         ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5);
         ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100);
