@@ -17,10 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import passi.skittleclicker.SkittleClickerGame;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class PreferencesScreen implements Screen {
 
@@ -31,7 +29,7 @@ public class PreferencesScreen implements Screen {
     private Label volumeSoundLabel;
     private Label musicOnOffLabel;
     private Label soundOnOffLabel;
-    private Label clawSkinLabel;
+    private Label stageSkinLabel;
     OrthographicCamera camera;
 
     public PreferencesScreen(final SkittleClickerGame gam) {
@@ -113,21 +111,21 @@ public class PreferencesScreen implements Screen {
             }
         });
 
-//        final CheckBox goldClawSkinCheckBox = new CheckBox(null, skin);
-//        goldClawSkinCheckBox.setChecked(game.getPreferences().getClawSkin().equals("gold"));
-//        goldClawSkinCheckBox.addListener(new EventListener() {
-//            @Override
-//            public boolean handle(Event event) {
-//                if(goldClawSkinCheckBox.isChecked()) {
-//                    game.getPreferences().setClawSkin("gold");
-//                    game.updateClawSkin();
-//                } else {
-//                    game.getPreferences().setClawSkin("default");
-//                    game.updateClawSkin();
-//                }
-//                return false;
-//            }
-//        });
+        final CheckBox stageSkinCheckBox = new CheckBox(null, skin);
+        stageSkinCheckBox.setChecked(game.getPreferences().getStageSkin().equals("iron"));
+        stageSkinCheckBox.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if(stageSkinCheckBox.isChecked()) {
+                    game.getPreferences().setStageSkin("iron");
+                    game.updateClawSkin();
+                } else {
+                    game.getPreferences().setStageSkin("wood");
+                    game.updateClawSkin();
+                }
+                return false;
+            }
+        });
 
         // return to game and main menu screen buttons
         final TextButton backButton = new TextButton("To Game", skin);//"small" //stylename
@@ -153,7 +151,7 @@ public class PreferencesScreen implements Screen {
         volumeSoundLabel = new Label( "Sound Volume", skin );
         musicOnOffLabel = new Label( "Music", skin );
         soundOnOffLabel = new Label( "Sound Effect", skin );
-        clawSkinLabel = new Label("Claw Skin", skin);
+        stageSkinLabel = new Label("Stage Skin", skin);
 
         table.add(titleLabel).colspan(2);
         table.row().pad(10,0,0,10);

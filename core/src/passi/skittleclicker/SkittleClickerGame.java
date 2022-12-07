@@ -102,4 +102,8 @@ public class SkittleClickerGame extends Game {
     public AppPreferences getPreferences() {
         return this.preferences;
     }
+
+    public void updateClawSkin() {
+        gameScreen.updateClawSkin();
+    }
 }

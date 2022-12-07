@@ -8,8 +8,8 @@ public class AppPreferences {
     private static final String PREF_MUSIC_ENABLED = "music.enabled";
     private static final String PREF_SOUND_ENABLED = "sound.enabled";
     private static final String PREF_SOUND_VOL = "sound";
-    private static final String PREF_CLAW_SKIN = "clawSkin";
-    private static final String PREFS_NAME = "claw";
+    private static final String PREF_STAGE_SKIN = "stageSkin";
+    private static final String PREFS_NAME = "skittle";
 
 
     protected Preferences getPrefs() {
@@ -52,12 +52,12 @@ public class AppPreferences {
         getPrefs().flush();
     }
 
-    public String getClawSkin() {
-        return getPrefs().getString(PREF_CLAW_SKIN, "default");
+    public String getStageSkin() {
+        return getPrefs().getString(PREF_STAGE_SKIN, "wood");
     }
 
-    public void setClawSkin(String clawSkin) {
-        getPrefs().putString(PREF_CLAW_SKIN, clawSkin);
+    public void setStageSkin(String stageSkin) {
+        getPrefs().putString(PREF_STAGE_SKIN, stageSkin);
         getPrefs().flush();
     }
 
