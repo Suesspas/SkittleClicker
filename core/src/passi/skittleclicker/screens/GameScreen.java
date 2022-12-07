@@ -48,6 +48,7 @@ import passi.skittleclicker.objects.Shop;
 import passi.skittleclicker.objects.ShopGroup;
 import passi.skittleclicker.util.AutoFocusScrollPane;
 import passi.skittleclicker.util.GreyedOutImageButton;
+import passi.skittleclicker.util.TextureUtil;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -114,20 +115,23 @@ public class GameScreen implements Screen {
     private Image storeTitle;
     private Table clickerTable;
     private final Skin skin;
-    private final boolean IS_DEBUG_ENABLED = true;
+    private final boolean IS_DEBUG_ENABLED = false;
     private String borderVerticalPath = "wood_border.png";
     private String borderHorizontalPath = "wood_border_horizontal.png";
-    private final Texture valhallaTexture = new Texture("valhalla_frame1_selection1.png");
-    private final Texture valhallaTexture2 = new Texture("valhalla_frame1.png");
-    private final List<Texture> valhallaTextures;
+    private final Texture valhallaTexture = new Texture("valhalla.png");
+    private final Texture valhallaFrameSheet;
+    private final Animation<TextureRegion> valhallaAnimation;
+    private final List<Texture> valhallaSelections;
     private final Texture borderHorizontalTexture = new Texture(borderHorizontalPath);
-
+    private float stateTime;
+    private TextureRegion currentFrameValhalla;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
         this.camera = new OrthographicCamera();
         this.shop = new Shop();
         this.stage = new Stage(new ScreenViewport());
+        this.stateTime = 0;
 
         this.format = new DecimalFormat("#,###");
         // temporary until we have asset manager in
@@ -135,13 +139,18 @@ public class GameScreen implements Screen {
 
         this.shader = new ShaderProgram(Gdx.files.internal("grey.vsh"), Gdx.files.internal("grey.fsh"));
 
-        valhallaTextures = new ArrayList<>();
-        valhallaTextures.add(valhallaTexture);
-        valhallaTextures.add(valhallaTexture2);
+        this.valhallaFrameSheet = new Texture("valhalla_framegrid.png");
+        TextureRegion[] valhallaFrames = TextureUtil.getTextureRegions(valhallaFrameSheet, 4, 6);
+        valhallaAnimation = new Animation<>(0.12f,valhallaFrames);
+//        currentFrameValhalla = valhallaAnimation.getKeyFrame(stateTime, true);
+        this.valhallaSelections = new ArrayList<>();
+        for (int i = 0; i <= 15; i++) {
+            valhallaSelections.add(new Texture("selections/selection" + i + ".png"));
+        }
 
         this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
         this.goldenSkittleTexture = new Texture(Gdx.files.internal("skittle_green.png"));
-        this.goldLightTexture = scaleImage("gold_light2.png", (int)(SKITTLE_WIDTH + (2*LIGHT_RADIUS)), (int)(SKITTLE_HEIGHT+ (2*LIGHT_RADIUS)));
+        this.goldLightTexture = TextureUtil.scaleImage("gold_light2.png", (int)(SKITTLE_WIDTH + (2*LIGHT_RADIUS)), (int)(SKITTLE_HEIGHT+ (2*LIGHT_RADIUS)));
         this.goldLightSprite = new Sprite(goldLightTexture);
         goldLightSprite.setOrigin(goldLightSprite.getWidth()/2,goldLightSprite.getHeight()/2);
 //        this.skittleTexture = scaleImage("big_skittle.png", 100, 100);
@@ -245,12 +254,6 @@ public class GameScreen implements Screen {
         menuBar.add(menuButton).expand().left();
         menuBar.add(prefButton).right();
 
-//        rootTable.add(menuBar).expand().fill().maxHeight(100).colspan(5);
-//        rootTable.row();
-
-        //create buttons
-        ImageButton imageButton1; //TODO load individual image Buttons
-        ImageButton imageButton2;
 
         //add contents to tables
         Texture horizontalBorder = new Texture(borderHorizontalPath);//scaleImage(borderHorizontalPath, 390, 12);
@@ -258,11 +261,11 @@ public class GameScreen implements Screen {
         imageTable.row();
 
         //adding dummy alpha images to image table, because you cant easily replace table cells (used for scrolling and coords)
-        Texture valhallaTexture = new Texture("valhalla_frame1_selection1.png");
+        Texture valhallaTexture = new Texture("valhalla.png");
         Texture borderPlaceholder = new Texture("placeholder_border_horizontal.png");
         double valTexScale = 0.75;
-        for (int i = 0; i < shop.numberOfShopGroups(); i++) {
-            Image image = new Image (scaleImage("image_placeholder.png",
+        for (int i = 0; i < shop.numberOfShopGroups()-1; i++) {
+            Image image = new Image (TextureUtil.scaleImage("image_placeholder.png",
                     (int) Math.round(valhallaTexture.getWidth()*valTexScale),
                     (int) Math.round(valhallaTexture.getHeight()*valTexScale)));
             dummyImageList.add(image);
@@ -334,6 +337,7 @@ public class GameScreen implements Screen {
     public void show() {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        stateTime = 0;
         clickerAnimationIndex = -1;
         clicksPerSecond = 0;
 
@@ -345,8 +349,8 @@ public class GameScreen implements Screen {
     }
 
     private GreyedOutImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath, int width, int height, boolean isUpgrade) {
-        Drawable drawable = new TextureRegionDrawable(new TextureRegion(scaleImage(imageUpPath,  width, height)));
-        Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(scaleImage(imageDownPath, width, height)));
+        Drawable drawable = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageUpPath,  width, height)));
+        Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageDownPath, width, height)));
         GreyedOutImageButton shopButton = new GreyedOutImageButton(drawable, drawablePressed, shader);
 
         //TODO setVisible(false) for not yet unlocked
@@ -395,6 +399,13 @@ public class GameScreen implements Screen {
             changeScreen(SkittleClickerGame.MENU);
         }
 
+        if (stateTime < Float.MAX_VALUE/3 ){
+            stateTime += Gdx.graphics.getDeltaTime();
+        } else {
+            stateTime = 0;
+        }
+
+        currentFrameValhalla = valhallaAnimation.getKeyFrame(stateTime, true);
 
         Gdx.gl.glClearColor(0.21f/* + b*/, 0.53f/* + b*/, 0.70f/* + b*/, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -482,6 +493,7 @@ public class GameScreen implements Screen {
             game.getBatch().draw(goldenSkittleTexture, goldenSkittleRepresentation.x, goldenSkittleRepresentation.y,
                     goldenSkittleRepresentation.width, goldenSkittleRepresentation.height);
         }
+
         game.getBatch().end();
 
 
@@ -538,11 +550,14 @@ public class GameScreen implements Screen {
     }
 
     private void drawImageTable() {
-        int index = 0;
+        int index = 1;
         for (Actor dummyImage:
                 dummyImageList) {
+            if (index >= shop.numberOfShopGroups()) break;
             int number = (int) shop.getShopGroups().get(index).getNumber();
-            drawActor(dummyImage, valhallaTextures.get(Math.min(number, valhallaTextures.size()-1)));
+//            drawActor(dummyImage, valhallaTexture);
+            drawAnimation(dummyImage, currentFrameValhalla);
+            drawActor(dummyImage, valhallaSelections.get(Math.min(number, valhallaSelections.size()-1)));
 //            Actor actor = imageTableList.get(index); // for animation
 //            Animation = new ?
 //            drawActor(dummyImage, texture);
@@ -555,6 +570,18 @@ public class GameScreen implements Screen {
         Vector2 borderScreenCoords = getScreenCoords(a);
         if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
             game.getBatch().draw(texture,
+                    borderScreenCoords.x,
+                    borderScreenCoords.y - a.getHeight(),
+                    a.getWidth(),
+                    a.getHeight());
+        }
+    }
+
+    private void drawAnimation(Actor a, TextureRegion textureRegion) {
+        //Needed for changing number of rendered images, because you cant just replace table images
+        Vector2 borderScreenCoords = getScreenCoords(a);
+        if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
+            game.getBatch().draw(textureRegion,
                     borderScreenCoords.x,
                     borderScreenCoords.y - a.getHeight(),
                     a.getWidth(),
@@ -788,19 +815,6 @@ public class GameScreen implements Screen {
                     MathUtils.random(0, MiniSkittle.Color.values().length-1)));
             amountMiniSkittles++;
         }
-    }
-
-    static Texture scaleImage(String path, int width, int height){
-        Pixmap original = new Pixmap(Gdx.files.internal(path));
-        Pixmap scaled = new Pixmap(width, height, original.getFormat());
-        scaled.drawPixmap(original,
-                0, 0, original.getWidth(), original.getHeight(),
-                0, 0, scaled.getWidth(), scaled.getHeight()
-        );
-        Texture texture = new Texture(scaled);
-        original.dispose();
-        scaled.dispose();
-        return texture;
     }
 
     @Override
