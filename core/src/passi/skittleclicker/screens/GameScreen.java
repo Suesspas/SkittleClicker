@@ -103,13 +103,21 @@ public class GameScreen implements Screen {
     private int autoSaveTimer;
     private final Stage stage;
     private final ShaderProgram shader;
+    private final List<ClickListener> clickListeners; //TODO add to all buttons
+    private final List<GreyedOutImageButton> shopButtons;
+    private final HorizontalGroup upgradeGroup = new HorizontalGroup();
+    private Table menuBar;
+    private final List<Image> imageList;
+    private final List<Image> borderList;
+    private Image storeTitle;
+    private Table clickerTable;
+    private final Skin skin;
+    private final boolean IS_DEBUG_ENABLED = true;
+    private String borderVerticalPath = "wood_border.png";
+    private String borderHorizontalPath = "wood_border_horizontal.png";
+    private final Texture valhallaTexture = new Texture("valhalla_frame1.png");
+    private final Texture borderHorizontalTexture = new Texture(borderHorizontalPath);
 
-    List<ClickListener> clickListeners; //TODO add to all buttons
-
-    List<GreyedOutImageButton> shopButtons;
-    HorizontalGroup upgradeGroup = new HorizontalGroup();
-    Image menuBar;
-    Image storeTitle;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -117,10 +125,9 @@ public class GameScreen implements Screen {
         this.shop = new Shop();
         this.stage = new Stage(new ScreenViewport());
 
-
         this.format = new DecimalFormat("#,###");
         // temporary until we have asset manager in
-        Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
+        skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
 
         this.shader = new ShaderProgram(Gdx.files.internal("grey.vsh"), Gdx.files.internal("grey.fsh"));
 
@@ -159,12 +166,12 @@ public class GameScreen implements Screen {
         }
 
         this.shopButtons = new ArrayList<>();
+        this.imageList = new ArrayList<>();
+        this.borderList= new ArrayList<>();
 
         this.autoSaveTimer = 58;
 
-//        if (continueGame) {
         loadDataForShop();
-//        }
 
         setupStage();
 
@@ -175,76 +182,102 @@ public class GameScreen implements Screen {
         // Create a table that fills the screen. Everything else will go inside this table.
         Table rootTable = new Table();
         rootTable.setFillParent(true);
-        rootTable.setDebug(false);
+        rootTable.setDebug(IS_DEBUG_ENABLED);
 
-        Table clickerTable = new Table();
+        clickerTable = new Table();
         clickerTable.setFillParent(false);
-        clickerTable.setDebug(false);
+        clickerTable.setDebug(IS_DEBUG_ENABLED);
 //        clickerTable.add(new TextButton("Clicker part", skin));
 
         Table imageTable = new Table();
         imageTable.setFillParent(false);
-        imageTable.setDebug(false);
+        imageTable.setDebug(IS_DEBUG_ENABLED);
 
         Table middleTable = new Table();
         middleTable.setFillParent(false);
-        middleTable.setDebug(false);
+        middleTable.setDebug(IS_DEBUG_ENABLED);
 
         Table shopTable = new Table();
         shopTable.setFillParent(false);
-        shopTable.setDebug(false);
+        shopTable.setDebug(IS_DEBUG_ENABLED);
 
         AutoFocusScrollPane scrollImageTable = new AutoFocusScrollPane(imageTable);
         AutoFocusScrollPane scrollShopTable = new AutoFocusScrollPane(shopTable);
         scrollShopTable.setFlickScroll(true); //disables scroll by drag which scrolled horizontally
         scrollShopTable.setFillParent(false);
         scrollShopTable.setOverscroll(false, false);
-        scrollShopTable.setDebug(false);
+        scrollShopTable.setDebug(IS_DEBUG_ENABLED);
         scrollImageTable.setFlickScroll(true);
         scrollImageTable.setOverscroll(false, false);
         scrollImageTable.setFillParent(false);
 
-        menuBar = new Image(new Texture("imageButtonTestError.png"));
-        middleTable.add(menuBar).expand().fill().height(50);
-        middleTable.row();
-        middleTable.add(scrollImageTable).expand().fill();
+        menuBar = new Table();//new Image(new Texture("imageButtonTestError.png"));
+//        Drawable drawable = new TextureRegionDrawable(new TextureRegion(scaleImage("upgrade_wood.png", 50, 50)));
+//        Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(scaleImage("upgrade_wood2.png", 50, 50)));
+//        ImageButton menuButton1 = new ImageButton(drawable, drawablePressed); //alternative mit image button
+
+        final TextButton menuButton = new TextButton("\n Main Menu \n", skin);
+        final TextButton prefButton = new TextButton("\n Preferences \n", skin);
+        menuButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                changeScreen(SkittleClickerGame.MENU);
+            }
+        });
+        prefButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                changeScreen(SkittleClickerGame.PREFERENCES);
+            }
+        });
+//        menuButton.setHeight(70);
+//        menuButton.setSize(50,50);
+//        menuButton.setFillParent(true);
+        menuBar.add(menuButton).expand().left();
+        menuBar.add(prefButton).right();
 
 //        rootTable.add(menuBar).expand().fill().maxHeight(100).colspan(5);
 //        rootTable.row();
-        Texture border = new Texture("wood_border.png");
-        rootTable.add(clickerTable).expand().uniform();
-        rootTable.add(new Image(border)).expandY().fillY();
-        rootTable.add(middleTable).expand().uniform().fill();
-        rootTable.add(new Image(border)).expandY().fillY();
-        rootTable.add(scrollShopTable).width(500);
-
-        stage.addActor(rootTable);
 
         //create buttons
         ImageButton imageButton1; //TODO load individual image Buttons
         ImageButton imageButton2;
 
         //add contents to tables
-
-        Texture horizontalBorder = scaleImage("wood_border_horizontal.png", 390, 12);
-        imageTable.add(new Image(horizontalBorder)).expandX().fillX();
+        Texture horizontalBorder = new Texture(borderHorizontalPath);//scaleImage(borderHorizontalPath, 390, 12);
+        imageTable.add(new Image(horizontalBorder)).expandX().fillX().height(12);
         imageTable.row();
 
-        for (int i = 0; i < 20; i++) {
-            imageTable.add(new Image(scaleImage("valhalla_frame1.png", 500, 100))).fillX();
+        Texture valhallaTexture = new Texture("valhalla_frame1_selection1.png");
+        Texture borderPlaceholder = new Texture("placeholder_border_horizontal.png");
+        double valTexScale = 0.75;
+        for (int i = 0; i < shop.numberOfShopGroups(); i++) {
+            Image image = new Image (scaleImage("image_placeholder.png",
+                    (int) Math.round(valhallaTexture.getWidth()*valTexScale),
+                    (int) Math.round(valhallaTexture.getHeight()*valTexScale)));
+            imageList.add(image);
+            imageTable.add(imageList.get(i)).fillX();//scaleImage("valhalla_frame1.png", 500, 100)
             imageTable.row();
-            imageTable.add(new Image(horizontalBorder)).expandX().fillX();
+            Image border = new Image(borderPlaceholder);
+            borderList.add(border);
+            imageTable.add(borderList.get(i)).expandX().fillX().height(12);
             imageTable.row();
         }
+
+        middleTable.add(menuBar).expand().fill().height(50);
+        middleTable.row();
+        middleTable.add(new Image(new Texture(borderHorizontalPath))).expand().fill();
+        middleTable.row();
+        middleTable.add(scrollImageTable).expand().fill();
 
         storeTitle = new Image(new Texture("imageButtonTestError.png"));
         shopTable.add(storeTitle).expand().fill().height(50).maxWidth(500);
         shopTable.row();
-        shopTable.add(new Image(horizontalBorder)).expandX().fill().maxWidth(500);
+        shopTable.add(new Image(horizontalBorder)).expandX().fill().maxWidth(500).height(12);
         shopTable.row();
         shopTable.add(upgradeGroup).left().maxWidth(500);
         shopTable.row();
-        shopTable.add(new Image(horizontalBorder)).expandX().fill().maxWidth(500);
+        shopTable.add(new Image(horizontalBorder)).expandX().fill().maxWidth(500).height(12);
 
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopTable.row(); //.pad(10, 0, 10, 0);
@@ -267,6 +300,15 @@ public class GameScreen implements Screen {
                 }
             }
         }
+
+        Texture border = new Texture(borderVerticalPath);
+        rootTable.add(clickerTable).expand().fill().minWidth(200);
+        rootTable.add(new Image(border)).expandY().fillY();
+        rootTable.add(middleTable).maxWidth((int) Math.round(valhallaTexture.getWidth()*valTexScale));
+        rootTable.add(new Image(border)).expandY().fillY();
+        rootTable.add(scrollShopTable).width(500);
+
+        stage.addActor(rootTable);
     }
 
     void saveProgress(){
@@ -340,9 +382,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            service.shutdown();
-            game.changeScreen(SkittleClickerGame.MENU);
-            saveProgress();
+            changeScreen(SkittleClickerGame.MENU);
         }
 
 
@@ -363,6 +403,8 @@ public class GameScreen implements Screen {
         game.getBatch().begin();
         renderSkittles();
         renderBigSkittle();
+        drawImageTable(imageList, valhallaTexture);
+        drawImageTable(borderList, borderHorizontalTexture);
         game.getBatch().end();
 
         renderClicker();
@@ -394,14 +436,16 @@ public class GameScreen implements Screen {
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             ShopGroup shopGroup = shop.getShopGroups().get(i);
             //draw debug info
-            game.getFont().draw(game.getBatch(), shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
-                            + " [Cost: "+ shopGroup.getCurrentCost()+"] skittles per sec " + shopGroup.getSkittlesPerSecond(),
-                    camera.position.x - (camera.viewportWidth / 2.2f) - 50,
-                    camera.position.y + (camera.viewportHeight / 2.2f) - 300 - yOffset
-            );
-            yOffset += 30;
+            if (IS_DEBUG_ENABLED){
+                game.getFont().draw(game.getBatch(), shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
+                                + " [Cost: "+ shopGroup.getCurrentCost()+"] skittles per sec " + shopGroup.getSkittlesPerSecond(),
+                        camera.position.x - (camera.viewportWidth / 2.2f) - 50,
+                        camera.position.y + (camera.viewportHeight / 2.2f) - 300 - yOffset
+                );
+                yOffset += 30;
+            }
 
-            //render text on shop buttons and disable
+            //render text on shop buttons and grey out if needed
             GreyedOutImageButton button = shopButtons.get(i);
             Vector2 buttonScreenCoords = getScreenCoords(button);
             game.getFont().draw(game.getBatch(), shopGroup.getType() + " " + shopGroup.getNumber(),
@@ -412,11 +456,10 @@ public class GameScreen implements Screen {
         }
         Vector2 shopNameScreenCoords = getScreenCoords(storeTitle);
         game.getFont().draw(game.getBatch(), "Shop", shopNameScreenCoords.x, shopNameScreenCoords.y);
-        System.out.println("Shop drawn at " + shopNameScreenCoords.x + ", " + shopNameScreenCoords.y);
 
-        for (Actor u:
+        for (Actor a:
              upgradeGroup.getChildren()) {
-            GreyedOutImageButton button = (GreyedOutImageButton) u;
+            GreyedOutImageButton button = (GreyedOutImageButton) a;
             int index = shopButtons.indexOf(button) - shop.numberOfShopGroups();
             button.setIsGreyedOut(shop.getUpgrade(index).getCost() > shop.getSkittles());
         }
@@ -480,8 +523,28 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void drawImageTable(List<Image> imageList, Texture texture) {
+        for (Actor a:
+                imageList) {
+            Vector2 borderScreenCoords = getScreenCoords(a);
+            if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
+                game.getBatch().draw(texture,
+                        borderScreenCoords.x,
+                        borderScreenCoords.y - a.getHeight(),
+                        a.getWidth(),
+                        a.getHeight());
+            }
+        }
+    }
+
+    private void changeScreen(int screenNumber) {
+        service.shutdown();
+        game.changeScreen(screenNumber);
+        saveProgress();
+    }
+
     private void renderBigSkittle() {
-        skittleRepresentation.set((camera.viewportWidth / 6f) - (SKITTLE_WIDTH / 2f) - (SKITTLE_WIDTH < 200 ? 5 : 0),
+        skittleRepresentation.set((clickerTable.getWidth()/2) - (SKITTLE_WIDTH / 2f) - (SKITTLE_WIDTH < 200 ? 5 : 0),
                 (camera.viewportHeight / 2f) - (SKITTLE_HEIGHT / 2f) - (SKITTLE_HEIGHT < 200 ? 5 : 0), SKITTLE_WIDTH, SKITTLE_HEIGHT);
         game.getBatch().draw(skittleTexture, skittleRepresentation.x, skittleRepresentation.y,
                 SKITTLE_WIDTH, SKITTLE_HEIGHT);
@@ -513,7 +576,7 @@ public class GameScreen implements Screen {
     private void renderToolTip(int i) {
         int width = 100;
         int height = 50;
-        float x = (2 * camera.viewportWidth / 3) - width;
+        float x = camera.viewportWidth - shopButtons.get(0).getWidth() - width;
         float y = Math.max(0, getUnprojectedScreenCoords(0).y - height);
         renderRoundRect(x, y, width, height);
 
@@ -682,7 +745,7 @@ public class GameScreen implements Screen {
                 default: miniSkittleTexture = skittleTexture;
             }
             game.getBatch().draw(miniSkittleTexture,
-                    miniSkittle.getX_relativePos()*camera.viewportWidth/3,
+                    miniSkittle.getX_relativePos()*clickerTable.getWidth(),
                     miniSkittle.getY(),
                     MINISKITTLE_WIDTH, MINISKITTLE_HEIGHT);
             miniSkittle.setY(miniSkittle.getY() - MINISKITTLE_SPEED);
@@ -757,5 +820,11 @@ public class GameScreen implements Screen {
         for (int i = 0; i < MAX_DISPLAYED_UPGRADES; i++) {
             addNewUpgradeButton();
         }
+    }
+
+    public void updateClawSkin() {
+        String skin = game.getPreferences().getStageSkin();
+        borderVerticalPath = skin + "_border.png";
+        borderHorizontalPath = skin + "_border_horizontal.png";
     }
 }
