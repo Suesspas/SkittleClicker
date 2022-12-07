@@ -25,6 +25,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -107,7 +108,8 @@ public class GameScreen implements Screen {
     private final List<GreyedOutImageButton> shopButtons;
     private final HorizontalGroup upgradeGroup = new HorizontalGroup();
     private Table menuBar;
-    private final List<Image> imageList;
+    private final List<Image> dummyImageList;
+    private final List<Actor> imageTableList;
     private final List<Image> borderList;
     private Image storeTitle;
     private Table clickerTable;
@@ -115,7 +117,9 @@ public class GameScreen implements Screen {
     private final boolean IS_DEBUG_ENABLED = true;
     private String borderVerticalPath = "wood_border.png";
     private String borderHorizontalPath = "wood_border_horizontal.png";
-    private final Texture valhallaTexture = new Texture("valhalla_frame1.png");
+    private final Texture valhallaTexture = new Texture("valhalla_frame1_selection1.png");
+    private final Texture valhallaTexture2 = new Texture("valhalla_frame1.png");
+    private final List<Texture> valhallaTextures;
     private final Texture borderHorizontalTexture = new Texture(borderHorizontalPath);
 
 
@@ -130,6 +134,10 @@ public class GameScreen implements Screen {
         skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
 
         this.shader = new ShaderProgram(Gdx.files.internal("grey.vsh"), Gdx.files.internal("grey.fsh"));
+
+        valhallaTextures = new ArrayList<>();
+        valhallaTextures.add(valhallaTexture);
+        valhallaTextures.add(valhallaTexture2);
 
         this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
         this.goldenSkittleTexture = new Texture(Gdx.files.internal("skittle_green.png"));
@@ -166,7 +174,8 @@ public class GameScreen implements Screen {
         }
 
         this.shopButtons = new ArrayList<>();
-        this.imageList = new ArrayList<>();
+        this.dummyImageList = new ArrayList<>();
+        this.imageTableList = new ArrayList<>();
         this.borderList= new ArrayList<>();
 
         this.autoSaveTimer = 58;
@@ -248,6 +257,7 @@ public class GameScreen implements Screen {
         imageTable.add(new Image(horizontalBorder)).expandX().fillX().height(12);
         imageTable.row();
 
+        //adding dummy alpha images to image table, because you cant easily replace table cells (used for scrolling and coords)
         Texture valhallaTexture = new Texture("valhalla_frame1_selection1.png");
         Texture borderPlaceholder = new Texture("placeholder_border_horizontal.png");
         double valTexScale = 0.75;
@@ -255,8 +265,8 @@ public class GameScreen implements Screen {
             Image image = new Image (scaleImage("image_placeholder.png",
                     (int) Math.round(valhallaTexture.getWidth()*valTexScale),
                     (int) Math.round(valhallaTexture.getHeight()*valTexScale)));
-            imageList.add(image);
-            imageTable.add(imageList.get(i)).fillX();//scaleImage("valhalla_frame1.png", 500, 100)
+            dummyImageList.add(image);
+            imageTable.add(dummyImageList.get(i)).fillX();//scaleImage("valhalla_frame1.png", 500, 100)
             imageTable.row();
             Image border = new Image(borderPlaceholder);
             borderList.add(border);
@@ -403,8 +413,12 @@ public class GameScreen implements Screen {
         game.getBatch().begin();
         renderSkittles();
         renderBigSkittle();
-        drawImageTable(imageList, valhallaTexture);
-        drawImageTable(borderList, borderHorizontalTexture);
+
+        drawImageTable();
+        for (Actor a:
+             borderList) {
+            drawActor(a, borderHorizontalTexture);
+        }
         game.getBatch().end();
 
         renderClicker();
@@ -523,17 +537,29 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void drawImageTable(List<Image> imageList, Texture texture) {
-        for (Actor a:
-                imageList) {
-            Vector2 borderScreenCoords = getScreenCoords(a);
-            if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
-                game.getBatch().draw(texture,
-                        borderScreenCoords.x,
-                        borderScreenCoords.y - a.getHeight(),
-                        a.getWidth(),
-                        a.getHeight());
-            }
+    private void drawImageTable() {
+        int index = 0;
+        for (Actor dummyImage:
+                dummyImageList) {
+            int number = (int) shop.getShopGroups().get(index).getNumber();
+            drawActor(dummyImage, valhallaTextures.get(Math.min(number, valhallaTextures.size()-1)));
+//            Actor actor = imageTableList.get(index); // for animation
+//            Animation = new ?
+//            drawActor(dummyImage, texture);
+            index++;
+        }
+    }
+
+    private void drawActor(Actor a, Texture texture) {
+        //Needed for changing number of rendered images, because you cant just replace table images
+        Vector2 borderScreenCoords = getScreenCoords(a);
+        if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
+            game.getBatch().draw(texture,
+                    borderScreenCoords.x,
+                    borderScreenCoords.y - a.getHeight(),
+                    a.getWidth(),
+                    a.getHeight());
+
         }
     }
 
