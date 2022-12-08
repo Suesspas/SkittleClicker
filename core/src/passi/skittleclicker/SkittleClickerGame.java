@@ -94,7 +94,7 @@ public class SkittleClickerGame extends Game {
                 this.setScreen(new TestScreen(this));
                 break;
             case EXIT:
-                this.setScreen(new ExitScreen(this));
+                this.setScreen(new ExitScreen(this, ExitScreen.EXIT));
                 break;
         }
     }

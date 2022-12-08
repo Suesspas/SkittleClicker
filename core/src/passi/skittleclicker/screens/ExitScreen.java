@@ -38,15 +38,18 @@ import passi.skittleclicker.data.Data;
 
 public class ExitScreen implements Screen {
 
-    private SkittleClickerGame game;
-    private OrthographicCamera camera;
-    private Stage stage;
-    Label label;
+    private final SkittleClickerGame game;
+    private final OrthographicCamera camera;
+    private final Stage stage;
+    public static final int EXIT = 0;
+    public static final int DELETE_DATA = 1;
+    private int action;
 
-    public ExitScreen(SkittleClickerGame game) {
+    public ExitScreen(SkittleClickerGame game, int action) {
         this.game = game;
         this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(new ScreenViewport());
+        this.action = action;
     }
 
     @Override
@@ -64,7 +67,7 @@ public class ExitScreen implements Screen {
         // temporary until we have asset manager in
         Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
 
-        label = new Label("Are you sure you want to exit?", skin);
+        Label label = new Label(action == 1 ? "Are you sure you want to delete ALL your data permanently?" : "Are you sure you want to exit?" , skin);
         label.setColor(Color.WHITE);
 
         //create buttons
@@ -84,7 +87,13 @@ public class ExitScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 stage.clear();
-                Gdx.app.exit();
+                if (action == 1){
+                    game.deleteSaveData();
+                    stage.clear();
+                    game.changeScreen(SkittleClickerGame.MENU);
+                } else {
+                    Gdx.app.exit();
+                }
             }
         });
 

@@ -93,6 +93,7 @@ public class MainMenuScreen implements Screen {
         deleteSaveData.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new ExitScreen(game, ExitScreen.DELETE_DATA));
                 game.deleteSaveData();
                 System.out.println("Save Data deleted");
             }
