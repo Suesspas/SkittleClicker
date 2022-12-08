@@ -34,7 +34,7 @@ public class SkittleClickerGame extends Game {
         ContributorUtil.load();
 
         batch = new SpriteBatch();
-        font = FontUtil.KOMIKA;
+        font = FontUtil.FONT_30;
         preferences = new AppPreferences();
 
         setScreen(new MainMenuScreen(this));

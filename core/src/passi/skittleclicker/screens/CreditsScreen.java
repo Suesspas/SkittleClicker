@@ -52,23 +52,23 @@ public class CreditsScreen implements Screen {
         camera.update();
         game.getBatch().begin();
 
-        FontUtil.KOMIKA.draw(game.getBatch(), "Press ESC to go back", camera.position.x - (camera.viewportWidth / 2f) + 10,
+        FontUtil.FONT_30.draw(game.getBatch(), "Press ESC to go back", camera.position.x - (camera.viewportWidth / 2f) + 10,
                 camera.position.y - (camera.viewportHeight / 2f) + 30);
         if (ContributorUtil.isLoading()) {
-            FontUtil.KOMIKA.draw(game.getBatch(), "Loading contributors...", camera.position.x - (camera.viewportWidth / 2f) + 10, camera.position.y);
+            FontUtil.FONT_30.draw(game.getBatch(), "Loading contributors...", camera.position.x - (camera.viewportWidth / 2f) + 10, camera.position.y);
         } else {
-            FontUtil.KOMIKA.draw(game.getBatch(), "Want to contribute?", camera.position.x + (camera.viewportWidth / 2f) - 220,
+            FontUtil.FONT_30.draw(game.getBatch(), "Want to contribute?", camera.position.x + (camera.viewportWidth / 2f) - 220,
                     camera.position.y + (camera.viewportHeight / 2f - 10));
-            FontUtil.KOMIKA.draw(game.getBatch(), "This project is open source:",
+            FontUtil.FONT_30.draw(game.getBatch(), "This project is open source:",
                     camera.position.x + (camera.viewportWidth / 2f) - 280,
                     camera.position.y + (camera.viewportHeight / 2f - 45));
-            FontUtil.KOMIKA.draw(game.getBatch(), "https://git.io/JeEIx",
+            FontUtil.FONT_30.draw(game.getBatch(), "https://git.io/JeEIx",
                     camera.position.x + (camera.viewportWidth / 2f) - 220,
                     camera.position.y + (camera.viewportHeight / 2f - 80));
 
             for (int i = 0; i < ContributorUtil.getContributors().size(); i++) {
                 ContributorUtil.ContributorData data = ContributorUtil.getContributors().get(i);
-                FontUtil.KOMIKA.draw(
+                FontUtil.FONT_30.draw(
                         game.getBatch(),
                         data.getName() + ": " + data.getCommits() + " commit(s)",
                         camera.position.x - (camera.viewportWidth / 2f) + 10,

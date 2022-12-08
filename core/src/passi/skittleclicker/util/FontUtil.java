@@ -21,42 +21,46 @@
 package passi.skittleclicker.util;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.loaders.BitmapFontLoader;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class FontUtil {
 
-    public static BitmapFont KOMIKA = null;
-    public static BitmapFont KOMIKA_20 = null;
-    public static BitmapFont KOMIKA_15 = null;
-    public static BitmapFont KOMIKA_10 = null;
-    public static BitmapFont KOMIKA_8 = null;
+    public static BitmapFont FONT_30 = null;
+    public static BitmapFont FONT_20 = null;
+    public static BitmapFont FONT_15 = null;
+    public static BitmapFont FONT_10 = null;
+    public static BitmapFont FONT_8 = null;
 
     private FontUtil() {
         throw new UnsupportedOperationException();
     }
 
     public static void init() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/KOMTITK_.ttf"));
+        String komika = "fonts/KOMTITK_.ttf";
+        String chunkRegular = "fonts/chunkfive/ChunkFive-Regular.otf";
+        String openSansBold = "fonts/open-sans/OpenSans-Bold.ttf";
+        String openSansExtraBold = "fonts/open-sans/OpenSans-ExtraBold.ttf";
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(openSansExtraBold));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 30;
-        KOMIKA = generator.generateFont(parameter);
+        FONT_30 = generator.generateFont(parameter);
 
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 20;
-        KOMIKA_20 = generator.generateFont(parameter);
+        FONT_20 = generator.generateFont(parameter);
 
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 15;
-        KOMIKA_15 = generator.generateFont(parameter);
+        FONT_15 = generator.generateFont(parameter);
 
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 10;
-        KOMIKA_10 = generator.generateFont(parameter);
+        FONT_10 = generator.generateFont(parameter);
 
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 8;
-        KOMIKA_8 = generator.generateFont(parameter);
+        FONT_8 = generator.generateFont(parameter);
     }
 }

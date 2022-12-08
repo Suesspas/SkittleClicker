@@ -24,6 +24,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -88,6 +89,7 @@ public class GameScreen implements Screen {
     private final Ellipse skittleRepresentation;
     private final Ellipse goldenSkittleRepresentation;
     public Music bgm;
+    private final Sound clickSound;
 
     private double skittlesPerSecond;
     private int clickerAnimationIndex;
@@ -182,6 +184,8 @@ public class GameScreen implements Screen {
             bgm.stop();
         }
 
+        clickSound = Gdx.audio.newSound(Gdx.files.internal("click.wav"));
+
         this.clickListeners = new ArrayList<>();
         int numberOfClickListeners = shop.numberOfShopGroups() + shop.numberOfUpgrades();
         for (int i = 0; i < numberOfClickListeners; i++) {
@@ -240,7 +244,7 @@ public class GameScreen implements Screen {
 //        Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(scaleImage("upgrade_wood2.png", 50, 50)));
 //        ImageButton menuButton1 = new ImageButton(drawable, drawablePressed); //alternative mit image button
 
-        final TextButton menuButton = new TextButton("\n Main Menu \n", skin);
+        final TextButton menuButton = new TextButton("\n Main Menu \n", skin); //TODO de-scuff this, probably imagebutton without skin
         final TextButton prefButton = new TextButton("\n Preferences \n", skin);
         menuButton.addListener(new ChangeListener() {
             @Override
@@ -258,7 +262,7 @@ public class GameScreen implements Screen {
 //        menuButton.setSize(50,50);
 //        menuButton.setFillParent(true);
         menuBar.add(menuButton).expand().left();
-        menuBar.add(new Image(new Texture("button_wood.png"))).expand();
+        menuBar.add(new Image(new Texture("grey_button_iron.png"))).expand();
         menuBar.add(prefButton).right();
 
 
@@ -302,8 +306,8 @@ public class GameScreen implements Screen {
         int visibleLockedButtonCount = 0;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopTable.row(); //.pad(10, 0, 10, 0);
-            shopButtons.add(setupShopButton(clickListeners.get(i), "button_wood_mousie.png",
-                    "button_wood_mousie2.png",500, 100, false));
+            shopButtons.add(setupShopButton(clickListeners.get(i), "button_iron.png",
+                    "button_wood_mousie2.png", "button_wood_light.png",500, 100));
             shopTable.add(shopButtons.get(i)).fill().expand().left().maxWidth(500);
             //only show unlocked + max visible not unlocked shop group buttons
             if (shop.getShopGroups().get(i).getNumber() > 0){
@@ -320,8 +324,8 @@ public class GameScreen implements Screen {
 
         int addedUpgrades = 0;
         for (int i = 0; i < shop.numberOfUpgrades(); i++) {
-            shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "upgrade_wood.png",
-                    "upgrade_wood2.png", 100, 100, true));
+            shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "upgrade_iron.png",
+                    "upgrade_wood2.png", "upgrade_wood_light.png",100, 100));
             if (shop.getUpgrades().get(i).isUnlocked()){
                 shop.displayedUpgrade(i);
             } else {
@@ -367,10 +371,10 @@ public class GameScreen implements Screen {
         scheduleService(service);
     }
 
-    private GreyedOutImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath, int width, int height, boolean isUpgrade) {
+    private GreyedOutImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath, String imageMouseOverPath, int width, int height) {
         Drawable drawable = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageUpPath,  width, height)));
         Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageDownPath, width, height)));
-        Drawable drawableMouseOver = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage("button_wood_light.png", width, height)));
+        Drawable drawableMouseOver = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageMouseOverPath, width, height)));
 //        GreyedOutImageButton shopButton = new GreyedOutImageButton(drawable, drawablePressed, shader);
         ImageButton.ImageButtonStyle imageButtonStyle = new ImageButton.ImageButtonStyle(null,null,null, drawable, drawablePressed,null);
         imageButtonStyle.imageOver = drawableMouseOver;
@@ -515,8 +519,7 @@ public class GameScreen implements Screen {
                             buttonScreenCoords.y - 70, 20,20);
                 }
 
-
-                FontUtil.KOMIKA_20.draw(game.getBatch(), shopGroup.getCurrentCost() + "",
+                FontUtil.FONT_20.draw(game.getBatch(), shopGroup.getCurrentCost() + "",
                         buttonScreenCoords.x + 125,
                         buttonScreenCoords.y - 50);
 
@@ -531,7 +534,7 @@ public class GameScreen implements Screen {
 //            menuBar.draw(game.getBatch(), 1); //making sure text is rendered behind menu bar,obsolete with new menu
         }
         Vector2 shopNameScreenCoords = getScreenCoords(storeTitle);
-        FontUtil.KOMIKA.draw(game.getBatch(),
+        FontUtil.FONT_30.draw(game.getBatch(),
                 "Shop",
                 shopNameScreenCoords.x + storeTitle.getWidth()/2,
                 shopNameScreenCoords.y - storeTitle.getHeight()/3);
@@ -584,7 +587,7 @@ public class GameScreen implements Screen {
                 && skittleRepresentation.contains(getUnprojectedScreenCoords(100))) {
             SKITTLE_HEIGHT -= 10;
             SKITTLE_WIDTH -= 10;
-
+            clickSound.play(game.getPreferences().getSoundVolume() * 0.3f);
             shop.click();
             clicksPerSecond++;
             addSkittle();
@@ -724,7 +727,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(140 / 255f, 140 / 255f, 140 / 255f, 1.0f);
+        shapeRenderer.setColor(155 / 255f, 155 / 255f, 155 / 255f, 1.0f);
         shapeRenderer.roundedRect(x, y, width, height, 10);
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
