@@ -5,8 +5,6 @@ Cookie Clicker type game written in Java with the [LibGDX](https://github.com/li
 ![Image](https://i.imgur.com/gV6Bo2F.png)
 
 ## How to run
-### Download a release
-You can find the latest build [here](http://jenkins.cerus-dev.de/job/cookie-clicker-game/lastBuild/)
 
 ### Build the source yourself
 1. Clone this repo

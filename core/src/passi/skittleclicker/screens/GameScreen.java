@@ -125,6 +125,7 @@ public class GameScreen implements Screen {
     private final Texture borderHorizontalTexture = new Texture(borderHorizontalPath);
     private float stateTime;
     private TextureRegion currentFrameValhalla;
+    private final int MAX_VISIBLE_LOCKED_SHOPBUTTONS = 2;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -292,11 +293,22 @@ public class GameScreen implements Screen {
         shopTable.row();
         shopTable.add(new Image(horizontalBorder)).expandX().fill().maxWidth(500).height(12);
 
+        int visibleLockedButtonCount = 0;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopTable.row(); //.pad(10, 0, 10, 0);
             shopButtons.add(setupShopButton(clickListeners.get(i), "button_wood_mousie.png",
                     "button_wood_mousie2.png",500, 100, false));
             shopTable.add(shopButtons.get(i)).fill().expand().left().maxWidth(500);
+            if (shop.getShopGroups().get(i).getNumber() > 0){
+                shopButtons.get(i).setVisible(true);
+            } else {
+                if (visibleLockedButtonCount < MAX_VISIBLE_LOCKED_SHOPBUTTONS){
+                    shopButtons.get(i).setVisible(true);
+                    visibleLockedButtonCount++;
+                } else {
+                    shopButtons.get(i).setVisible(false);
+                }
+            }
         }
 
         int addedUpgrades = 0;
@@ -414,16 +426,20 @@ public class GameScreen implements Screen {
         game.getBatch().setProjectionMatrix(camera.combined);
 
         // Render mini skittles and tooltips
+        game.getBatch().begin();
         if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){
-            game.getBatch().begin();
             renderGoldLight();
-            game.getBatch().end();
         } else if (game.getBatch().getColor() != Color.WHITE){
             game.getBatch().setColor(Color.WHITE);
         }
-        game.getBatch().begin();
+
         renderSkittles();
         renderBigSkittle();
+        renderClicker();
+
+        if (game.getBatch().getColor() != Color.WHITE){
+            game.getBatch().setColor(Color.WHITE);
+        }
 
         drawImageTable();
         for (Actor a:
@@ -431,8 +447,6 @@ public class GameScreen implements Screen {
             drawActor(a, borderHorizontalTexture);
         }
         game.getBatch().end();
-
-        renderClicker();
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         stage.draw();
@@ -458,6 +472,7 @@ public class GameScreen implements Screen {
                 camera.viewportHeight - menuBar.getHeight() - 40);
 
         int yOffset = 100;
+        int visibleLockedButtonCount = 0;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             ShopGroup shopGroup = shop.getShopGroups().get(i);
             //draw debug info
@@ -472,12 +487,23 @@ public class GameScreen implements Screen {
 
             //render text on shop buttons and grey out if needed
             GreyedOutImageButton button = shopButtons.get(i);
-            Vector2 buttonScreenCoords = getScreenCoords(button);
-            game.getFont().draw(game.getBatch(), shopGroup.getType() + " " + shopGroup.getNumber(),
+            if (button.isVisible()){
+                if (shopGroup.getNumber() == 0) {
+                    visibleLockedButtonCount++;
+                }
+                Vector2 buttonScreenCoords = getScreenCoords(button);
+                game.getFont().draw(game.getBatch(), shopGroup.getType() + " " + shopGroup.getNumber(),
                         buttonScreenCoords.x,
                         buttonScreenCoords.y);
+                button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
+            } else {
+                if (visibleLockedButtonCount < MAX_VISIBLE_LOCKED_SHOPBUTTONS){
+                    button.setVisible(true);
+                    button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
+                    visibleLockedButtonCount++;
+                }
+            }
 //            menuBar.draw(game.getBatch(), 1); //making sure text is rendered behind menu bar,obsolete with new menu
-            button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
         }
         Vector2 shopNameScreenCoords = getScreenCoords(storeTitle);
         game.getFont().draw(game.getBatch(), "Shop", shopNameScreenCoords.x, shopNameScreenCoords.y);
@@ -606,7 +632,7 @@ public class GameScreen implements Screen {
     private void renderGoldLight(){
         Color c = game.getBatch().getColor();
         goldLightSprite.setPosition(skittleRepresentation.x - LIGHT_RADIUS, skittleRepresentation.y - LIGHT_RADIUS);
-        game.getBatch().setColor(255, 220, 0, 0.3f);
+        game.getBatch().setColor(255, 220, 0, 0.3f); //TODO maybe replace with actual shader for left screen part ar one point
         goldLightSprite.rotate(0.2f);
         if (goldLightIsGrowing){
             goldLightSprite.setScale(goldLightSprite.getScaleX() + goldLightGrowSpeed);
@@ -739,7 +765,7 @@ public class GameScreen implements Screen {
 
             double angle = Math.toRadians(rotation);
 
-            game.getBatch().begin();
+//            game.getBatch().begin();
             float SKITTLE_MAX_WIDTH = 200;
             float SKITTLE_MAX_HEIGHT = 200;
             Vector2 center = new Vector2(
@@ -781,7 +807,7 @@ public class GameScreen implements Screen {
                     false,
                     false
             );
-            game.getBatch().end();
+//            game.getBatch().end();
         }
     }
 
@@ -854,6 +880,9 @@ public class GameScreen implements Screen {
 //        shop.deleteSaveData();
         shop = new Shop();
         int displayedUpgrades = upgradeGroup.getChildren().size;
+        for (int i = 0; i < shop.numberOfShopGroups(); i++) {
+            shopButtons.get(i).setVisible(i < MAX_VISIBLE_LOCKED_SHOPBUTTONS);
+        }
         for (int i = 0; i < displayedUpgrades; i++) {
             upgradeGroup.removeActorAt(0, false);
         }
