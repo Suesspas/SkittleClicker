@@ -118,10 +118,10 @@ public class PreferencesScreen implements Screen {
             public boolean handle(Event event) {
                 if(stageSkinCheckBox.isChecked()) {
                     game.getPreferences().setStageSkin("iron");
-                    game.updateClawSkin();
+                    game.updateStageSkin();
                 } else {
                     game.getPreferences().setStageSkin("wood");
-                    game.updateClawSkin();
+                    game.updateStageSkin();
                 }
                 return false;
             }
@@ -149,27 +149,28 @@ public class PreferencesScreen implements Screen {
         titleLabel = new Label( "Preferences", skin );
         volumeMusicLabel = new Label( "Music Volume", skin );
         volumeSoundLabel = new Label( "Sound Volume", skin );
-        musicOnOffLabel = new Label( "Music", skin );
-        soundOnOffLabel = new Label( "Sound Effect", skin );
+        musicOnOffLabel = new Label( "Music enabled", skin );
+        soundOnOffLabel = new Label( "Sound enabled", skin );
         stageSkinLabel = new Label("Stage Skin", skin);
 
+        int padding = 10;
         table.add(titleLabel).colspan(2);
-        table.row().pad(10,0,0,10);
+        table.row().pad(padding,0,0,padding);
         table.add(volumeMusicLabel).left();
         table.add(volumeMusicSlider);
-        table.row().pad(10,0,0,10);
+        table.row().pad(padding,0,0,padding);
         table.add(musicOnOffLabel).left();
-        table.add(musicCheckbox);
-        table.row().pad(10,0,0,10);
+        table.add(musicCheckbox);//.left();
+        table.row().pad(padding,0,0,padding);
         table.add(volumeSoundLabel).left();
         table.add(soundMusicSlider);
-        table.row().pad(10,0,0,10);
+        table.row().pad(padding,0,0,padding);
         table.add(soundOnOffLabel).left();
-        table.add(soundEffectsCheckbox);
+        table.add(soundEffectsCheckbox);//.left();
+        table.row().pad(padding,0,0,padding);
+//        table.add(stageSkinLabel).left();
+//        table.add(stageSkinCheckBox);
 //        table.row().pad(10,0,0,10);
-//        table.add(clawSkinLabel).left();
-//        table.add(goldClawSkinCheckBox);
-        table.row().pad(10,0,0,10);
         table.add(backButton).colspan(2);
         table.row().pad(10,0,0,10);
         table.add(menuButton).colspan(2);

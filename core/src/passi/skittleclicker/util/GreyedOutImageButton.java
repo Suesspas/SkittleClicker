@@ -11,19 +11,7 @@ import passi.skittleclicker.objects.ShopGroup;
 public class GreyedOutImageButton extends ImageButton {
     private boolean isGreyedOut; // A flag that determines whether this should be greyed out
     private final ShaderProgram shader;
-    public GreyedOutImageButton(ImageButtonStyle style, ShaderProgram shader) {
-        super(style);
-//        addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                // When clicked, toggle the grey effect
-//                Gdx.app.log("ClickListener", "Click");
-//                setIsGreyedOut(!getIsGreyedOut());
-//            }
-//        });
-        isGreyedOut = false;
-        this.shader = shader;
-    }
+
 
     public GreyedOutImageButton(Drawable up, Drawable down, ShaderProgram shader) {
         super(up, down);
@@ -50,5 +38,9 @@ public class GreyedOutImageButton extends ImageButton {
             // If not required to be grey-out, do normal drawing
             super.draw(batch, parentAlpha);
         }
+    }
+
+    public boolean isGreyedOut() {
+        return isGreyedOut;
     }
 }

@@ -103,7 +103,7 @@ public class SkittleClickerGame extends Game {
         return this.preferences;
     }
 
-    public void updateClawSkin() {
-        gameScreen.updateClawSkin();
+    public void updateStageSkin() {
+        gameScreen.updateStageSkin();
     }
 }

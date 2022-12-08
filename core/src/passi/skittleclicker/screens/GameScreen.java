@@ -47,6 +47,7 @@ import passi.skittleclicker.objects.MiniSkittle;
 import passi.skittleclicker.objects.Shop;
 import passi.skittleclicker.objects.ShopGroup;
 import passi.skittleclicker.util.AutoFocusScrollPane;
+import passi.skittleclicker.util.FontUtil;
 import passi.skittleclicker.util.GreyedOutImageButton;
 import passi.skittleclicker.util.TextureUtil;
 
@@ -77,6 +78,7 @@ public class GameScreen implements Screen {
     private final DecimalFormat format;
 
     private final Texture skittleTexture;
+    private final Texture greySkittleTexture;
     private final Texture goldenSkittleTexture;
     private final Texture goldLightTexture;
     private final Sprite goldLightSprite;
@@ -105,6 +107,7 @@ public class GameScreen implements Screen {
     private int autoSaveTimer;
     private final Stage stage;
     private final ShaderProgram shader;
+//    private final ShaderProgram lightShader;
     private final List<ClickListener> clickListeners; //TODO add to all buttons
     private final List<GreyedOutImageButton> shopButtons;
     private final HorizontalGroup upgradeGroup = new HorizontalGroup();
@@ -116,8 +119,8 @@ public class GameScreen implements Screen {
     private Table clickerTable;
     private final Skin skin;
     private final boolean IS_DEBUG_ENABLED = false;
-    private String borderVerticalPath = "wood_border.png";
-    private String borderHorizontalPath = "wood_border_horizontal.png";
+    private String borderVerticalPath = "iron_border.png";
+    private String borderHorizontalPath = "iron_border_horizontal.png";
     private final Texture valhallaTexture = new Texture("valhalla.png");
     private final Texture valhallaFrameSheet;
     private final Animation<TextureRegion> valhallaAnimation;
@@ -139,6 +142,7 @@ public class GameScreen implements Screen {
         skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
 
         this.shader = new ShaderProgram(Gdx.files.internal("grey.vsh"), Gdx.files.internal("grey.fsh"));
+//        this.lightShader = new ShaderProgram(Gdx.files.internal("light.vsh"), Gdx.files.internal("light.fsh"));
 
         this.valhallaFrameSheet = new Texture("valhalla_framegrid.png");
         TextureRegion[] valhallaFrames = TextureUtil.getTextureRegions(valhallaFrameSheet, 4, 6);
@@ -150,7 +154,8 @@ public class GameScreen implements Screen {
         }
 
         this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
-        this.goldenSkittleTexture = new Texture(Gdx.files.internal("skittle_green.png"));
+        this.greySkittleTexture = new Texture("grey_skittle.png");
+        this.goldenSkittleTexture = TextureUtil.scaleImage("golden_skittle.png",100,100);
         this.goldLightTexture = TextureUtil.scaleImage("gold_light2.png", (int)(SKITTLE_WIDTH + (2*LIGHT_RADIUS)), (int)(SKITTLE_HEIGHT+ (2*LIGHT_RADIUS)));
         this.goldLightSprite = new Sprite(goldLightTexture);
         goldLightSprite.setOrigin(goldLightSprite.getWidth()/2,goldLightSprite.getHeight()/2);
@@ -253,6 +258,7 @@ public class GameScreen implements Screen {
 //        menuButton.setSize(50,50);
 //        menuButton.setFillParent(true);
         menuBar.add(menuButton).expand().left();
+        menuBar.add(new Image(new Texture("button_wood.png"))).expand();
         menuBar.add(prefButton).right();
 
 
@@ -284,7 +290,7 @@ public class GameScreen implements Screen {
         middleTable.row();
         middleTable.add(scrollImageTable).expand().fill();
 
-        storeTitle = new Image(new Texture("imageButtonTestError.png"));
+        storeTitle = new Image(new Texture("storetitle_placeholder.png"));
         shopTable.add(storeTitle).expand().fill().height(50).maxWidth(500);
         shopTable.row();
         shopTable.add(new Image(horizontalBorder)).expandX().fill().maxWidth(500).height(12);
@@ -299,6 +305,7 @@ public class GameScreen implements Screen {
             shopButtons.add(setupShopButton(clickListeners.get(i), "button_wood_mousie.png",
                     "button_wood_mousie2.png",500, 100, false));
             shopTable.add(shopButtons.get(i)).fill().expand().left().maxWidth(500);
+            //only show unlocked + max visible not unlocked shop group buttons
             if (shop.getShopGroups().get(i).getNumber() > 0){
                 shopButtons.get(i).setVisible(true);
             } else {
@@ -419,7 +426,8 @@ public class GameScreen implements Screen {
 
         currentFrameValhalla = valhallaAnimation.getKeyFrame(stateTime, true);
 
-        Gdx.gl.glClearColor(0.21f/* + b*/, 0.53f/* + b*/, 0.70f/* + b*/, 1);
+//        Gdx.gl.glClearColor(0.21f/* + b*/, 0.53f/* + b*/, 0.70f/* + b*/, 1);
+        Gdx.gl.glClearColor(0f, 0.1f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
@@ -485,7 +493,7 @@ public class GameScreen implements Screen {
                 yOffset += 30;
             }
 
-            //render text on shop buttons and grey out if needed
+            //render text on shop buttons and grey out/set visible if needed
             GreyedOutImageButton button = shopButtons.get(i);
             if (button.isVisible()){
                 if (shopGroup.getNumber() == 0) {
@@ -493,8 +501,20 @@ public class GameScreen implements Screen {
                 }
                 Vector2 buttonScreenCoords = getScreenCoords(button);
                 game.getFont().draw(game.getBatch(), shopGroup.getType() + " " + shopGroup.getNumber(),
-                        buttonScreenCoords.x,
-                        buttonScreenCoords.y);
+                        buttonScreenCoords.x + 100,
+                        buttonScreenCoords.y - 20);
+                if (button.isGreyedOut()){
+                    game.getBatch().draw(greySkittleTexture, buttonScreenCoords.x + 100,
+                            buttonScreenCoords.y - 70, 20,20);
+                } else {
+                    game.getBatch().draw(skittleTexture, buttonScreenCoords.x + 100,
+                            buttonScreenCoords.y - 70, 20,20);
+                }
+
+                FontUtil.KOMIKA_20.draw(game.getBatch(), shopGroup.getCurrentCost() + "",
+                        buttonScreenCoords.x + 125,
+                        buttonScreenCoords.y - 50);
+
                 button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
             } else {
                 if (visibleLockedButtonCount < MAX_VISIBLE_LOCKED_SHOPBUTTONS){
@@ -506,7 +526,10 @@ public class GameScreen implements Screen {
 //            menuBar.draw(game.getBatch(), 1); //making sure text is rendered behind menu bar,obsolete with new menu
         }
         Vector2 shopNameScreenCoords = getScreenCoords(storeTitle);
-        game.getFont().draw(game.getBatch(), "Shop", shopNameScreenCoords.x, shopNameScreenCoords.y);
+        FontUtil.KOMIKA.draw(game.getBatch(),
+                "Shop",
+                shopNameScreenCoords.x + storeTitle.getWidth()/2,
+                shopNameScreenCoords.y - storeTitle.getHeight()/3);
 
         for (Actor a:
              upgradeGroup.getChildren()) {
@@ -538,6 +561,7 @@ public class GameScreen implements Screen {
         for (int i = 0; i < clickListeners.size(); i++) {
             if(clickListeners.get(i).isOver()){
                 renderToolTip(i);
+                buttonGlow(i);
             }
         }
 
@@ -559,6 +583,7 @@ public class GameScreen implements Screen {
             shop.click();
             clicksPerSecond++;
             addSkittle();
+            animateClick();
         } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)
                 && SKITTLE_WIDTH < 200 && SKITTLE_HEIGHT < 200) {
             SKITTLE_WIDTH = 200;
@@ -573,6 +598,22 @@ public class GameScreen implements Screen {
             GoldenSkittle.clicked();
             shop.goldenActive(true);
         }
+    }
+
+    private void buttonGlow(int i) {
+//        Vector2 coords = getScreenCoords(shopButtons.get(i));
+//        game.getBatch().setShader(lightShader); // Set shader to the batch
+//        game.getBatch().begin();
+//        game.getBatch().draw(); // Draw the image with the greyed out affect
+//        game.getBatch().end();
+//        game.getBatch().setShader(null); // Remove shader from batch so that other images using the same batch won't be affected
+    }
+
+    private void animateClick() { //TODO figure out what to animate, if anything at all
+        Vector2 vector = getUnprojectedScreenCoords(0);
+        game.getBatch().begin();
+        game.getFont().draw(game.getBatch(), "+" + shop.getSkittlesPerClick(), vector.x, vector.y);
+        game.getBatch().end();
     }
 
     private void drawImageTable() {
@@ -891,7 +932,7 @@ public class GameScreen implements Screen {
         }
     }
 
-    public void updateClawSkin() {
+    public void updateStageSkin() { // doesnt really do anything because textures inside tables are not changed
         String skin = game.getPreferences().getStageSkin();
         borderVerticalPath = skin + "_border.png";
         borderHorizontalPath = skin + "_border_horizontal.png";

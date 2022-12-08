@@ -146,7 +146,11 @@ public class Shop{
         generalModifier *= modifier;
     }
     public void click() {
-        skittles += baseSkittlesPerClick * clickModifier * generalModifier *(goldenActive ? goldenModifier : 1);
+        skittles += getSkittlesPerClick();
+    }
+
+    public long getSkittlesPerClick(){
+        return Math.round(baseSkittlesPerClick * clickModifier * generalModifier *(goldenActive ? goldenModifier : 1));
     }
 
     public void deleteSaveData() { //TODO probably just call Constructor, see if it works
