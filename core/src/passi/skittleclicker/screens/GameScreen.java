@@ -370,7 +370,11 @@ public class GameScreen implements Screen {
     private GreyedOutImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath, int width, int height, boolean isUpgrade) {
         Drawable drawable = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageUpPath,  width, height)));
         Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageDownPath, width, height)));
-        GreyedOutImageButton shopButton = new GreyedOutImageButton(drawable, drawablePressed, shader);
+        Drawable drawableMouseOver = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage("button_wood_light.png", width, height)));
+//        GreyedOutImageButton shopButton = new GreyedOutImageButton(drawable, drawablePressed, shader);
+        ImageButton.ImageButtonStyle imageButtonStyle = new ImageButton.ImageButtonStyle(null,null,null, drawable, drawablePressed,null);
+        imageButtonStyle.imageOver = drawableMouseOver;
+        GreyedOutImageButton shopButton = new GreyedOutImageButton(imageButtonStyle, shader);
 
         //TODO setVisible(false) for not yet unlocked
 
@@ -510,6 +514,7 @@ public class GameScreen implements Screen {
                     game.getBatch().draw(skittleTexture, buttonScreenCoords.x + 100,
                             buttonScreenCoords.y - 70, 20,20);
                 }
+
 
                 FontUtil.KOMIKA_20.draw(game.getBatch(), shopGroup.getCurrentCost() + "",
                         buttonScreenCoords.x + 125,
