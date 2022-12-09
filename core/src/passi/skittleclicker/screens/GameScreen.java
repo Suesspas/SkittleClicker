@@ -113,7 +113,8 @@ public class GameScreen implements Screen {
     private final boolean IS_DEBUG_ENABLED = false;
     private String borderVerticalPath = "iron_border.png";
     private String borderHorizontalPath = "iron_border_horizontal.png";
-    private final Texture valhallaTexture = new Texture("valhalla.png");
+    private final Texture milkTexture;
+    private final TextureRegion milkRegion;
     private final Texture valhallaFrameSheet;
     private final Animation<TextureRegion> valhallaAnimation;
     private final List<Texture> valhallaSelections;
@@ -121,12 +122,14 @@ public class GameScreen implements Screen {
     private float stateTime;
     private TextureRegion currentFrameValhalla;
     private final int MAX_VISIBLE_LOCKED_SHOPBUTTONS = 2;
-    GlyphLayout shopTextLayout;
-    GlyphLayout skittleNumberLayout;
-    GlyphLayout skittleTextLayout;
-    GlyphLayout skittlesPerSecLayout;
-    GlyphLayout skittlesPerSecTextLayout;
-    GlyphLayout clickSkittleTextLayout;
+    private int milkFrame;
+    private final Texture darkBackground;
+    private final GlyphLayout shopTextLayout;
+    private final GlyphLayout skittleNumberLayout;
+    private final GlyphLayout skittleTextLayout;
+    private final GlyphLayout skittlesPerSecLayout;
+    private final GlyphLayout skittlesPerSecTextLayout;
+    private final GlyphLayout clickSkittleTextLayout;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -134,6 +137,7 @@ public class GameScreen implements Screen {
         this.shop = new Shop();
         this.stage = new Stage(new ScreenViewport());
         this.stateTime = 0;
+        this.milkFrame = 0;
 
         this.format = new DecimalFormat("#,###");
         // temporary until we have asset manager in
@@ -151,6 +155,9 @@ public class GameScreen implements Screen {
             valhallaSelections.add(new Texture("selections/selection" + i + ".png"));
         }
 
+        this.darkBackground = new Texture("dark_background.png");
+        this.milkTexture = new Texture("milk.png");
+        this.milkRegion = new TextureRegion(milkTexture);
         this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
         this.greySkittleTexture = new Texture("grey_skittle.png");
         this.goldenSkittleTexture = TextureUtil.scaleImage("golden_skittle.png",100,100);
@@ -180,7 +187,7 @@ public class GameScreen implements Screen {
             bgm.stop();
         }
 
-        shopTextLayout = new GlyphLayout(); //dont do this every frame! Store it as member
+        shopTextLayout = new GlyphLayout();
         shopTextLayout.setText(game.getFont(), "Shop");
         skittleNumberLayout = new GlyphLayout();
         skittleNumberLayout.setText(game.getFont(),"");
@@ -478,6 +485,8 @@ public class GameScreen implements Screen {
         skittleNumberLayout.setText(game.getFont(), format.format(shop.getSkittles()));
         skittlesPerSecLayout.setText(FontUtil.FONT_20, format.format(skittlesPerSecond)); //
 
+        game.getBatch().draw(darkBackground, 0, camera.viewportHeight - 220, clickerTable.getWidth(), 160);
+
         game.getFont().draw(game.getBatch(), skittleNumberLayout,
                 (clickerTable.getWidth() - skittleNumberLayout.width)/2,
                 camera.viewportHeight - menuBar.getHeight() - 30);
@@ -570,6 +579,7 @@ public class GameScreen implements Screen {
             button.setIsGreyedOut(shop.getUpgrade(index).getCost() > shop.getSkittles());
         }
 
+        renderMilk();
         renderClickSkittles();
 
         if (GoldenSkittle.isInState(GoldenSkittle.State.SKITTLE)){
@@ -636,6 +646,27 @@ public class GameScreen implements Screen {
             shop.goldenActive(true);
         }
     }
+
+    private void renderMilk() {
+        float milkSpeed = 1f; //if lower than 1 it causes milk to be rendered less than framerate
+        int milkX = Math.round(milkFrame * milkSpeed);
+        float relativeTableWidth = clickerTable.getWidth() / milkTexture.getWidth();
+        int MAX_MILK_FRAMES = milkTexture.getWidth();
+
+        milkFrame++;
+        milkRegion.setRegion(milkTexture.getWidth() - milkX, 0, milkX, milkTexture.getHeight());
+        game.getBatch().draw(milkRegion, 0, 0);
+        for (int i = 0; i < relativeTableWidth; i++) {
+            int width = Math.min((int)clickerTable.getWidth() - (milkTexture.getWidth()*i) - milkX, milkTexture.getWidth());
+            width = Math.max(width, 0);
+            milkRegion.setRegion(0, 0, width, milkTexture.getHeight());
+            game.getBatch().draw(milkRegion, (milkTexture.getWidth()*i) + milkX, 0);
+        }
+        if (milkX >= MAX_MILK_FRAMES){
+            milkFrame = 0;
+        }
+    }
+
     private void drawImageTable() {
         int index = 1;
         for (Actor dummyImage:
@@ -884,11 +915,11 @@ public class GameScreen implements Screen {
 
     private void renderClickSkittles(){
         clickSkittles.forEach(clickSkittle -> {
-            clickSkittleTextLayout.setText(FontUtil.FONT_20, format.format(clickSkittle.getSkittleAmount()));
+            clickSkittleTextLayout.setText(FontUtil.FONT_20, "+"+format.format(clickSkittle.getSkittleAmount()));
             renderSkittles(clickSkittle);
             FontUtil.FONT_20.draw(game.getBatch(),
-                    "+" + clickSkittle.getSkittleAmount(),
-                    clickSkittle.getOriginX() - 50,
+                    clickSkittleTextLayout,
+                    clickSkittle.getOriginX() - clickSkittleTextLayout.width/2,
                     3*clickSkittle.getOriginY() - 2*clickSkittle.getY() + 50); // change 3* and 2* for higher/lower fall speed (must stay exactly 1 apart)
             clickSkittle.update();
         });
