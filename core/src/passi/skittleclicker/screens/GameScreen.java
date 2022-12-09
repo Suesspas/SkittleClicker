@@ -26,9 +26,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
@@ -91,7 +89,7 @@ public class GameScreen implements Screen {
     public Music bgm;
     private final Sound clickSound;
 
-    private double skittlesPerSecond;
+    private long skittlesPerSecond;
     private int clickerAnimationIndex;
 
     private final Queue<MiniSkittle> miniSkittles = new ConcurrentLinkedQueue<>();
@@ -131,6 +129,11 @@ public class GameScreen implements Screen {
     private float stateTime;
     private TextureRegion currentFrameValhalla;
     private final int MAX_VISIBLE_LOCKED_SHOPBUTTONS = 2;
+    GlyphLayout shopTextLayout;
+    GlyphLayout skittleNumberLayout;
+    GlyphLayout skittleTextLayout;
+    GlyphLayout skittlesPerSecLayout;
+    GlyphLayout skittlesPerSecTextLayout;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -183,6 +186,17 @@ public class GameScreen implements Screen {
         } else {
             bgm.stop();
         }
+
+        shopTextLayout = new GlyphLayout(); //dont do this every frame! Store it as member
+        shopTextLayout.setText(game.getFont(), "Shop");
+        skittleNumberLayout = new GlyphLayout();
+        skittleNumberLayout.setText(game.getFont(),"");
+        skittleTextLayout = new GlyphLayout();
+        skittleTextLayout.setText(game.getFont(), "Skittles");
+        skittlesPerSecLayout = new GlyphLayout();
+        skittlesPerSecLayout.setText(FontUtil.FONT_20, "");
+        skittlesPerSecTextLayout = new GlyphLayout();
+        skittlesPerSecTextLayout.setText(FontUtil.FONT_20, "Skittles per second");
 
         clickSound = Gdx.audio.newSound(Gdx.files.internal("click.wav"));
 
@@ -470,22 +484,38 @@ public class GameScreen implements Screen {
         game.getBatch().begin();
 
         //draw overlay info
-        game.getFont().draw(game.getBatch(), "Skittles per second: " + skittlesPerSecond,
-                camera.position.x - (camera.viewportWidth / 2f) + 10,
-                camera.position.y - (camera.viewportHeight / 2f) + 100);
-        game.getFont().draw(game.getBatch(), "Rendered skittles: " + amountMiniSkittles,
-                camera.position.x - (camera.viewportWidth / 2f) + 10,
-                camera.position.y - (camera.viewportHeight / 2f) + 70);
-        game.getFont().draw(game.getBatch(), "FPS: " + Gdx.graphics.getFramesPerSecond(),
-                camera.position.x - (camera.viewportWidth / 2f) + 10,
-                camera.position.y - (camera.viewportHeight / 2f) + 40);
+        skittleNumberLayout.setText(game.getFont(), format.format(shop.getSkittles()));
+        skittlesPerSecLayout.setText(FontUtil.FONT_20, format.format(skittlesPerSecond)); //
 
-        game.getFont().draw(game.getBatch(), "Skittles: " + format.format(shop.getSkittles()),
-                camera.position.x - (camera.viewportWidth / 2f) + 10,
-                camera.viewportHeight - menuBar.getHeight() - 10);
-        game.getFont().draw(game.getBatch(), "Max long value " + Long.MAX_VALUE,
-                camera.position.x - (camera.viewportWidth / 2f) + 10,
-                camera.viewportHeight - menuBar.getHeight() - 40);
+        game.getFont().draw(game.getBatch(), skittleNumberLayout,
+                (clickerTable.getWidth() - skittleNumberLayout.width)/2,
+                camera.viewportHeight - menuBar.getHeight() - 30);
+
+        game.getFont().draw(game.getBatch(), skittleTextLayout,
+                (clickerTable.getWidth() - skittleTextLayout.width)/2,
+                camera.viewportHeight - menuBar.getHeight() - 60);
+
+        FontUtil.FONT_20.draw(game.getBatch(),  skittlesPerSecLayout,
+                (clickerTable.getWidth() - skittlesPerSecLayout.width)/2,
+                camera.viewportHeight - menuBar.getHeight() - 100);
+
+        FontUtil.FONT_20.draw(game.getBatch(),  skittlesPerSecTextLayout,
+                (clickerTable.getWidth() - skittlesPerSecTextLayout.width)/2,
+                camera.viewportHeight - menuBar.getHeight() - 120);
+
+
+        if (IS_DEBUG_ENABLED){
+            game.getFont().draw(game.getBatch(), "Rendered skittles: " + amountMiniSkittles,
+                    camera.position.x - (camera.viewportWidth / 2f) + 10,
+                    camera.position.y - (camera.viewportHeight / 2f) + 70);
+            game.getFont().draw(game.getBatch(), "FPS: " + Gdx.graphics.getFramesPerSecond(),
+                    camera.position.x - (camera.viewportWidth / 2f) + 10,
+                    camera.position.y - (camera.viewportHeight / 2f) + 40);
+            game.getFont().draw(game.getBatch(), "Max long value " + Long.MAX_VALUE,
+                    camera.position.x - (camera.viewportWidth / 2f) + 10,
+                    camera.viewportHeight - menuBar.getHeight() - 40);
+        }
+
 
         int yOffset = 100;
         int visibleLockedButtonCount = 0;
@@ -508,20 +538,22 @@ public class GameScreen implements Screen {
                     visibleLockedButtonCount++;
                 }
                 Vector2 buttonScreenCoords = getScreenCoords(button);
-                game.getFont().draw(game.getBatch(), shopGroup.getType() + " " + shopGroup.getNumber(),
+
+                int yPadding = 25;
+                game.getFont().draw(game.getBatch(), shop.shopgroupTypeToString(shopGroup.getType()) + " " + shopGroup.getNumber(),
                         buttonScreenCoords.x + 100,
-                        buttonScreenCoords.y - 20);
+                        buttonScreenCoords.y - yPadding);
                 if (button.isGreyedOut()){
                     game.getBatch().draw(greySkittleTexture, buttonScreenCoords.x + 100,
-                            buttonScreenCoords.y - 70, 20,20);
+                            buttonScreenCoords.y - (yPadding + 50), 20,20);
                 } else {
                     game.getBatch().draw(skittleTexture, buttonScreenCoords.x + 100,
-                            buttonScreenCoords.y - 70, 20,20);
+                            buttonScreenCoords.y - (yPadding + 50), 20,20);
                 }
 
                 FontUtil.FONT_20.draw(game.getBatch(), shopGroup.getCurrentCost() + "",
                         buttonScreenCoords.x + 125,
-                        buttonScreenCoords.y - 50);
+                        buttonScreenCoords.y - (yPadding + 32));
 
                 button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
             } else {
@@ -534,9 +566,10 @@ public class GameScreen implements Screen {
 //            menuBar.draw(game.getBatch(), 1); //making sure text is rendered behind menu bar,obsolete with new menu
         }
         Vector2 shopNameScreenCoords = getScreenCoords(storeTitle);
+
         FontUtil.FONT_30.draw(game.getBatch(),
-                "Shop",
-                shopNameScreenCoords.x + storeTitle.getWidth()/2,
+                shopTextLayout,
+                shopNameScreenCoords.x + storeTitle.getWidth()/2 - shopTextLayout.width/2,
                 shopNameScreenCoords.y - storeTitle.getHeight()/3);
 
         for (Actor a:
@@ -747,7 +780,7 @@ public class GameScreen implements Screen {
                 e.printStackTrace();
             }
             shop.updateSkittles();
-            skittlesPerSecond = shop.getSkittlesPerSecond() + clicksPerSecond;
+            skittlesPerSecond = shop.getSkittlesPerSecond() + Math.round(clicksPerSecond * shop.getClickModifier());
             addSkittle();
             clicksPerSecond = 0;
 //            for (int j = 0; j < shop.getUpgrades().size(); j++) {
@@ -764,7 +797,9 @@ public class GameScreen implements Screen {
             if (GoldenSkittle.isRespawnTime()){
                 GoldenSkittle.respawn();
                 goldenSkittleRepresentation.set(MathUtils.random(0, (2*camera.viewportWidth/3) - goldenSkittleTexture.getWidth()),
-                        MathUtils.random(0, camera.viewportHeight - goldenSkittleTexture.getHeight()), goldenSkittleTexture.getWidth(), goldenSkittleTexture.getHeight());
+                        MathUtils.random(0, camera.viewportHeight - goldenSkittleTexture.getHeight() - menuBar.getHeight()),
+                        goldenSkittleTexture.getWidth(),
+                        goldenSkittleTexture.getHeight());
             } else if (GoldenSkittle.isDespawnTime()){
                 System.out.println("failed to get golden skittle");
                 GoldenSkittle.despawn();

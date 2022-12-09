@@ -34,6 +34,7 @@ import passi.skittleclicker.util.FontUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Shop{
     private long skittles = 0;
@@ -149,6 +150,10 @@ public class Shop{
         skittles += getSkittlesPerClick();
     }
 
+    public double getClickModifier(){
+        return clickModifier;
+    }
+
     public long getSkittlesPerClick(){
         return Math.round(baseSkittlesPerClick * clickModifier * generalModifier *(goldenActive ? goldenModifier : 1));
     }
@@ -206,5 +211,8 @@ public class Shop{
 
     public void goldenActive(boolean b) {
         goldenActive = b;
+    }
+    public String shopgroupTypeToString(ShopGroup.Type type){
+        return type.name().charAt(0) + type.name().toLowerCase(Locale.ROOT).substring(1);
     }
 }
