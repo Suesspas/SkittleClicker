@@ -126,6 +126,7 @@ public class GameScreen implements Screen {
     GlyphLayout skittleTextLayout;
     GlyphLayout skittlesPerSecLayout;
     GlyphLayout skittlesPerSecTextLayout;
+    GlyphLayout clickSkittleTextLayout;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -189,6 +190,8 @@ public class GameScreen implements Screen {
         skittlesPerSecLayout.setText(FontUtil.FONT_20, "");
         skittlesPerSecTextLayout = new GlyphLayout();
         skittlesPerSecTextLayout.setText(FontUtil.FONT_20, "Skittles per second");
+        clickSkittleTextLayout = new GlyphLayout();
+        clickSkittleTextLayout.setText(FontUtil.FONT_20, "");
 
         clickSound = Gdx.audio.newSound(Gdx.files.internal("click.wav"));
 
@@ -617,7 +620,6 @@ public class GameScreen implements Screen {
             shop.click();
             clicksPerSecond++;
             addSkittle();
-            animateClick();
             addClickSkittle();
         } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)
                 && SKITTLE_WIDTH < 200 && SKITTLE_HEIGHT < 200) {
@@ -634,14 +636,6 @@ public class GameScreen implements Screen {
             shop.goldenActive(true);
         }
     }
-
-    private void animateClick() { //TODO figure out what to animate, if anything at all
-        Vector2 vector = getUnprojectedScreenCoords(0);
-        game.getBatch().begin();
-        game.getFont().draw(game.getBatch(), "+" + shop.getSkittlesPerClick(), vector.x, vector.y);
-        game.getBatch().end();
-    }
-
     private void drawImageTable() {
         int index = 1;
         for (Actor dummyImage:
@@ -890,7 +884,12 @@ public class GameScreen implements Screen {
 
     private void renderClickSkittles(){
         clickSkittles.forEach(clickSkittle -> {
+            clickSkittleTextLayout.setText(FontUtil.FONT_20, format.format(clickSkittle.getSkittleAmount()));
             renderSkittles(clickSkittle);
+            FontUtil.FONT_20.draw(game.getBatch(),
+                    "+" + clickSkittle.getSkittleAmount(),
+                    clickSkittle.getOriginX() - 50,
+                    3*clickSkittle.getOriginY() - 2*clickSkittle.getY() + 50); // change 3* and 2* for higher/lower fall speed (must stay exactly 1 apart)
             clickSkittle.update();
         });
     }
@@ -906,8 +905,9 @@ public class GameScreen implements Screen {
                 break;
             default: miniSkittleTexture = skittleTexture;
         }
+        float xPos = miniSkittle instanceof ClickSkittle ? miniSkittle.getX() : miniSkittle.getX()/camera.viewportWidth*clickerTable.getWidth();
         game.getBatch().draw(miniSkittleTexture,
-                miniSkittle.getX()/camera.viewportWidth*clickerTable.getWidth(),
+                xPos,
                 miniSkittle.getY(),
                 MiniSkittle.WIDTH, MiniSkittle.HEIGHT);
     }
