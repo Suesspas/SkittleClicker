@@ -41,10 +41,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.data.Data;
 import passi.skittleclicker.fixes.CustomShapeRenderer;
-import passi.skittleclicker.objects.GoldenSkittle;
-import passi.skittleclicker.objects.MiniSkittle;
-import passi.skittleclicker.objects.Shop;
-import passi.skittleclicker.objects.ShopGroup;
+import passi.skittleclicker.objects.*;
 import passi.skittleclicker.util.AutoFocusScrollPane;
 import passi.skittleclicker.util.FontUtil;
 import passi.skittleclicker.util.GreyedOutImageButton;
@@ -93,11 +90,7 @@ public class GameScreen implements Screen {
     private int clickerAnimationIndex;
 
     private final Queue<MiniSkittle> miniSkittles = new ConcurrentLinkedQueue<>();
-    private int amountMiniSkittles;
-    private static final int MINISKITTLE_WIDTH = 25;
-    private static final int MINISKITTLE_HEIGHT = 25;
-    private static final float MINISKITTLE_SPEED = 0.4f;//0.8f;
-    private static final float MINISKITTLE_ROTATION_SPEED = 0.25f;
+    private final Queue<ClickSkittle> clickSkittles = new ConcurrentLinkedQueue<>();
 
     private float generalRotation = 0;
 
@@ -113,7 +106,6 @@ public class GameScreen implements Screen {
     private final HorizontalGroup upgradeGroup = new HorizontalGroup();
     private Table menuBar;
     private final List<Image> dummyImageList;
-    private final List<Actor> imageTableList;
     private final List<Image> borderList;
     private Image storeTitle;
     private Table clickerTable;
@@ -208,7 +200,6 @@ public class GameScreen implements Screen {
 
         this.shopButtons = new ArrayList<>();
         this.dummyImageList = new ArrayList<>();
-        this.imageTableList = new ArrayList<>();
         this.borderList= new ArrayList<>();
 
         this.autoSaveTimer = 58;
@@ -393,12 +384,9 @@ public class GameScreen implements Screen {
         ImageButton.ImageButtonStyle imageButtonStyle = new ImageButton.ImageButtonStyle(null,null,null, drawable, drawablePressed,null);
         imageButtonStyle.imageOver = drawableMouseOver;
         GreyedOutImageButton shopButton = new GreyedOutImageButton(imageButtonStyle, shader);
-
-        //TODO setVisible(false) for not yet unlocked
-
         shopButton.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) { //TODO make mapping instead of implicit pos in list
+            public void changed(ChangeEvent event, Actor actor) {
                 int index = shopButtons.indexOf(shopButton);
                 if (index < shop.numberOfShopGroups()){
                     ShopGroup shopGroup = shop.getShopGroups().get(index);
@@ -463,7 +451,7 @@ public class GameScreen implements Screen {
             game.getBatch().setColor(Color.WHITE);
         }
 
-        renderSkittles();
+        renderMiniSkittles();
         renderBigSkittle();
         renderClicker();
 
@@ -505,7 +493,7 @@ public class GameScreen implements Screen {
 
 
         if (IS_DEBUG_ENABLED){
-            game.getFont().draw(game.getBatch(), "Rendered skittles: " + amountMiniSkittles,
+            game.getFont().draw(game.getBatch(), "Rendered skittles: " + miniSkittles.size(),
                     camera.position.x - (camera.viewportWidth / 2f) + 10,
                     camera.position.y - (camera.viewportHeight / 2f) + 70);
             game.getFont().draw(game.getBatch(), "FPS: " + Gdx.graphics.getFramesPerSecond(),
@@ -579,6 +567,8 @@ public class GameScreen implements Screen {
             button.setIsGreyedOut(shop.getUpgrade(index).getCost() > shop.getSkittles());
         }
 
+        renderClickSkittles();
+
         if (GoldenSkittle.isInState(GoldenSkittle.State.SKITTLE)){
             game.getBatch().draw(goldenSkittleTexture, goldenSkittleRepresentation.x, goldenSkittleRepresentation.y,
                     goldenSkittleRepresentation.width, goldenSkittleRepresentation.height);
@@ -602,16 +592,19 @@ public class GameScreen implements Screen {
         for (int i = 0; i < clickListeners.size(); i++) {
             if(clickListeners.get(i).isOver()){
                 renderToolTip(i);
-                buttonGlow(i);
             }
         }
 
-
         // Remove disappeared skittles
         miniSkittles.forEach(miniSkittle -> {
-            if (miniSkittle.getY() <= -MINISKITTLE_HEIGHT) {
+            if (miniSkittle.getY() <= -MiniSkittle.HEIGHT) {
                 miniSkittles.remove(miniSkittle);
-                amountMiniSkittles--;
+            }
+        });
+
+        clickSkittles.forEach(clickSkittle -> {
+            if (!clickSkittle.isAlive()) {
+                clickSkittles.remove(clickSkittle);
             }
         });
 
@@ -625,6 +618,7 @@ public class GameScreen implements Screen {
             clicksPerSecond++;
             addSkittle();
             animateClick();
+            addClickSkittle();
         } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)
                 && SKITTLE_WIDTH < 200 && SKITTLE_HEIGHT < 200) {
             SKITTLE_WIDTH = 200;
@@ -639,15 +633,6 @@ public class GameScreen implements Screen {
             GoldenSkittle.clicked();
             shop.goldenActive(true);
         }
-    }
-
-    private void buttonGlow(int i) {
-//        Vector2 coords = getScreenCoords(shopButtons.get(i));
-//        game.getBatch().setShader(lightShader); // Set shader to the batch
-//        game.getBatch().begin();
-//        game.getBatch().draw(); // Draw the image with the greyed out affect
-//        game.getBatch().end();
-//        game.getBatch().setShader(null); // Remove shader from batch so that other images using the same batch won't be affected
     }
 
     private void animateClick() { //TODO figure out what to animate, if anything at all
@@ -895,35 +880,57 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void renderSkittles() {
+    private void renderMiniSkittles() {
         miniSkittles.forEach(miniSkittle -> {
-            Texture miniSkittleTexture;
-            switch (miniSkittle.getColor()){
-                case RED: miniSkittleTexture = miniSkittleTextures.get(MiniSkittle.Color.RED.ordinal());
-                    break;
-                case GREEN: miniSkittleTexture = miniSkittleTextures.get(MiniSkittle.Color.GREEN.ordinal());
-                    break;
-                case PURPLE: miniSkittleTexture = miniSkittleTextures.get(MiniSkittle.Color.PURPLE.ordinal());
-                    break;
-                default: miniSkittleTexture = skittleTexture;
-            }
-            game.getBatch().draw(miniSkittleTexture,
-                    miniSkittle.getX_relativePos()*clickerTable.getWidth(),
-                    miniSkittle.getY(),
-                    MINISKITTLE_WIDTH, MINISKITTLE_HEIGHT);
-            miniSkittle.setY(miniSkittle.getY() - MINISKITTLE_SPEED);
-            miniSkittle.setRotation((miniSkittle.getRotation() + MINISKITTLE_ROTATION_SPEED) % 360.0f);
+            renderSkittles(miniSkittle);
+            miniSkittle.setY(miniSkittle.getY() - MiniSkittle.SPEED);
+            miniSkittle.setRotation((miniSkittle.getRotation() + MiniSkittle.ROTATION_SPEED) % 360.0f);
         });
     }
 
+    private void renderClickSkittles(){
+        clickSkittles.forEach(clickSkittle -> {
+            renderSkittles(clickSkittle);
+            clickSkittle.update();
+        });
+    }
+
+    private void renderSkittles(MiniSkittle miniSkittle) {
+        Texture miniSkittleTexture;
+        switch (miniSkittle.getColor()){
+            case RED: miniSkittleTexture = miniSkittleTextures.get(MiniSkittle.Color.RED.ordinal());
+                break;
+            case GREEN: miniSkittleTexture = miniSkittleTextures.get(MiniSkittle.Color.GREEN.ordinal());
+                break;
+            case PURPLE: miniSkittleTexture = miniSkittleTextures.get(MiniSkittle.Color.PURPLE.ordinal());
+                break;
+            default: miniSkittleTexture = skittleTexture;
+        }
+        game.getBatch().draw(miniSkittleTexture,
+                miniSkittle.getX()/camera.viewportWidth*clickerTable.getWidth(),
+                miniSkittle.getY(),
+                MiniSkittle.WIDTH, MiniSkittle.HEIGHT);
+    }
+
     private void addSkittle() {
-        float MINISKITTLE_THRESHOLD = -1; //just in case the skittles bring bad performance
-        if (MINISKITTLE_THRESHOLD == -1 || amountMiniSkittles <= MINISKITTLE_THRESHOLD) {
-            miniSkittles.add(new MiniSkittle(MathUtils.random(0, camera.viewportWidth - MINISKITTLE_WIDTH)/camera.viewportWidth,
-                    camera.viewportHeight + MINISKITTLE_HEIGHT,
+        int MINISKITTLE_THRESHOLD = -1; //just in case the skittles bring bad performance
+        if (MINISKITTLE_THRESHOLD == -1 || miniSkittles.size() <= MINISKITTLE_THRESHOLD) {
+            miniSkittles.add(new MiniSkittle(MathUtils.random(0, camera.viewportWidth - MiniSkittle.WIDTH),
+                    camera.viewportHeight + MiniSkittle.HEIGHT,
                     MathUtils.random(0.0f, 360.0f),
                     MathUtils.random(0, MiniSkittle.Color.values().length-1)));
-            amountMiniSkittles++;
+        }
+    }
+
+    private void addClickSkittle() {
+        int CLICKSKITTLE_THRESHOLD = -1; //just in case the skittles bring bad performance
+        if (CLICKSKITTLE_THRESHOLD == -1 || clickSkittles.size() <= CLICKSKITTLE_THRESHOLD) {
+            Vector2 pos = getUnprojectedScreenCoords(0);
+            clickSkittles.add(new ClickSkittle(pos.x,
+                    pos.y,
+                    MathUtils.random(0.0f, 360.0f),
+                    MathUtils.random(0, MiniSkittle.Color.values().length-1),
+                    shop.getSkittlesPerClick()));
         }
     }
 
