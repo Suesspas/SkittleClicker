@@ -124,6 +124,7 @@ public class GameScreen implements Screen {
     private final int MAX_VISIBLE_LOCKED_SHOPBUTTONS = 2;
     private int milkFrame;
     private final Texture darkBackground;
+    private final Texture goldGlow;
     private final GlyphLayout shopTextLayout;
     private final GlyphLayout skittleNumberLayout;
     private final GlyphLayout skittleTextLayout;
@@ -155,13 +156,14 @@ public class GameScreen implements Screen {
             valhallaSelections.add(new Texture("selections/selection" + i + ".png"));
         }
 
+        this.goldGlow = new Texture("gold_glow2.png");
         this.darkBackground = new Texture("dark_background.png");
         this.milkTexture = new Texture("milk.png");
         this.milkRegion = new TextureRegion(milkTexture);
         this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
         this.greySkittleTexture = new Texture("grey_skittle.png");
         this.goldenSkittleTexture = TextureUtil.scaleImage("golden_skittle.png",100,100);
-        this.goldLightTexture = TextureUtil.scaleImage("gold_light2.png", (int)(SKITTLE_WIDTH + (2*LIGHT_RADIUS)), (int)(SKITTLE_HEIGHT+ (2*LIGHT_RADIUS)));
+        this.goldLightTexture = TextureUtil.scaleImage("gold_light4.png", (int)(SKITTLE_WIDTH + (2*LIGHT_RADIUS)), (int)(SKITTLE_HEIGHT+ (2*LIGHT_RADIUS)));
         this.goldLightSprite = new Sprite(goldLightTexture);
         goldLightSprite.setOrigin(goldLightSprite.getWidth()/2,goldLightSprite.getHeight()/2);
 //        this.skittleTexture = scaleImage("big_skittle.png", 100, 100);
@@ -585,6 +587,8 @@ public class GameScreen implements Screen {
         if (GoldenSkittle.isInState(GoldenSkittle.State.SKITTLE)){
             game.getBatch().draw(goldenSkittleTexture, goldenSkittleRepresentation.x, goldenSkittleRepresentation.y,
                     goldenSkittleRepresentation.width, goldenSkittleRepresentation.height);
+        } else if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)) {
+            game.getBatch().draw(goldGlow, 0, 0, clickerTable.getWidth(), clickerTable.getHeight());
         }
 
         game.getBatch().end();
@@ -655,6 +659,9 @@ public class GameScreen implements Screen {
 
         milkFrame++;
         milkRegion.setRegion(milkTexture.getWidth() - milkX, 0, milkX, milkTexture.getHeight());
+        if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){ //TODO set color according to milk upgrades
+            game.getBatch().setColor(1,0,0,0.9f);
+        }
         game.getBatch().draw(milkRegion, 0, 0);
         for (int i = 0; i < relativeTableWidth; i++) {
             int width = Math.min((int)clickerTable.getWidth() - (milkTexture.getWidth()*i) - milkX, milkTexture.getWidth());
@@ -665,6 +672,7 @@ public class GameScreen implements Screen {
         if (milkX >= MAX_MILK_FRAMES){
             milkFrame = 0;
         }
+        game.getBatch().setColor(Color.WHITE);
     }
 
     private void drawImageTable() {
@@ -957,8 +965,8 @@ public class GameScreen implements Screen {
         int CLICKSKITTLE_THRESHOLD = -1; //just in case the skittles bring bad performance
         if (CLICKSKITTLE_THRESHOLD == -1 || clickSkittles.size() <= CLICKSKITTLE_THRESHOLD) {
             Vector2 pos = getUnprojectedScreenCoords(0);
-            clickSkittles.add(new ClickSkittle(pos.x,
-                    pos.y,
+            clickSkittles.add(new ClickSkittle(pos.x - ClickSkittle.WIDTH/2f,
+                    pos.y - ClickSkittle.HEIGHT/2f,
                     MathUtils.random(0.0f, 360.0f),
                     MathUtils.random(0, MiniSkittle.Color.values().length-1),
                     shop.getSkittlesPerClick()));
