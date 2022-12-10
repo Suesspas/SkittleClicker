@@ -24,7 +24,6 @@ public class SkittleClickerGame extends Game {
 
     public MainMenuScreen menuScreen;
     public GameScreen gameScreen;
-    public SettingsScreen settingsScreen;
     public PreferencesScreen preferencesScreen;
     private AppPreferences preferences;
 

@@ -78,7 +78,7 @@ public class CreditsScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.setScreen(new MenuScreen(game));
+            game.setScreen(new MainMenuScreen(game));
         } else if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             Vector3 vec = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(vec);

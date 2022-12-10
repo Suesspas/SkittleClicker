@@ -125,12 +125,15 @@ public class GameScreen implements Screen {
     private int milkFrame;
     private final Texture darkBackground;
     private final Texture goldGlow;
+    private final Texture overlayTexture;
     private final GlyphLayout shopTextLayout;
     private final GlyphLayout skittleNumberLayout;
     private final GlyphLayout skittleTextLayout;
     private final GlyphLayout skittlesPerSecLayout;
     private final GlyphLayout skittlesPerSecTextLayout;
     private final GlyphLayout clickSkittleTextLayout;
+    private final GlyphLayout tooltipTextLayout;
+    private final GlyphLayout autosaveTextLayout;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -168,9 +171,10 @@ public class GameScreen implements Screen {
         goldLightSprite.setOrigin(goldLightSprite.getWidth()/2,goldLightSprite.getHeight()/2);
 //        this.skittleTexture = scaleImage("big_skittle.png", 100, 100);
         this.miniSkittleTextures = new ArrayList<>();
-        miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_red.png")));
-        miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_green.png")));
-        miniSkittleTextures.add(new Texture(Gdx.files.internal("skittle_purple.png")));
+        miniSkittleTextures.add(new Texture("skittle_red.png"));
+        miniSkittleTextures.add(new Texture("skittle_green.png"));
+        miniSkittleTextures.add(new Texture("skittle_purple.png"));
+        this.overlayTexture = new Texture("grey_button_iron.png");
 
         this.clickerTexture = new Texture(Gdx.files.internal("pointer.png"));
 //        this.clickerTexture = scaleImage("pointer.png", 3, 3);
@@ -192,15 +196,15 @@ public class GameScreen implements Screen {
         shopTextLayout = new GlyphLayout();
         shopTextLayout.setText(game.getFont(), "Shop");
         skittleNumberLayout = new GlyphLayout();
-        skittleNumberLayout.setText(game.getFont(),"");
         skittleTextLayout = new GlyphLayout();
         skittleTextLayout.setText(game.getFont(), "Skittles");
         skittlesPerSecLayout = new GlyphLayout();
-        skittlesPerSecLayout.setText(FontUtil.FONT_20, "");
         skittlesPerSecTextLayout = new GlyphLayout();
         skittlesPerSecTextLayout.setText(FontUtil.FONT_20, "Skittles per second");
         clickSkittleTextLayout = new GlyphLayout();
-        clickSkittleTextLayout.setText(FontUtil.FONT_20, "");
+        tooltipTextLayout = new GlyphLayout();
+        autosaveTextLayout = new GlyphLayout();
+        autosaveTextLayout.setText(FontUtil.FONT_20, "Autosaved.");
 
         clickSound = Gdx.audio.newSound(Gdx.files.internal("click.wav"));
 
@@ -279,9 +283,8 @@ public class GameScreen implements Screen {
 //        menuButton.setSize(50,50);
 //        menuButton.setFillParent(true);
         menuBar.add(menuButton).expand().left();
-        menuBar.add(new Image(new Texture("grey_button_iron.png"))).expand();
+        menuBar.add(new Image(overlayTexture)).expand();
         menuBar.add(prefButton).right();
-
 
         //add contents to tables
         Texture horizontalBorder = new Texture(borderHorizontalPath);//scaleImage(borderHorizontalPath, 390, 12);
@@ -450,12 +453,12 @@ public class GameScreen implements Screen {
 
 //        Gdx.gl.glClearColor(0.21f/* + b*/, 0.53f/* + b*/, 0.70f/* + b*/, 1);
         Gdx.gl.glClearColor(0f, 0.1f, 0.2f, 1);
+//        Gdx.gl.glClearColor(0.47f, 0.73f, 0.55f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
         game.getBatch().setProjectionMatrix(camera.combined);
 
-        // Render mini skittles and tooltips
         game.getBatch().begin();
         if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){
             renderGoldLight();
@@ -595,13 +598,13 @@ public class GameScreen implements Screen {
 
 
         if (autoSaveTimer < 2){
-            int width = 130;
-            int height = 50;
-            float x = (camera.viewportWidth/2) - ((float) width/2);
-            float y = 10;
-            renderRoundRect(x, y, width, height);
+            int x = Math.round((camera.viewportWidth - autosaveTextLayout.width)/2);
+            int y = 15;
+            int padding = 10;
+//            renderRoundRect(x, y, autosaveTextLayout.width, autosaveTextLayout.height);
             game.getBatch().begin();
-            game.getFont().draw(game.getBatch(), "AUTOSAVED", x, y+height);
+            game.getBatch().draw(overlayTexture, x- padding, y - padding, autosaveTextLayout.width + 2*padding, y + autosaveTextLayout.height + padding);
+            FontUtil.FONT_20.draw(game.getBatch(), autosaveTextLayout, x, y + autosaveTextLayout.height);
             game.getBatch().end();
         }
 
@@ -753,14 +756,7 @@ public class GameScreen implements Screen {
     }
 
     private void renderToolTip(int i) {
-        int width = 100;
-        int height = 50;
-        float x = camera.viewportWidth - shopButtons.get(0).getWidth() - width;
-        float y = Math.max(0, getUnprojectedScreenCoords(0).y - height);
-        renderRoundRect(x, y, width, height);
-
         String str;
-        game.getBatch().begin();
         if (i < shop.numberOfShopGroups()){
             ShopGroup shopGroup = shop.getShopGroups().get(i);
             str = shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER() + " [Cost: "+ shopGroup.getCurrentCost()+"]";
@@ -769,11 +765,20 @@ public class GameScreen implements Screen {
             int upgradeIndex = i - shop.numberOfShopGroups();
             str = "Upgrade " + upgradeIndex + " [Cost: "+ shop.getUpgrade(upgradeIndex).getCost() +"]";
         }
-        game.getFont().draw(game.getBatch(), str, x, y+height);
+        tooltipTextLayout.setText(FontUtil.FONT_20, str);
+        float padding = 50;
+        float width = tooltipTextLayout.width;
+        float height = tooltipTextLayout.height;
+        float x = camera.viewportWidth - shopButtons.get(0).getWidth() - width;
+        float y = Math.max(2*padding, getUnprojectedScreenCoords(0).y - height);
+//        renderRoundRect(x - 2*padding, y - 2*padding, width + 2*padding, height + 2*padding);
+        game.getBatch().begin();
+        game.getBatch().draw(overlayTexture, x - 2*padding, y - 2*padding, width + 2*padding, height + 2*padding);
+        FontUtil.FONT_20.draw(game.getBatch(), tooltipTextLayout, x - padding, y + height - 30);
         game.getBatch().end();
     }
 
-    private void renderRoundRect(float x, float y, int width, int height) {
+    private void renderRoundRect(float x, float y, float width, float height) {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.setProjectionMatrix(camera.combined);
