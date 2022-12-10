@@ -1,7 +1,5 @@
 package passi.skittleclicker.objects;
 
-import java.util.List;
-
 public class ShopGroup {
 
     enum Type {
@@ -23,19 +21,21 @@ public class ShopGroup {
     };
     private final Type type;
     private long number;
-    private long cost;
+    private final long baseCost;
     private final long MAX_NUMBER;
     private final long baseSkittles;
     private double modifier;
+    private final String text;
 
 
-    public ShopGroup(Type type, long baseSkittles, long MAX_NUMBER, long cost) {
+    public ShopGroup(Type type, long baseSkittles, long MAX_NUMBER, long baseCost, String text) {
         this.type = type;
         this.number = 0;
         this.MAX_NUMBER = MAX_NUMBER;
-        this.cost = cost;
+        this.baseCost = baseCost;
         this.baseSkittles = baseSkittles;
         this.modifier = 1;
+        this.text = text;
     }
 
     public long getSkittlesPerSecond(){
@@ -59,7 +59,7 @@ public class ShopGroup {
     }
 
     public long getCurrentCost() {
-        return cost * (number+1);
+        return baseCost * (number+1);
     }
 
     public long getMAX_NUMBER() {
@@ -75,5 +75,8 @@ public class ShopGroup {
     }
     public void upgradeProgress(){
 
+    }
+    public String getText() {
+        return text;
     }
 }

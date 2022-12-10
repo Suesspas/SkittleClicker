@@ -24,6 +24,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
+import java.awt.*;
+import java.awt.font.TextAttribute;
+import java.util.Map;
+
 public class FontUtil {
 
     public static BitmapFont FONT_30 = null;
@@ -62,5 +66,6 @@ public class FontUtil {
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 8;
         FONT_8 = generator.generateFont(parameter);
+
     }
 }

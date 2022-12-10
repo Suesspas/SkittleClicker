@@ -23,6 +23,7 @@ package passi.skittleclicker.data;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter;
+import passi.skittleclicker.objects.ShopGroup;
 import passi.skittleclicker.objects.Upgrade;
 
 import java.io.*;
@@ -33,7 +34,6 @@ import java.util.List;
 public class Data {
 
     private static File file = new File(String.format("%s//SkittleClicker//data.json", System.getenv("APPDATA")));;
-
     public static List<Object> loadProgress(int numberOfShopGroups, int numberOfUpgrades) {
         List<Object> objects = new ArrayList<>();
         if (!file.exists()) {

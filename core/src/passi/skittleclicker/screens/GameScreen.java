@@ -750,8 +750,8 @@ public class GameScreen implements Screen {
         String str;
         if (i < shop.numberOfShopGroups()){
             ShopGroup shopGroup = shop.getShopGroups().get(i);
-            str = shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER() + " [Cost: "+ shopGroup.getCurrentCost()+"]";
-
+            str = shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
+                    + " [Cost: "+ shopGroup.getCurrentCost() +"]\n" + shopGroup.getText();
         }  else {
             int upgradeIndex = i - shop.numberOfShopGroups();
             str = "Upgrade " + upgradeIndex + " [Cost: "+ shop.getUpgrade(upgradeIndex).getCost() +"]";

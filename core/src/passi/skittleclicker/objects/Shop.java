@@ -59,10 +59,13 @@ public class Shop{
             upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * (i+1), 2 + i));
             upgrades.add(new Upgrade(ShopGroup.Type.FACTORY,"Upgrade " + i, 100 * (i+1), 2 + i));
         }
-        ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5);
-        ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100);
-        ShopGroup bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, 20, 250);
-        ShopGroup factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, 20, 1000);
+        ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5, "Clicker Text");
+        ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100, """
+                A certain Cat with a Knight Title forces
+                I mean politely asks the local neighbourhood grandmas
+                to help with the skittles production""");
+        ShopGroup bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, 20, 250, "Bakery Text");
+        ShopGroup factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, 20, 1000, "Factory Text");
 
         //Order in which shopGroups are added has to be the same as order of buttons #jank
         shopGroups = new ArrayList<>();
@@ -72,7 +75,7 @@ public class Shop{
         shopGroups.add(factoryShopGroup);
         //placeholders
         for (int i = 7; i < ShopGroup.Type.values().length; i++) {
-            shopGroups.add(new ShopGroup(ShopGroup.Type.values()[i], 100L *i, 42, 100L *i));
+            shopGroups.add(new ShopGroup(ShopGroup.Type.values()[i], 100L *i, 42, 100L *i, "Clicker Text"));
         }
         this.goldenActive = false;
     }
