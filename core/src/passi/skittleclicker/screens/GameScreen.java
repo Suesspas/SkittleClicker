@@ -42,10 +42,7 @@ import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.data.Data;
 import passi.skittleclicker.fixes.CustomShapeRenderer;
 import passi.skittleclicker.objects.*;
-import passi.skittleclicker.util.AutoFocusScrollPane;
-import passi.skittleclicker.util.FontUtil;
-import passi.skittleclicker.util.GreyedOutImageButton;
-import passi.skittleclicker.util.TextureUtil;
+import passi.skittleclicker.util.*;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -542,7 +539,7 @@ public class GameScreen implements Screen {
                 if (shopGroup.getNumber() == 0) {
                     visibleLockedButtonCount++;
                 }
-                Vector2 buttonScreenCoords = getScreenCoords(button);
+                Vector2 buttonScreenCoords = ScreenUtil.getScreenCoords(button, camera);
 
                 int yPadding = 25;
                 game.getFont().draw(game.getBatch(), shop.shopgroupTypeToString(shopGroup.getType()) + " " + shopGroup.getNumber(),
@@ -570,7 +567,7 @@ public class GameScreen implements Screen {
             }
 //            menuBar.draw(game.getBatch(), 1); //making sure text is rendered behind menu bar,obsolete with new menu
         }
-        Vector2 shopNameScreenCoords = getScreenCoords(storeTitle);
+        Vector2 shopNameScreenCoords = ScreenUtil.getScreenCoords(storeTitle, camera);
 
         FontUtil.FONT_30.draw(game.getBatch(),
                 shopTextLayout,
@@ -696,7 +693,7 @@ public class GameScreen implements Screen {
 
     private void drawActor(Actor a, Texture texture) {
         //Needed for changing number of rendered images, because you cant just replace table images
-        Vector2 borderScreenCoords = getScreenCoords(a);
+        Vector2 borderScreenCoords = ScreenUtil.getScreenCoords(a, camera);
         if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
             game.getBatch().draw(texture,
                     borderScreenCoords.x,
@@ -708,7 +705,7 @@ public class GameScreen implements Screen {
 
     private void drawAnimation(Actor a, TextureRegion textureRegion) {
         //Needed for changing number of rendered images, because you cant just replace table images
-        Vector2 borderScreenCoords = getScreenCoords(a);
+        Vector2 borderScreenCoords = ScreenUtil.getScreenCoords(a, camera);
         if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
             game.getBatch().draw(textureRegion,
                     borderScreenCoords.x,
@@ -749,12 +746,6 @@ public class GameScreen implements Screen {
 //        game.getBatch().setColor(Color.WHITE);
     }
 
-    private Vector2 getScreenCoords(Actor actor){
-        Vector2 vector = actor.localToScreenCoordinates(new Vector2(0, camera.viewportHeight + actor.getHeight()));
-        vector.y = -vector.y;
-        return vector;
-    }
-
     private void renderToolTip(int i) {
         String str;
         if (i < shop.numberOfShopGroups()){
@@ -778,16 +769,16 @@ public class GameScreen implements Screen {
         game.getBatch().end();
     }
 
-    private void renderRoundRect(float x, float y, float width, float height) {
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(155 / 255f, 155 / 255f, 155 / 255f, 1.0f);
-        shapeRenderer.roundedRect(x, y, width, height, 10);
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
-    }
+//    private void renderRoundRect(float x, float y, float width, float height) {
+//        Gdx.gl.glEnable(GL20.GL_BLEND);
+//        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+//        shapeRenderer.setProjectionMatrix(camera.combined);
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//        shapeRenderer.setColor(155 / 255f, 155 / 255f, 155 / 255f, 1.0f);
+//        shapeRenderer.roundedRect(x, y, width, height, 10);
+//        shapeRenderer.end();
+//        Gdx.gl.glDisable(GL20.GL_BLEND);
+//    }
 
     private void loadDataForShop() {
         List<Object> objects = Data.loadProgress(shop.numberOfShopGroups(), shop.numberOfUpgrades());
