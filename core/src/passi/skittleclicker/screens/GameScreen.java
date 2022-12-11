@@ -471,6 +471,7 @@ public class GameScreen implements Screen {
             game.getBatch().setColor(Color.WHITE);
         }
 
+        renderMilk();
         drawImageTable();
         for (Actor a:
              borderList) {
@@ -581,7 +582,7 @@ public class GameScreen implements Screen {
             button.setIsGreyedOut(shop.getUpgrade(index).getCost() > shop.getSkittles());
         }
 
-        renderMilk();
+//        renderMilk();
         renderClickSkittles();
 
         if (GoldenSkittle.isInState(GoldenSkittle.State.SKITTLE)){
@@ -658,7 +659,7 @@ public class GameScreen implements Screen {
         int MAX_MILK_FRAMES = milkTexture.getWidth();
 
         milkFrame++;
-        milkRegion.setRegion(milkTexture.getWidth() - milkX, 0, milkX, milkTexture.getHeight());
+        milkRegion.setRegion(milkTexture.getWidth() - milkX, 0, (int)Math.min(clickerTable.getWidth(), milkX), milkTexture.getHeight());
         if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){ //TODO set color according to milk upgrades
             game.getBatch().setColor(1,0,0,0.9f);
         }
