@@ -818,7 +818,6 @@ public class GameScreen implements Screen {
     private void loadDataForShop() {
         List<Object> objects = Data.loadProgress(shop.numberOfShopGroups(), shop.numberOfUpgrades());
         shop.setupShop(objects);
-        //TODO load upgrades
     }
 
     private void scheduleService(ScheduledExecutorService service) {

@@ -49,13 +49,13 @@ public class Data {
             JsonReader reader = new JsonReader();
             JsonValue value = reader.parse(Files.newInputStream(file.toPath()));
             objects.add(value.get("skittles") == null ? 0 : value.get("skittles").asLong());
-            objects.add(value.get("clickers") == null ? 0 : value.get("clickers").asLong());
-            objects.add(value.get("grandmas") == null ? 0 : value.get("grandmas").asLong());
-            objects.add(value.get("bakeries") == null ? 0 : value.get("bakeries").asLong());
-            objects.add(value.get("factories") == null ? 0 : value.get("factories").asLong());
+//            objects.add(value.get("clickers") == null ? 0 : value.get("clickers").asLong());
+//            objects.add(value.get("grandmas") == null ? 0 : value.get("grandmas").asLong());
+//            objects.add(value.get("bakeries") == null ? 0 : value.get("bakeries").asLong());
+//            objects.add(value.get("factories") == null ? 0 : value.get("factories").asLong());
 
-            for (int i = 5; i <= numberOfShopGroups; i++) {
-                objects.add(value.get("placeholder" + (i-4)) == null ? 0 : value.get("placeholder" + (i-4)).asLong());
+            for (int i = 0; i < numberOfShopGroups; i++) {
+                objects.add(value.get("sg" + i) == null ? 0 : value.get("sg" + i).asLong());
             }
 
             for (int i = 0; i < numberOfUpgrades; i++) {
@@ -78,13 +78,13 @@ public class Data {
 
 
             JsonValue value = new JsonValue(JsonValue.ValueType.object);
-            value.addChild("skittles", new JsonValue(skittles));
-            value.addChild("clickers", new JsonValue(shopGroups.get(0)));
-            value.addChild("grandmas", new JsonValue(shopGroups.get(1)));
-            value.addChild("bakeries", new JsonValue(shopGroups.get(2)));
-            value.addChild("factories", new JsonValue(shopGroups.get(3)));
-            for (int i = 4; i < shopGroups.size(); i++) {
-                value.addChild("placeholder" + (i-3), new JsonValue(shopGroups.get(i)));
+//            value.addChild("skittles", new JsonValue(skittles));
+//            value.addChild("clickers", new JsonValue(shopGroups.get(0)));
+//            value.addChild("grandmas", new JsonValue(shopGroups.get(1)));
+//            value.addChild("bakeries", new JsonValue(shopGroups.get(2)));
+//            value.addChild("factories", new JsonValue(shopGroups.get(3)));
+            for (int i = 0; i < shopGroups.size(); i++) {
+                value.addChild("sg" + i, new JsonValue(shopGroups.get(i)));
             }
 
             int i = 0;
