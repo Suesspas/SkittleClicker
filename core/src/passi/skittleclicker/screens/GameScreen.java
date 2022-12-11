@@ -173,7 +173,7 @@ public class GameScreen implements Screen {
         miniSkittleTextures.add(new Texture("skittle_purple.png"));
         this.overlayTexture = new Texture("grey_button_iron.png");
 
-        this.clickerTexture = new Texture(Gdx.files.internal("pointer.png"));
+        this.clickerTexture = new Texture(Gdx.files.internal("pointer_white.png"));
 //        this.clickerTexture = scaleImage("pointer.png", 3, 3);
 
         this.skittleRepresentation = new Ellipse();
@@ -764,7 +764,35 @@ public class GameScreen implements Screen {
         float y = Math.max(2*padding, getUnprojectedScreenCoords(0).y - height);
 //        renderRoundRect(x - 2*padding, y - 2*padding, width + 2*padding, height + 2*padding);
         game.getBatch().begin();
-        game.getBatch().draw(overlayTexture, x - 2*padding, y - 2*padding, width + 2*padding, height + 2*padding);
+//        game.getBatch().draw(overlayTexture, x - 2*padding, y - 2*padding, width + 2*padding, height + 2*padding);
+
+        int borderSize = 10;
+        TextureUtil.drawPartOfSprite(game.getBatch(), overlayTexture,
+                x - 2*padding, y - 2*padding,
+                width + 2*padding, height + 2*padding, borderSize, borderSize,
+                overlayTexture.getWidth() - 2*borderSize, overlayTexture.getHeight() - 2*borderSize);
+
+        //left border
+        TextureUtil.drawPartOfSprite(game.getBatch(), overlayTexture,
+                x - 2*padding, y - 2*padding, borderSize,
+                height + 2*padding, 0, borderSize,
+                borderSize, overlayTexture.getHeight() - 2*borderSize);
+        //right border
+        TextureUtil.drawPartOfSprite(game.getBatch(), overlayTexture,
+                x + width - borderSize, y - 2*padding, borderSize,
+                height + 2*padding, overlayTexture.getWidth() - borderSize, borderSize,
+                borderSize, overlayTexture.getHeight() - 2*borderSize);
+        //top border
+        TextureUtil.drawPartOfSprite(game.getBatch(), overlayTexture,
+                x - 2*padding, y + height - borderSize, width + 2*padding,
+                borderSize, 0, overlayTexture.getHeight() - borderSize,
+                overlayTexture.getWidth(), borderSize);
+        //bottom border
+        TextureUtil.drawPartOfSprite(game.getBatch(), overlayTexture,
+                x - 2* padding, y - 2*padding, width + 2*padding,
+                borderSize, 0, overlayTexture.getHeight() - borderSize,
+                overlayTexture.getWidth(), borderSize);
+
         FontUtil.FONT_20.draw(game.getBatch(), tooltipTextLayout, x - padding, y + height - 30);
         game.getBatch().end();
     }

@@ -20,18 +20,6 @@
 
 package passi.skittleclicker.objects;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Disposable;
-import passi.skittleclicker.SkittleClickerGame;
-import passi.skittleclicker.fixes.CustomShapeRenderer;
-import passi.skittleclicker.util.FontUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -56,16 +44,21 @@ public class Shop{
             upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade " + i, 100 * (i+1), 2 + i));
             upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * (i+1), 2 + i));
             upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * (i+1), 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.BAKERY,"Upgrade " + i, 100 * (i+1), 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.FACTORY,"Upgrade " + i, 100 * (i+1), 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Upgrade " + i, 100 * (i+1), 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Upgrade " + i, 100 * (i+1), 2 + i));
         }
         ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5, "Clicker Text");
         ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100, """
                 A certain Cat with a Knight Title forces
                 I mean politely asks the local neighbourhood grandmas
                 to help with the skittles production""");
-        ShopGroup bakeryShopGroup = new ShopGroup(ShopGroup.Type.BAKERY, 10, 20, 250, "Bakery Text");
-        ShopGroup factoryShopGroup = new ShopGroup(ShopGroup.Type.FACTORY, 50, 20, 1000, "Factory Text");
+        ShopGroup bakeryShopGroup = new ShopGroup(ShopGroup.Type.DUCK, 10, 20, 250, """
+                In a remote skittles swamp there are living many ducks 
+                with normal amounts of legs. 
+                Granting you an increase in skittles production 
+                by 1 Skittle per Second for every leg they possess. 
+                +4 to SpS\s""");
+        ShopGroup factoryShopGroup = new ShopGroup(ShopGroup.Type.SKITTLES_BAR, 50, 20, 1000, "Factory Text");
 
         //Order in which shopGroups are added has to be the same as order of buttons #jank
         shopGroups = new ArrayList<>();
@@ -216,6 +209,12 @@ public class Shop{
         goldenActive = b;
     }
     public String shopgroupTypeToString(ShopGroup.Type type){
-        return type.name().charAt(0) + type.name().toLowerCase(Locale.ROOT).substring(1);
+        String s = type.name().charAt(0) + type.name().toLowerCase(Locale.ROOT).substring(1);
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '_'){
+                s = s.substring(0, i) + " " + s.substring(i+1, i+2).toUpperCase(Locale.ROOT) + s.substring(i+2);
+            }
+        }
+        return s;
     }
 }
