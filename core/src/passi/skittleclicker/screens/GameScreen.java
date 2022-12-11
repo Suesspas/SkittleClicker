@@ -753,7 +753,7 @@ public class GameScreen implements Screen {
         String text;
         if (i < shop.numberOfShopGroups()){
             ShopGroup shopGroup = shop.getShopGroups().get(i);
-            title = shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
+            title = shop.shopgroupTypeToString(shopGroup.getType()) +" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
                     + " [Cost: "+ shopGroup.getCurrentCost() +"]";
             text = shopGroup.getText();
         }  else {

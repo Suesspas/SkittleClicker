@@ -38,34 +38,62 @@ public class Shop{
 
     public Shop(){
         ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5, """
-                Clicker Text""");
+                Why click yourself when you can just let others do it?
+                People from chat come together and help you make more
+                and more skittles! 
+                Spam those left mouse buttons for maximum skittles output.""");
         ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100, """
                 A certain Cat with a Knight Title forces
                 I mean politely asks the local neighbourhood grandmas
                 to help with the skittles production""");
         ShopGroup duckShopGroup = new ShopGroup(ShopGroup.Type.DUCK, 10, 20, 250, """
-                In a remote skittles swamp many ducks 
-                with normal amounts of legs can be found. 
-                Granting you an increase in skittles production 
-                by 1 Skittle per Second for every leg they possess. 
+                In a remote skittles swamp many ducks
+                with normal amounts of legs can be found.
+                Granting you an increase in skittles production
+                by 1 Skittle per Second for every leg they possess.
                 +4 to SpS\s""");
         ShopGroup skittlesBarShopGroup = new ShopGroup(ShopGroup.Type.SKITTLES_BAR, 50, 20, 1000, """
-                Skittles Bar Text""");
+                You start your own bar to share the sweet flavor of
+                skittles drinks with many people!
+                Somehow you still end up making more skittles with every
+                bar you open despite them being your main ingredient.""");
         ShopGroup cyberpunkBarShopGroup = new ShopGroup(ShopGroup.Type.CYBERPUNK_BAR, 100, 15, 300, """
-                CyberPunk Shopgroup Text""");
+                You already own skittles bars, but do you own
+                cyberpunk skittles bars? 
+                Hire knowledgeable people to work for you 
+                and contract them to create highly profitable drinks.
+                Just tell them to not overdo it with the Karmotrine.""");
         ShopGroup mountainShopGroup = new ShopGroup(ShopGroup.Type.MOUNTAIN, 100, 15, 300, """
-                Mountain ShopGroup Text""");
+                It is said that Skittle Mountain holds many secrets and challenges.
+                But once you reach the summit you will have uncovered many things,
+                maybe even about yourself. 
+                This gives you the energy to make more and more skittles.
+                And the best part? You can climb the mountain multiple times
+                and keep improving your skittles production.""");
         ShopGroup collabShopGroup = new ShopGroup(ShopGroup.Type.COLLAB, 100, 15, 300, """
-                Collab, where absolutely nobody was forced to join""");
+                Live streaming skittles production seems to yield even more
+                delicious skittles!
+                Get together with your streaming friends for a big collab
+                and turn those virtual skittles into real ones.""");
         ShopGroup isekaiShopGroup = new ShopGroup(ShopGroup.Type.ISEKAI, 100, 15, 300, """
-                Isekai Text""");
+                The skittle reserves of this world are no longer enough for you.
+                Since you heard that in other worlds there might be magic,
+                you need to explore this option. 
+                If you're lucky you might even find someone 
+                that wields the highest form of attack magic:
+                Skittle Explosion Magic. EKSU PURO SION""");
         ShopGroup tailorGroup = new ShopGroup(ShopGroup.Type.TAILOR, 100, 15, 300, """
                 Skilled Tailors, Making skittles clothes out of 
                 the Fabric of reality. Some can even harness the powers 
                 of those skittle dresses and wear them, 
                 granting them increased strength in combat.""");
         ShopGroup dragonShopGroup = new ShopGroup(ShopGroup.Type.DRAGON, 100, 15, 300, """
-                Dragon Maid""");
+                If you were thinking this game starts to drag on... I got you!
+                Dragon is the next way you can increase your skittles production.
+                More specifically skittles synthesized from the rare ingredient
+                dragon tail. Most dragons would never let you touch their tail,
+                but some are almost as enthusiastic about you eating their tail as
+                they are about wearing a maid outfit.""");
         ShopGroup danceFloorShopGroup = new ShopGroup(ShopGroup.Type.DANCE_FLOOR, 100, 15, 300, """
                 HASHIRE SORI YO
                 KAZE NO YOU NI
