@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import passi.skittleclicker.screens.*;
 import passi.skittleclicker.util.AppPreferences;
-import passi.skittleclicker.util.ContributorUtil;
 import passi.skittleclicker.util.FontUtil;
 
 public class SkittleClickerGame extends Game {

@@ -26,7 +26,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 import passi.skittleclicker.SkittleClickerGame;
-import passi.skittleclicker.util.ContributorUtil;
 import passi.skittleclicker.util.FontUtil;
 
 import java.awt.*;
@@ -52,51 +51,45 @@ public class CreditsScreen implements Screen {
         camera.update();
         game.getBatch().begin();
 
-        FontUtil.FONT_30.draw(game.getBatch(), "Press ESC to go back", camera.position.x - (camera.viewportWidth / 2f) + 10,
-                camera.position.y - (camera.viewportHeight / 2f) + 30);
-        if (ContributorUtil.isLoading()) {
-            FontUtil.FONT_30.draw(game.getBatch(), "Loading contributors...", camera.position.x - (camera.viewportWidth / 2f) + 10, camera.position.y);
-        } else {
-            FontUtil.FONT_30.draw(game.getBatch(), "Want to contribute?", camera.position.x + (camera.viewportWidth / 2f) - 220,
-                    camera.position.y + (camera.viewportHeight / 2f - 10));
-            FontUtil.FONT_30.draw(game.getBatch(), "This project is open source:",
-                    camera.position.x + (camera.viewportWidth / 2f) - 280,
-                    camera.position.y + (camera.viewportHeight / 2f - 45));
-            FontUtil.FONT_30.draw(game.getBatch(), "https://git.io/JeEIx",
-                    camera.position.x + (camera.viewportWidth / 2f) - 220,
-                    camera.position.y + (camera.viewportHeight / 2f - 80));
-
-            for (int i = 0; i < ContributorUtil.getContributors().size(); i++) {
-                ContributorUtil.ContributorData data = ContributorUtil.getContributors().get(i);
-                FontUtil.FONT_30.draw(
-                        game.getBatch(),
-                        data.getName() + ": " + data.getCommits() + " commit(s)",
-                        camera.position.x - (camera.viewportWidth / 2f) + 10,
-                        camera.position.y + (camera.viewportHeight / 2f - 10 - (i * 35))
-                );
-            }
-        }
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(new MainMenuScreen(game));
-        } else if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            Vector3 vec = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(vec);
-
-            if (vec.y > camera.position.y + (camera.viewportHeight / 2f - 80 - 30)
-                    && vec.y < camera.position.y + (camera.viewportHeight / 2f - 80)
-                    && vec.x > camera.position.x + (camera.viewportWidth / 2f) - 220
-                    && vec.x < camera.position.x + (camera.viewportWidth / 2f)) {
-
-                Desktop desktop = Desktop.getDesktop();
-                try {
-                    desktop.browse(new java.net.URL("https://git.io/JeEIx").toURI());
-                } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
-                }
-            }
         }
-
+        String musicCredits1 = """
+                When I Was A Boy by Tokyo Music Walker | https://soundcloud.com/user-356546060
+                Music promoted by https://www.chosic.com/free-music/all/
+                Creative Commons CC BY 3.0
+                https://creativecommons.org/licenses/by/3.0/
+                \s""";
+        String musicCredits2 = """
+                Field Of Fireflies by Purrple Cat | https://purrplecat.com/
+                Music promoted on https://www.chosic.com/free-music/all/
+                Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+                https://creativecommons.org/licenses/by-sa/3.0/
+                \s
+                """;
+        String musicCredits3 = """
+                Morning Routine by Ghostrifter Official | https://soundcloud.com/ghostrifter-official
+                Music promoted by https://www.chosic.com/free-music/all/
+                Creative Commons CC BY-SA 3.0
+                https://creativecommons.org/licenses/by-sa/3.0/
+                \s""";
+        String musicCredits4 = """
+                Faithful Mission by Artificial.Music | https://soundcloud.com/artificial-music/
+                Music promoted by https://www.chosic.com/free-music/all/
+                Creative Commons CC BY 3.0
+                https://creativecommons.org/licenses/by/3.0/
+                \s""";
+        String musicCredits5 = """
+                Where The Waves Take Us by Purrple Cat | https://purrplecat.com/
+                Music promoted by https://www.chosic.com/free-music/all/
+                Creative Commons CC BY-SA 3.0
+                https://creativecommons.org/licenses/by-sa/3.0/
+                \s""";
+        String musicCredits6 = """
+                City Lights by Ghostrifter bit.ly/ghostrifter-yt
+                Creative Commons — Attribution-NoDerivs 3.0 Unported — CC BY-ND 3.0
+                Music promoted by https://www.chosic.com/free-music/all/
+                \s""";
         game.getBatch().end();
     }
 
