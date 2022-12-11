@@ -10,14 +10,13 @@ public class ShopGroup {
         GRANNY,
         DUCK,
         SKITTLES_BAR,
-        PLACEHOLDER1,
-        PLACEHOLDER2,
-        PLACEHOLDER3,
-        PLACEHOLDER4,
-        PLACEHOLDER5,
-        PLACEHOLDER6,
-        PLACEHOLDER7,
-        PLACEHOLDER8,
+        CYBERPUNK_BAR,
+        MOUNTAIN,
+        COLLAB,
+        ISEKAI,
+        TAILOR,
+        DRAGON,
+        DANCE_FLOOR,
     };
     private final Type type;
     private long number;

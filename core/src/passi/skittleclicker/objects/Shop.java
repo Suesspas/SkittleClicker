@@ -37,6 +37,57 @@ public class Shop{
     List<Integer> alreadyDisplayedUpgrades = new ArrayList<>();
 
     public Shop(){
+        ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5, """
+                Clicker Text""");
+        ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100, """
+                A certain Cat with a Knight Title forces
+                I mean politely asks the local neighbourhood grandmas
+                to help with the skittles production""");
+        ShopGroup duckShopGroup = new ShopGroup(ShopGroup.Type.DUCK, 10, 20, 250, """
+                In a remote skittles swamp many ducks 
+                with normal amounts of legs can be found. 
+                Granting you an increase in skittles production 
+                by 1 Skittle per Second for every leg they possess. 
+                +4 to SpS\s""");
+        ShopGroup skittlesBarShopGroup = new ShopGroup(ShopGroup.Type.SKITTLES_BAR, 50, 20, 1000, """
+                Skittles Bar Text
+                """);
+        ShopGroup cyberpunkBarShopGroup = new ShopGroup(ShopGroup.Type.CYBERPUNK_BAR, 100, 15, 300, """
+                CyberPunk Shopgroup Text""");
+        ShopGroup mountainShopGroup = new ShopGroup(ShopGroup.Type.MOUNTAIN, 100, 15, 300, """
+                Mountain ShopGroup Text""");
+        ShopGroup collabShopGroup = new ShopGroup(ShopGroup.Type.COLLAB, 100, 15, 300, """
+                Collab, where absolutely nobody was forced to join""");
+        ShopGroup isekaiShopGroup = new ShopGroup(ShopGroup.Type.ISEKAI, 100, 15, 300, """
+                Isekai Text""");
+        ShopGroup tailorGroup = new ShopGroup(ShopGroup.Type.TAILOR, 100, 15, 300, """
+                Skilled Tailors, Making skittles clothes out of 
+                the Fabric of reality. Some can even harness the powers 
+                of those skittle dresses and wear them 
+                for increased strength in combat.""");
+        ShopGroup dragonShopGroup = new ShopGroup(ShopGroup.Type.DRAGON, 100, 15, 300, """
+                Dragon Maid""");
+        ShopGroup danceFloorShopGroup = new ShopGroup(ShopGroup.Type.DANCE_FLOOR, 100, 15, 300, """
+                HASHIRE SORI YO
+                KAZE NO YOU NI
+                TSUKIMIHARA WO
+                PADORU PADORU""");
+
+        //Order in which shopGroups are added has to be the same as order of buttons #jank
+        shopGroups = new ArrayList<>();
+        shopGroups.add(clickerShopGroup);
+        shopGroups.add(grannyShopGroup);
+        shopGroups.add(duckShopGroup);
+        shopGroups.add(skittlesBarShopGroup);
+        shopGroups.add(cyberpunkBarShopGroup);
+        shopGroups.add(mountainShopGroup);
+        shopGroups.add(collabShopGroup);
+        shopGroups.add(isekaiShopGroup);
+        shopGroups.add(tailorGroup);
+        shopGroups.add(dragonShopGroup);
+        shopGroups.add(danceFloorShopGroup);
+
+        //Upgrades
         upgrades = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + i, 100 * (i+1), 2 + i));
@@ -47,29 +98,7 @@ public class Shop{
             upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Upgrade " + i, 100 * (i+1), 2 + i));
             upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Upgrade " + i, 100 * (i+1), 2 + i));
         }
-        ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5, "Clicker Text");
-        ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 20, 100, """
-                A certain Cat with a Knight Title forces
-                I mean politely asks the local neighbourhood grandmas
-                to help with the skittles production""");
-        ShopGroup bakeryShopGroup = new ShopGroup(ShopGroup.Type.DUCK, 10, 20, 250, """
-                In a remote skittles swamp there are living many ducks 
-                with normal amounts of legs. 
-                Granting you an increase in skittles production 
-                by 1 Skittle per Second for every leg they possess. 
-                +4 to SpS\s""");
-        ShopGroup factoryShopGroup = new ShopGroup(ShopGroup.Type.SKITTLES_BAR, 50, 20, 1000, "Factory Text");
 
-        //Order in which shopGroups are added has to be the same as order of buttons #jank
-        shopGroups = new ArrayList<>();
-        shopGroups.add(clickerShopGroup);
-        shopGroups.add(grannyShopGroup);
-        shopGroups.add(bakeryShopGroup);
-        shopGroups.add(factoryShopGroup);
-        //placeholders
-        for (int i = 7; i < ShopGroup.Type.values().length; i++) {
-            shopGroups.add(new ShopGroup(ShopGroup.Type.values()[i], 100L *i, 42, 100L *i, "Clicker Text"));
-        }
         this.goldenActive = false;
     }
 
