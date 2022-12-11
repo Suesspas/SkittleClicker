@@ -50,8 +50,7 @@ public class Shop{
                 by 1 Skittle per Second for every leg they possess. 
                 +4 to SpS\s""");
         ShopGroup skittlesBarShopGroup = new ShopGroup(ShopGroup.Type.SKITTLES_BAR, 50, 20, 1000, """
-                Skittles Bar Text
-                """);
+                Skittles Bar Text""");
         ShopGroup cyberpunkBarShopGroup = new ShopGroup(ShopGroup.Type.CYBERPUNK_BAR, 100, 15, 300, """
                 CyberPunk Shopgroup Text""");
         ShopGroup mountainShopGroup = new ShopGroup(ShopGroup.Type.MOUNTAIN, 100, 15, 300, """
@@ -63,8 +62,8 @@ public class Shop{
         ShopGroup tailorGroup = new ShopGroup(ShopGroup.Type.TAILOR, 100, 15, 300, """
                 Skilled Tailors, Making skittles clothes out of 
                 the Fabric of reality. Some can even harness the powers 
-                of those skittle dresses and wear them 
-                for increased strength in combat.""");
+                of those skittle dresses and wear them, 
+                granting them increased strength in combat.""");
         ShopGroup dragonShopGroup = new ShopGroup(ShopGroup.Type.DRAGON, 100, 15, 300, """
                 Dragon Maid""");
         ShopGroup danceFloorShopGroup = new ShopGroup(ShopGroup.Type.DANCE_FLOOR, 100, 15, 300, """
@@ -90,13 +89,20 @@ public class Shop{
         //Upgrades
         upgrades = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + i, 100 * (i+1), 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + i, 100 * (i+1), 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade " + i, 100 * (i+1), 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * (i+1), 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * (i+1), 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Upgrade " + i, 100 * (i+1), 2 + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Upgrade " + i, 100 * (i+1), 2 + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + i, 100 * (i+1), 2 + i,
+                    shopgroupTypeToString(ShopGroup.Type.PLAYER) + "Upgrade #" + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + i, 100 * (i+1), 2 + i,
+                    shopgroupTypeToString(ShopGroup.Type.GOLDEN) + "Upgrade #" + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade " + i, 100 * (i+1), 2 + i,
+                    shopgroupTypeToString(ShopGroup.Type.ALL) + "Upgrade #" + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * (i+1), 2 + i,
+                    shopgroupTypeToString(ShopGroup.Type.CLICKER) + "Upgrade #" + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * (i+1), 2 + i,
+                    shopgroupTypeToString(ShopGroup.Type.GRANNY) + "Upgrade #" + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Upgrade " + i, 100 * (i+1), 2 + i,
+                    shopgroupTypeToString(ShopGroup.Type.DUCK) + "Upgrade #" + i));
+            upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Upgrade " + i, 100 * (i+1), 2 + i,
+                    shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + "Upgrade #" + i));
         }
 
         this.goldenActive = false;

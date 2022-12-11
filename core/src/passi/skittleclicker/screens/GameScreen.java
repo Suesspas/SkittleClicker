@@ -28,7 +28,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -130,6 +129,7 @@ public class GameScreen implements Screen {
     private final GlyphLayout skittlesPerSecTextLayout;
     private final GlyphLayout clickSkittleTextLayout;
     private final GlyphLayout tooltipTextLayout;
+    private final GlyphLayout tooltipTitleLayout;
     private final GlyphLayout autosaveTextLayout;
 
     public GameScreen(SkittleClickerGame game) {
@@ -199,6 +199,7 @@ public class GameScreen implements Screen {
         skittlesPerSecTextLayout = new GlyphLayout();
         skittlesPerSecTextLayout.setText(FontUtil.FONT_20, "Skittles per second");
         clickSkittleTextLayout = new GlyphLayout();
+        tooltipTitleLayout = new GlyphLayout();
         tooltipTextLayout = new GlyphLayout();
         autosaveTextLayout = new GlyphLayout();
         autosaveTextLayout.setText(FontUtil.FONT_20, "Autosaved.");
@@ -748,19 +749,23 @@ public class GameScreen implements Screen {
     }
 
     private void renderToolTip(int i) {
-        String str;
+        String title;
+        String text;
         if (i < shop.numberOfShopGroups()){
             ShopGroup shopGroup = shop.getShopGroups().get(i);
-            str = shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
-                    + " [Cost: "+ shopGroup.getCurrentCost() +"]\n" + shopGroup.getText();
+            title = shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
+                    + " [Cost: "+ shopGroup.getCurrentCost() +"]";
+            text = shopGroup.getText();
         }  else {
             int upgradeIndex = i - shop.numberOfShopGroups();
-            str = "Upgrade " + upgradeIndex + " [Cost: "+ shop.getUpgrade(upgradeIndex).getCost() +"]";
+            title = "Upgrade " + upgradeIndex + " [Cost: "+ shop.getUpgrade(upgradeIndex).getCost() +"]";
+            text = shop.getUpgrade(upgradeIndex).getText();
         }
-        tooltipTextLayout.setText(FontUtil.FONT_20, str);
+        tooltipTitleLayout.setText(FontUtil.FONT_30, title);
+        tooltipTextLayout.setText(FontUtil.FONT_20, text);
         float padding = 50;
-        float width = tooltipTextLayout.width;
-        float height = tooltipTextLayout.height;
+        float width = Math.max(tooltipTitleLayout.width, tooltipTextLayout.width);
+        float height = tooltipTitleLayout.height + tooltipTextLayout.height;
         float x = camera.viewportWidth - shopButtons.get(0).getWidth() - width;
         float y = Math.max(2*padding, getUnprojectedScreenCoords(0).y - height);
 //        renderRoundRect(x - 2*padding, y - 2*padding, width + 2*padding, height + 2*padding);
@@ -794,7 +799,8 @@ public class GameScreen implements Screen {
                 borderSize, 0, overlayTexture.getHeight() - borderSize,
                 overlayTexture.getWidth(), borderSize);
 
-        FontUtil.FONT_20.draw(game.getBatch(), tooltipTextLayout, x - padding, y + height - 30);
+        FontUtil.FONT_30.draw(game.getBatch(), tooltipTitleLayout, x - padding, y + height - 30);
+        FontUtil.FONT_20.draw(game.getBatch(), tooltipTextLayout, x - padding, y + height - 75);
         game.getBatch().end();
     }
 

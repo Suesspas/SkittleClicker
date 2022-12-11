@@ -8,12 +8,13 @@ public class Upgrade {
     private final ShopGroup.Type type;
     private String text;
 
-    public Upgrade(ShopGroup.Type type, String name, long cost, double modifier) {
+    public Upgrade(ShopGroup.Type type, String name, long cost, double modifier, String text) {
         this.type = type;
         Name = name;
         this.cost = cost;
         this.modifier = modifier;
         this.unlocked = false;
+        this.text = text;
     }
 
     public boolean isUnlocked() {
