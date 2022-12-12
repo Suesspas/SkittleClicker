@@ -78,11 +78,7 @@ public class Data {
 
 
             JsonValue value = new JsonValue(JsonValue.ValueType.object);
-//            value.addChild("skittles", new JsonValue(skittles));
-//            value.addChild("clickers", new JsonValue(shopGroups.get(0)));
-//            value.addChild("grandmas", new JsonValue(shopGroups.get(1)));
-//            value.addChild("bakeries", new JsonValue(shopGroups.get(2)));
-//            value.addChild("factories", new JsonValue(shopGroups.get(3)));
+            value.addChild("skittles", new JsonValue(skittles));
             for (int i = 0; i < shopGroups.size(); i++) {
                 value.addChild("sg" + i, new JsonValue(shopGroups.get(i)));
             }

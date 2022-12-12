@@ -61,11 +61,11 @@ public class MainMenuScreen implements Screen {
         mousieCry = new Texture("mousieCry86.png");
 
         Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
-        String imageUpPath = "upgrade_iron.png";
-        String imageDownPath = "upgrade_wood2.png";
-        String imageMouseOverPath = "upgrade_wood_light.png";
+        String imageUpPath = "button_iron.png";
+        String imageDownPath = "button_iron_shadow.png";
+        String imageMouseOverPath = "button_iron_light.png";
         int width = 350;
-        int height= 100;
+        int height= 105;
         Drawable drawable = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageUpPath,  width, height)));
         Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageDownPath, width, height)));
         Drawable drawableMouseOver = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageMouseOverPath, width, height)));
@@ -189,7 +189,7 @@ public class MainMenuScreen implements Screen {
     private void drawButtonOverlay(Button button, Texture overlayTexture, String name) {
         int xPadding = 40;
         Vector2 buttonScreenCoords = ScreenUtil.getScreenCoords(button, camera);
-        game.getBatch().draw(overlayTexture, buttonScreenCoords.x + button.getWidth() - mousieHello.getWidth() - xPadding, buttonScreenCoords.y -button.getHeight() + 5);
+        game.getBatch().draw(overlayTexture, buttonScreenCoords.x + button.getWidth() - mousieHello.getWidth() - xPadding + 10, buttonScreenCoords.y -button.getHeight() + 10);
         game.getFont().draw(game.getBatch(), name, buttonScreenCoords.x + xPadding, buttonScreenCoords.y - button.getHeight()/2.5f);
     }
 

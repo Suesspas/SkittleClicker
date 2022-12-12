@@ -217,19 +217,6 @@ public class Shop{
         return Math.round(baseSkittlesPerClick * clickModifier * generalModifier *(goldenActive ? goldenModifier : 1));
     }
 
-    public void deleteSaveData() { //TODO probably just call Constructor, see if it works
-        setSkittles(0);
-        for (ShopGroup s:
-             shopGroups) {
-            s.setNumber(0);
-        }
-        for (Upgrade u:
-             upgrades) {
-            u.lock();
-        }
-        alreadyDisplayedUpgrades.clear();
-    }
-
     public void pay(long cost) {
         skittles -= cost;
     }

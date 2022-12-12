@@ -97,7 +97,7 @@ public class GameScreen implements Screen {
     private final Stage stage;
     private final ShaderProgram shader;
 //    private final ShaderProgram lightShader;
-    private final List<ClickListener> clickListeners; //TODO add to all buttons
+    private final List<ClickListener> clickListeners;
     private final List<GreyedOutImageButton> shopButtons;
     private final HorizontalGroup upgradeGroup = new HorizontalGroup();
     private Table menuBar;
@@ -122,6 +122,7 @@ public class GameScreen implements Screen {
     private final Texture darkBackground;
     private final Texture goldGlow;
     private final Texture overlayTexture;
+    private final List<Texture> imageTextures;
     private final GlyphLayout shopTextLayout;
     private final GlyphLayout skittleNumberLayout;
     private final GlyphLayout skittleTextLayout;
@@ -155,6 +156,8 @@ public class GameScreen implements Screen {
         for (int i = 0; i <= 15; i++) {
             valhallaSelections.add(new Texture("selections/selection" + i + ".png"));
         }
+
+        this.imageTextures = new ArrayList<>();
 
         this.goldGlow = new Texture("gold_glow2.png");
         this.darkBackground = new Texture("dark_background.png");
@@ -325,7 +328,8 @@ public class GameScreen implements Screen {
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopTable.row(); //.pad(10, 0, 10, 0);
             shopButtons.add(setupShopButton(clickListeners.get(i), "button_iron.png",
-                    "button_wood_mousie2.png", "button_wood_light.png",500, 100));
+                    "button_iron_shadow.png", "button_iron_light.png",
+                    "shopgroups/" + shop.shopgroupTypeToString(shop.getShopGroups().get(i).getType()) + ".png"));
             shopTable.add(shopButtons.get(i)).fill().expand().left().maxWidth(500);
             //only show unlocked + max visible not unlocked shop group buttons
             if (shop.getShopGroups().get(i).getNumber() > 0){
@@ -343,7 +347,8 @@ public class GameScreen implements Screen {
         int addedUpgrades = 0;
         for (int i = 0; i < shop.numberOfUpgrades(); i++) {
             shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "upgrade_iron.png",
-                    "upgrade_wood2.png", "upgrade_wood_light.png",100, 100));
+                    "upgrade_wood_shadow.png", "upgrade_wood_light.png",
+                    "shopgroups/Granny.png"));
             if (shop.getUpgrades().get(i).isUnlocked()){
                 shop.displayedUpgrade(i);
             } else {
@@ -389,10 +394,14 @@ public class GameScreen implements Screen {
         scheduleService(service);
     }
 
-    private GreyedOutImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath, String imageMouseOverPath, int width, int height) {
-        Drawable drawable = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageUpPath,  width, height)));
-        Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageDownPath, width, height)));
-        Drawable drawableMouseOver = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageMouseOverPath, width, height)));
+    private GreyedOutImageButton setupShopButton(ClickListener clickListener, String imageUpPath, String imageDownPath,
+                                                 String imageMouseOverPath, String iconPath) {
+        Drawable drawable = new TextureRegionDrawable(new TextureRegion(TextureUtil.combineTextures(
+                new Texture(imageUpPath), new Texture(iconPath))));
+        Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(TextureUtil.combineTextures(
+                new Texture(imageDownPath), new Texture(iconPath))));
+        Drawable drawableMouseOver = new TextureRegionDrawable(new TextureRegion(TextureUtil.combineTextures(
+                new Texture(imageMouseOverPath), new Texture(iconPath))));
 //        GreyedOutImageButton shopButton = new GreyedOutImageButton(drawable, drawablePressed, shader);
         ImageButton.ImageButtonStyle imageButtonStyle = new ImageButton.ImageButtonStyle(null,null,null, drawable, drawablePressed,null);
         imageButtonStyle.imageOver = drawableMouseOver;
@@ -838,7 +847,7 @@ public class GameScreen implements Screen {
             if (autoSaveTimer > 60){
                 saveProgress();
                 autoSaveTimer = 0;
-                System.out.println("auto saved"); //TODO auto save popup
+                System.out.println("auto saved");
             }
 
             GoldenSkittle.incrementTimer();
@@ -856,7 +865,7 @@ public class GameScreen implements Screen {
                 GoldenSkittle.activeEnd();
                 shop.goldenActive(false);
             }
-        }, 1000, 1000, TimeUnit.MILLISECONDS);
+        }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     private Vector2 getUnprojectedScreenCoords(float minus) {

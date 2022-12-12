@@ -29,7 +29,6 @@ public class SkittleClickerGame extends Game {
     @Override
     public void create() {
         FontUtil.init();
-        ContributorUtil.load();
 
         batch = new SpriteBatch();
         font = FontUtil.FONT_30;
@@ -68,7 +67,7 @@ public class SkittleClickerGame extends Game {
     }
 
     public void changeScreen(int screen){
-        System.out.println(screen); //TODO changing screens back to mainmenu doesnt work after newgame?
+        System.out.println(screen);
         switch(screen){
             case MENU:
                 if(menuScreen == null) {

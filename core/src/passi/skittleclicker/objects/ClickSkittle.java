@@ -17,7 +17,7 @@ public class ClickSkittle extends MiniSkittle{
         this.aliveTime = 0;
         this.direction = new Vector2(-1 + (float)Math.random() * 2, 0.5f + (float)Math.random());
     }
-    public void update(){//TODO render list of clickSkittles in game screen and
+    public void update(){
         aliveTime++;
         x += SPEED * direction.x;
         y -= SPEED; //* direction.y for variable fall speed

@@ -25,6 +25,21 @@ public class TextureUtil {
         return frames;
     }
 
+    public static Texture combineTextures(Texture texture1, Texture texture2) { //second texture wil be drawn on top
+        texture1.getTextureData().prepare();
+        Pixmap pixmap1 = texture1.getTextureData().consumePixmap();
+
+        texture2.getTextureData().prepare();
+        Pixmap pixmap2 = texture2.getTextureData().consumePixmap();
+
+        pixmap1.drawPixmap(pixmap2, 0, 0);
+        Texture textureResult = new Texture(pixmap1);
+
+        pixmap1.dispose();
+        pixmap2.dispose();
+
+        return textureResult;
+    }
     public static void drawPartOfSprite(SpriteBatch batch, Texture texture, float x, float y, float width, float height,
                                         int partX, int partY, int partWidth, int partHeight){
         batch.draw(
@@ -48,9 +63,7 @@ public class TextureUtil {
                 false);                  /* flipY whether to flip the sprite vertically */
     }
 
-    public static TextureRegion getOverlayBorder(Texture texture){
-        return null;
-    }
+
 
     public static Texture scaleImage(String path, int width, int height){
         Pixmap original = new Pixmap(Gdx.files.internal(path));
