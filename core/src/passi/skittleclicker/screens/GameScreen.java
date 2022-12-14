@@ -348,7 +348,7 @@ public class GameScreen implements Screen {
         for (int i = 0; i < shop.numberOfUpgrades(); i++) {
             shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "upgrade_iron.png",
                     "upgrade_wood_shadow.png", "upgrade_wood_light.png",
-                    "shopgroups/Granny.png"));
+                    shop.getUpgrade(i).getImagePath()));
             if (shop.getUpgrades().get(i).isUnlocked()){
                 shop.displayedUpgrade(i);
             } else {

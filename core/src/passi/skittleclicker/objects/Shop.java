@@ -116,22 +116,117 @@ public class Shop{
 
         //Upgrades
         upgrades = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + i, 100 * (i+1), 2 + i,
-                    shopgroupTypeToString(ShopGroup.Type.PLAYER) + "Upgrade #" + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + i, 100 * (i+1), 2 + i,
-                    shopgroupTypeToString(ShopGroup.Type.GOLDEN) + "Upgrade #" + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade " + i, 100 * (i+1), 2 + i,
-                    shopgroupTypeToString(ShopGroup.Type.ALL) + "Upgrade #" + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Upgrade " + i, 100 * (i+1), 2 + i,
-                    shopgroupTypeToString(ShopGroup.Type.CLICKER) + "Upgrade #" + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Upgrade " + i, 100 * (i+1), 2 + i,
-                    shopgroupTypeToString(ShopGroup.Type.GRANNY) + "Upgrade #" + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Upgrade " + i, 100 * (i+1), 2 + i,
-                    shopgroupTypeToString(ShopGroup.Type.DUCK) + "Upgrade #" + i));
-            upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Upgrade " + i, 100 * (i+1), 2 + i,
-                    shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + "Upgrade #" + i));
-        }
+
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + 1, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + "Upgrade #" + 1, "shopgroups/Granny.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 2, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.GOLDEN) + "Upgrade #" + 1, "shopgroups/Granny.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade " + 3, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.ALL) + "Upgrade #" + 1, "shopgroups/Granny.png"));
+        //bronze upgrades
+        upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Bronze Clicker", 100, 2,
+                    shopgroupTypeToString(ShopGroup.Type.CLICKER) + "Bronze Upgrade, doubles production of Clickers",
+                "upgrades/clicker_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Bronze Granny", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.GRANNY) + "Bronze Upgrade, doubles production of Grannies",
+                "upgrades/granny_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Bronze Ducks", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.DUCK) + "Bronze Upgrade, doubles production of Ducks",
+                "upgrades/duck_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Bronze Skittles Bar", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + "Bronze Upgrade, doubles production of Skittles Bars",
+                "upgrades/skittles bar_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Bronze Cyberpunk Bar", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + "Bronze Upgrade, doubles production of Cyberpunk Bars",
+                "upgrades/cyberpunk bar_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Bronze Mountain", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + "Bronze Upgrade, doubles production of Mountains",
+                "upgrades/mountain_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Bronze Collab", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.COLLAB) + "Bronze Upgrade, doubles production of Collabs",
+                "upgrades/collab_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Bronze Isekai", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.ISEKAI) + "Bronze Upgrade, doubles production of Isekais",
+                "upgrades/isekai_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Bronze Tailor", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.TAILOR) + "Bronze Upgrade, doubles production of Tailors",
+                "upgrades/tailor_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Bronze Dragon", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.DRAGON) + "Bronze Upgrade, doubles production of Dragons",
+                "upgrades/dragon_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Bronze Dance Floor", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + "Bronze Upgrade, doubles production of Dance Floors",
+                "upgrades/dance floor_bronze.png"));
+
+        //silver upgrades
+        upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Silver Clicker", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.CLICKER) + "Silver Upgrade, doubles production of Clickers",
+                "upgrades/clicker_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Silver Granny", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.GRANNY) + "Silver Upgrade, doubles production of Grannies",
+                "upgrades/granny_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Silver Ducks", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.DUCK) + "Silver Upgrade, doubles production of Ducks",
+                "upgrades/duck_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Silver Skittles Bar", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + "Silver Upgrade, doubles production of Skittles Bars",
+                "upgrades/skittles bar_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Silver Cyberpunk Bar", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + "Silver Upgrade, doubles production of Cyberpunk Bars",
+                "upgrades/cyberpunk bar_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Silver Mountain", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + "Silver Upgrade, doubles production of Mountains",
+                "upgrades/mountain_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Silver Collab", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.COLLAB) + "Silver Upgrade, doubles production of Collabs",
+                "upgrades/collab_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Silver Isekai", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.ISEKAI) + "Silver Upgrade, doubles production of Isekais",
+                "upgrades/isekai_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Silver Tailor", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.TAILOR) + "Silver Upgrade, doubles production of Tailors",
+                "upgrades/tailor_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Silver Dragon", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.DRAGON) + "Silver Upgrade, doubles production of Dragons",
+                "upgrades/dragon_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Silver Dance Floor", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + "Silver Upgrade, doubles production of Dance Floors",
+                "upgrades/dance floor_silver.png"));
+
+        //gold upgrades
+        upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Gold Clicker", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.CLICKER) + "Gold Upgrade, doubles production of Clickers",
+                "upgrades/clicker_gold.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Gold Granny", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.GRANNY) + "Gold Upgrade, doubles production of Grannies",
+                "upgrades/granny_gold.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Gold Ducks", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.DUCK) + "Gold Upgrade, doubles production of Ducks",
+                "upgrades/duck_gold.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Gold Skittles Bar", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + "Gold Upgrade, doubles production of Skittles Bars",
+                "upgrades/skittles bar_gold.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Gold Cyberpunk Bar", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + "Gold Upgrade, doubles production of Cyberpunk Bars",
+                "upgrades/cyberpunk bar_gold.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Gold Mountain", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + "Gold Upgrade, doubles production of Mountains",
+                "upgrades/mountain_gold.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Gold Collab", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.COLLAB) + "Gold Upgrade, doubles production of Collabs",
+                "upgrades/collab_gold.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Gold Isekai", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.ISEKAI) + "Gold Upgrade, doubles production of Isekais",
+                "upgrades/isekai_gold.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Gold Tailor", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.TAILOR) + "Gold Upgrade, doubles production of Tailors",
+                "upgrades/tailor_gold.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Gold Dragon", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.DRAGON) + "Gold Upgrade, doubles production of Dragons",
+                "upgrades/dragon_gold.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Gold Dance Floor", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + "Gold Upgrade, doubles production of Dance Floors",
+                "upgrades/dance floor_gold.png"));
 
         this.goldenActive = false;
     }
