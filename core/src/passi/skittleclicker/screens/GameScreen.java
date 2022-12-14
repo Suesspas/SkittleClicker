@@ -22,6 +22,7 @@ package passi.skittleclicker.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -30,12 +31,10 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.data.Data;
@@ -51,7 +50,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen{
 
     private static final int MAX_DISPLAYED_UPGRADES = 5;
     private static final float MAX_GOLDLIGHT_SCALE = 1.1f;
@@ -87,17 +86,14 @@ public class GameScreen implements Screen {
 
     private final Queue<MiniSkittle> miniSkittles = new ConcurrentLinkedQueue<>();
     private final Queue<ClickSkittle> clickSkittles = new ConcurrentLinkedQueue<>();
-
     private float generalRotation = 0;
-
     private int clicksPerSecond = 0;
     private ScheduledExecutorService service;
-
     private int autoSaveTimer;
     private final Stage stage;
     private final ShaderProgram shader;
-//    private final ShaderProgram lightShader;
-    private final List<ClickListener> clickListeners;
+    private final List<ClickListener> shopClickListeners;
+//    private final List<ClickListener[]> imageClickListeners;
     private final List<GreyedOutImageButton> shopButtons;
     private final HorizontalGroup upgradeGroup = new HorizontalGroup();
     private Table menuBar;
@@ -122,7 +118,8 @@ public class GameScreen implements Screen {
     private final Texture darkBackground;
     private final Texture goldGlow;
     private final Texture overlayTexture;
-    private final List<Texture> imageTextures;
+    private final List<Image[]> imageRepresentations;
+    private final List<Texture> imageBackgroundTextures;
     private final GlyphLayout shopTextLayout;
     private final GlyphLayout skittleNumberLayout;
     private final GlyphLayout skittleTextLayout;
@@ -157,7 +154,8 @@ public class GameScreen implements Screen {
             valhallaSelections.add(new Texture("selections/selection" + i + ".png"));
         }
 
-        this.imageTextures = new ArrayList<>();
+        this.imageRepresentations = new ArrayList<>();
+        this.imageBackgroundTextures = new ArrayList<>();
 
         this.goldGlow = new Texture("gold_glow2.png");
         this.darkBackground = new Texture("dark_background.png");
@@ -209,11 +207,19 @@ public class GameScreen implements Screen {
 
         clickSound = Gdx.audio.newSound(Gdx.files.internal("click.wav"));
 
-        this.clickListeners = new ArrayList<>();
+        this.shopClickListeners = new ArrayList<>();
         int numberOfClickListeners = shop.numberOfShopGroups() + shop.numberOfUpgrades();
         for (int i = 0; i < numberOfClickListeners; i++) {
-            clickListeners.add(new ClickListener());
+            shopClickListeners.add(new ClickListener());
         }
+//        this.imageClickListeners = new ArrayList<>();
+//        for (int i = 1; i < shop.numberOfShopGroups(); i++) {
+//            ClickListener[] clickListeners = new ClickListener[(int)shop.getShopGroups().get(i).getMAX_NUMBER()];
+//            for (int j = 0; j < clickListeners.length; j++) {
+//                clickListeners[j] = new ClickListener();
+//            }
+//            imageClickListeners.add(clickListeners);
+//        }
 
         this.shopButtons = new ArrayList<>();
         this.dummyImageList = new ArrayList<>();
@@ -307,6 +313,7 @@ public class GameScreen implements Screen {
             borderList.add(border);
             imageTable.add(borderList.get(i)).expandX().fillX().height(12);
             imageTable.row();
+            setupImages(i, imageTable);
         }
 
         middleTable.add(menuBar).expand().fill().height(50);
@@ -327,7 +334,7 @@ public class GameScreen implements Screen {
         int visibleLockedButtonCount = 0;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopTable.row(); //.pad(10, 0, 10, 0);
-            shopButtons.add(setupShopButton(clickListeners.get(i), "button_iron.png",
+            shopButtons.add(setupShopButton(shopClickListeners.get(i), "button_iron.png",
                     "button_iron_shadow.png", "button_iron_light.png",
                     "shopgroups/" + shop.shopgroupTypeToString(shop.getShopGroups().get(i).getType()) + ".png"));
             shopTable.add(shopButtons.get(i)).fill().expand().left().maxWidth(500);
@@ -346,7 +353,7 @@ public class GameScreen implements Screen {
 
         int addedUpgrades = 0;
         for (int i = 0; i < shop.numberOfUpgrades(); i++) {
-            shopButtons.add(setupShopButton(clickListeners.get(shop.numberOfShopGroups()+i), "upgrade_iron.png",
+            shopButtons.add(setupShopButton(shopClickListeners.get(shop.numberOfShopGroups()+i), "upgrade_iron.png",
                     "upgrade_wood_shadow.png", "upgrade_wood_light.png",
                     shop.getUpgrade(i).getImagePath()));
             if (shop.getUpgrades().get(i).isUnlocked()){
@@ -368,6 +375,20 @@ public class GameScreen implements Screen {
         rootTable.add(scrollShopTable).width(500);
 
         stage.addActor(rootTable);
+    }
+
+    private void setupImages(int index, Table table) {
+        ShopGroup shopGroup = shop.getShopGroups().get(index + 1);
+        String name = shop.shopgroupTypeToString(shopGroup.getType());
+        imageBackgroundTextures.add(new Texture("images/background_test.png")); //TODO add backgrounds
+        Image[] images = new Image[(int)shopGroup.getMAX_NUMBER()];
+        for (int i = 0; i < images.length; i++) {
+            images[i] = new Image(new Texture("images/strawb.png"));
+            images[i].setScale(0.1f);
+//            images[i].addListener(imageClickListeners.get(index)[i]);
+//            stage.addListener(imageClickListeners.get(index)[i]);
+        }
+        imageRepresentations.add(images);
     }
 
     void saveProgress(){
@@ -617,11 +638,21 @@ public class GameScreen implements Screen {
         }
 
 
-        for (int i = 0; i < clickListeners.size(); i++) {
-            if(clickListeners.get(i).isOver()){
+        for (int i = 0; i < shopClickListeners.size(); i++) {
+            if(shopClickListeners.get(i).isOver()){
                 renderToolTip(i);
             }
         }
+
+//        for (int i = 0; i < imageClickListeners.size(); i++) {
+//            int j = 0;
+//            for (ClickListener c:
+//                 imageClickListeners.get(i)) {
+//                if(c.isOver()){
+//                    System.out.println("MOUSE OVER sg " + i + ", " + j++);
+//                }
+//            }
+//        }
 
         // Remove disappeared skittles
         miniSkittles.forEach(miniSkittle -> {
@@ -660,6 +691,12 @@ public class GameScreen implements Screen {
             GoldenSkittle.clicked();
             shop.goldenActive(true);
         }
+        for (Image[] i:
+             imageRepresentations) {
+            for (int j = 0; j < i.length; j++) {
+                if ( i[j].isTouchFocusTarget()) System.out.println("MOUSE IS OVER");
+            }
+        }
     }
 
     private void renderMilk() {
@@ -693,12 +730,31 @@ public class GameScreen implements Screen {
             if (index >= shop.numberOfShopGroups()) break;
             int number = (int) shop.getShopGroups().get(index).getNumber();
 //            drawActor(dummyImage, valhallaTexture);
-            drawAnimation(dummyImage, currentFrameValhalla);
-            drawActor(dummyImage, valhallaSelections.get(Math.min(number, valhallaSelections.size()-1)));
+            if (number > 0) {
+                if (index == 4){ // valhalla is 4th shopgroup
+                    drawAnimation(dummyImage, currentFrameValhalla);
+                    drawActor(dummyImage, valhallaSelections.get(Math.min(number, valhallaSelections.size()-1)));
+                } else {
+                    drawActor(dummyImage, imageBackgroundTextures.get(index - 1));
+                    drawImages(dummyImage, imageRepresentations.get(index - 1), number);
+                }
+            }
+
 //            Actor actor = imageTableList.get(index); // for animation
 //            Animation = new ?
 //            drawActor(dummyImage, texture);
             index++;
+        }
+    }
+
+    private void drawImages(Actor a, Image[] images, int number) {
+        Vector2 borderScreenCoords = ScreenUtil.getScreenCoords(a, camera);
+        if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
+//            game.getBatch().draw(image);
+            for (int i = 0; i < number; i++) {
+                images[i].setPosition(borderScreenCoords.x + 50*i, borderScreenCoords.y - a.getHeight());
+                images[i].draw(game.getBatch(), 1);
+            }
         }
     }
 
