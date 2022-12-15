@@ -29,6 +29,10 @@ public class Shop{
     private static final long baseSkittlesPerClick = 1;
     private double clickModifier = 1;
     private double goldenModifier = 10;
+    private double milkModifier = 1;
+    private double milkClicksMod = 0;
+    private final double MAX_MILK_CLICKS_MOD = 1;
+    private final double MILK_CLICKS_MOD_INCREMENT = 0.01;
     private double generalModifier = 1;
     private boolean goldenActive;
     List<ShopGroup> shopGroups;
@@ -116,6 +120,20 @@ public class Shop{
 
         //Upgrades
         upgrades = new ArrayList<>();
+        int[] milkStateIndices = new int[MilkState.State.values().length];
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade melk 1", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 1, "shopgroups/Granny.png"));
+        milkStateIndices[0] = upgrades.size() - 1;
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade melk 2", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 2, "shopgroups/Granny.png"));
+        milkStateIndices[1] = upgrades.size() - 1;
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade melk 3", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 3, "shopgroups/Granny.png"));
+        milkStateIndices[2] = upgrades.size() - 1;
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade melk 4", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 4, "shopgroups/Granny.png"));
+        milkStateIndices[3] = upgrades.size() - 1;
+        MilkState.setUpStates(milkStateIndices);
 
         upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + 1, 100, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + "Upgrade #" + 1, "shopgroups/Granny.png"));
@@ -297,11 +315,16 @@ public class Shop{
     public void updateGoldenModifier(double modifier){
         goldenModifier *= modifier;
     }
+
+    public void updateMilkModifier(double modifier){
+        milkModifier *= modifier;
+    }
     public void updateGeneralModifier(double modifier){
         generalModifier *= modifier;
     }
     public void click() {
         skittles += getSkittlesPerClick();
+        milkClicksMod+= milkClicksMod < MAX_MILK_CLICKS_MOD ? MILK_CLICKS_MOD_INCREMENT : 0;
     }
 
     public double getClickModifier(){
@@ -309,7 +332,7 @@ public class Shop{
     }
 
     public long getSkittlesPerClick(){
-        return Math.round(baseSkittlesPerClick * clickModifier * generalModifier *(goldenActive ? goldenModifier : 1));
+        return Math.round(baseSkittlesPerClick * clickModifier *  (1 + (milkModifier * milkClicksMod)) * generalModifier *(goldenActive ? goldenModifier : 1));
     }
 
     public void pay(long cost) {
@@ -323,6 +346,7 @@ public class Shop{
         switch (type) {
             case PLAYER -> updateClickModifier(upgrade.getModifier());
             case GOLDEN -> updateGoldenModifier(upgrade.getModifier());
+            case MILK -> updateMilkModifier(upgrade.getModifier());
             case ALL -> updateGeneralModifier(upgrade.getModifier());
             default -> {
                 for (ShopGroup s : shopGroups) {
@@ -362,4 +386,15 @@ public class Shop{
         }
         return s;
     }
+
+    public void milkClickTimeDecrement(){
+        milkClicksMod -= milkClicksMod > 0 ? 0.1 : 0;
+    }
+    public double getMilkClicksMod() {
+        return milkClicksMod;
+    }
+    public double getMilkClicksPercent() {
+        return milkClicksMod/MAX_MILK_CLICKS_MOD;
+    }
+
 }

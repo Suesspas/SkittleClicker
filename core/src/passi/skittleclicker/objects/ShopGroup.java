@@ -5,6 +5,7 @@ public class ShopGroup {
     enum Type {
         PLAYER,
         GOLDEN,
+        MILK,
         ALL,
         CLICKER,
         GRANNY,

@@ -103,7 +103,7 @@ public class GameScreen implements Screen{
     private Image storeTitle;
     private Table clickerTable;
     private final Skin skin;
-    private final boolean IS_DEBUG_ENABLED = false;
+    private final boolean IS_DEBUG_ENABLED = true;
     private String borderVerticalPath = layoutStyle + "_border.png";
     private String borderHorizontalPath = layoutStyle + "_border_horizontal.png";
     private final Texture milkTexture;
@@ -458,6 +458,7 @@ public class GameScreen implements Screen{
                          System.out.println("Upgrade" + index +" purchased");
                          shop.unlockUpgrade(index);
                          shop.pay(shop.getUpgrade(index).getCost());
+                         MilkState.changeState(index);
                          shopButton.remove();
                          addNewUpgradeButton();
                      }
@@ -555,6 +556,9 @@ public class GameScreen implements Screen{
 
 
         if (IS_DEBUG_ENABLED){
+            game.getFont().draw(game.getBatch(), "Click Milk Mod " + shop.getMilkClicksMod(),
+                    camera.position.x - (camera.viewportWidth / 2f) + 10,
+                    camera.position.y - (camera.viewportHeight / 2f) + 100);
             game.getFont().draw(game.getBatch(), "Rendered skittles: " + miniSkittles.size(),
                     camera.position.x - (camera.viewportWidth / 2f) + 10,
                     camera.position.y - (camera.viewportHeight / 2f) + 70);
@@ -720,18 +724,19 @@ public class GameScreen implements Screen{
         int milkX = Math.round(milkFrame * milkSpeed);
         float relativeTableWidth = clickerTable.getWidth() / milkTexture.getWidth();
         int MAX_MILK_FRAMES = milkTexture.getWidth();
+        float yPos = -100 + 100 * (float)shop.getMilkClicksPercent();
 
         milkFrame++;
         milkRegion.setRegion(milkTexture.getWidth() - milkX, 0, (int)Math.min(clickerTable.getWidth(), milkX), milkTexture.getHeight());
         if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){ //TODO set color according to milk upgrades
             game.getBatch().setColor(1,0,0,0.9f);
         }
-        game.getBatch().draw(milkRegion, 0, 0);
+        game.getBatch().draw(milkRegion, 0, yPos);
         for (int i = 0; i < relativeTableWidth; i++) {
             int width = Math.min((int)clickerTable.getWidth() - (milkTexture.getWidth()*i) - milkX, milkTexture.getWidth());
             width = Math.max(width, 0);
             milkRegion.setRegion(0, 0, width, milkTexture.getHeight());
-            game.getBatch().draw(milkRegion, (milkTexture.getWidth()*i) + milkX, 0);
+            game.getBatch().draw(milkRegion, (milkTexture.getWidth()*i) + milkX, yPos);
         }
         if (milkX >= MAX_MILK_FRAMES){
             milkFrame = 0;
@@ -933,6 +938,8 @@ public class GameScreen implements Screen{
                 saveProgress();
                 autoSaveTimer = 0;
                 System.out.println("auto saved");
+            } else  if (autoSaveTimer % 5 == 0){
+                shop.milkClickTimeDecrement();
             }
 
             GoldenSkittle.incrementTimer();
