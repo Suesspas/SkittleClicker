@@ -113,7 +113,7 @@ public class GameScreen implements Screen{
     private final Texture borderHorizontalTexture = new Texture(borderHorizontalPath);
     private float stateTime;
     private TextureRegion currentFrameValhalla;
-    private final int MAX_VISIBLE_LOCKED_SHOPBUTTONS = 2;
+    private final int MAX_VISIBLE_LOCKED_SHOPBUTTONS = 1;
     private int milkFrame;
     private final Texture darkBackground;
     private final Texture goldGlow;
@@ -383,8 +383,14 @@ public class GameScreen implements Screen{
         imageBackgroundTextures.add(new Texture("images/background_test.png")); //TODO add backgrounds
         Image[] images = new Image[(int)shopGroup.getMAX_NUMBER()];
         for (int i = 0; i < images.length; i++) {
-            images[i] = new Image(new Texture("images/strawb.png"));
-            images[i].setScale(0.1f);
+            if (index == 1){
+                images[i] = new Image(new Texture("images/ducks/" + name + "_" + (i+1) + ".png"));
+            } else {
+                images[i] = new Image(TextureUtil.scaleImage("images/" + name + ".png", 50, 50));
+            }
+
+
+//            images[i].setScale(0.1f);
 //            images[i].addListener(imageClickListeners.get(index)[i]);
 //            stage.addListener(imageClickListeners.get(index)[i]);
         }
@@ -504,9 +510,11 @@ public class GameScreen implements Screen{
 
         renderMilk();
         drawImageTable();
-        for (Actor a:
-             borderList) {
-            drawActor(a, borderHorizontalTexture);
+        for (int i = 0; i < borderList.size(); i++) {
+            Actor border = borderList.get(i);
+            if (shop.getShopGroups().get(i+1).getNumber() > 0){
+                drawActor(border, borderHorizontalTexture);
+            }
         }
         game.getBatch().end();
 
@@ -691,10 +699,15 @@ public class GameScreen implements Screen{
             GoldenSkittle.clicked();
             shop.goldenActive(true);
         }
+        Vector2 mousePos = getUnprojectedScreenCoords(0);
         for (Image[] i:
              imageRepresentations) {
             for (int j = 0; j < i.length; j++) {
-                if ( i[j].isTouchFocusTarget()) System.out.println("MOUSE IS OVER");
+//                if ( i[j].isTouchFocusTarget()) System.out.println("MOUSE IS OVER");
+                if (mousePos.x > i[j].getX() && mousePos.x < i[j].getX() + i[j].getWidth()*i[j].getScaleX()
+                && mousePos.y > i[j].getY() && mousePos.y < i[j].getY() + i[j].getHeight()*i[j].getScaleY()){
+                    System.out.println(imageRepresentations.indexOf(i) + ", " + j); //TODO show names of twitch subs / channels in tooltip
+                }
             }
         }
     }
@@ -734,6 +747,12 @@ public class GameScreen implements Screen{
                 if (index == 4){ // valhalla is 4th shopgroup
                     drawAnimation(dummyImage, currentFrameValhalla);
                     drawActor(dummyImage, valhallaSelections.get(Math.min(number, valhallaSelections.size()-1)));
+                } else if (index == 2) {
+                    drawActor(dummyImage, imageBackgroundTextures.get(index - 1));
+                    Image duckImage = imageRepresentations.get(index - 1)[number-1];
+                    Vector2 borderScreenCoords = ScreenUtil.getScreenCoords(dummyImage, camera);
+                    duckImage.setPosition(borderScreenCoords.x + dummyImage.getWidth()/2 -duckImage.getWidth()/2,borderScreenCoords.y - duckImage.getHeight());
+                    duckImage.draw(game.getBatch(), 1);
                 } else {
                     drawActor(dummyImage, imageBackgroundTextures.get(index - 1));
                     drawImages(dummyImage, imageRepresentations.get(index - 1), number);
@@ -751,8 +770,15 @@ public class GameScreen implements Screen{
         Vector2 borderScreenCoords = ScreenUtil.getScreenCoords(a, camera);
         if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
 //            game.getBatch().draw(image);
+            float xOffset = 10 + borderScreenCoords.x;
+            float yOffset = 10 + borderScreenCoords.y;
             for (int i = 0; i < number; i++) {
-                images[i].setPosition(borderScreenCoords.x + 50*i, borderScreenCoords.y - a.getHeight());
+                if (i < 12){
+                    images[i].setPosition( xOffset+ 50*i,  yOffset- a.getHeight() + 50); //TODO set pos
+                } else {
+                    images[i].setPosition(xOffset + 50* (i - 12), yOffset - a.getHeight());
+                }
+
                 images[i].draw(game.getBatch(), 1);
             }
         }
