@@ -342,6 +342,7 @@ public class Shop{
     public void unlockUpgrade(int index) {
         Upgrade upgrade = upgrades.get(index);
         upgrade.unlock();
+        MilkState.changeState(index);
         ShopGroup.Type type = upgrade.getType();
         switch (type) {
             case PLAYER -> updateClickModifier(upgrade.getModifier());

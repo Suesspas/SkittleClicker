@@ -458,7 +458,6 @@ public class GameScreen implements Screen{
                          System.out.println("Upgrade" + index +" purchased");
                          shop.unlockUpgrade(index);
                          shop.pay(shop.getUpgrade(index).getCost());
-                         MilkState.changeState(index);
                          shopButton.remove();
                          addNewUpgradeButton();
                      }
@@ -728,15 +727,15 @@ public class GameScreen implements Screen{
 
         milkFrame++;
         milkRegion.setRegion(milkTexture.getWidth() - milkX, 0, (int)Math.min(clickerTable.getWidth(), milkX), milkTexture.getHeight());
-        if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){ //TODO set color according to milk upgrades
-            game.getBatch().setColor(1,0,0,0.9f);
-        }
-        game.getBatch().draw(milkRegion, 0, yPos);
-        for (int i = 0; i < relativeTableWidth; i++) {
-            int width = Math.min((int)clickerTable.getWidth() - (milkTexture.getWidth()*i) - milkX, milkTexture.getWidth());
-            width = Math.max(width, 0);
-            milkRegion.setRegion(0, 0, width, milkTexture.getHeight());
-            game.getBatch().draw(milkRegion, (milkTexture.getWidth()*i) + milkX, yPos);
+        if (MilkState.getCurrentState() != null){
+            game.getBatch().setColor(MilkState.getCurrentStateColor());
+            game.getBatch().draw(milkRegion, 0, yPos);
+            for (int i = 0; i < relativeTableWidth; i++) {
+                int width = Math.min((int)clickerTable.getWidth() - (milkTexture.getWidth()*i) - milkX, milkTexture.getWidth());
+                width = Math.max(width, 0);
+                milkRegion.setRegion(0, 0, width, milkTexture.getHeight());
+                game.getBatch().draw(milkRegion, (milkTexture.getWidth()*i) + milkX, yPos);
+            }
         }
         if (milkX >= MAX_MILK_FRAMES){
             milkFrame = 0;
@@ -1140,6 +1139,7 @@ public class GameScreen implements Screen{
     public void deleteSaveData() {
 //        shop.deleteSaveData();
         shop = new Shop();
+        MilkState.deleteSaveData();
         int displayedUpgrades = upgradeGroup.getChildren().size;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopButtons.get(i).setVisible(i < MAX_VISIBLE_LOCKED_SHOPBUTTONS);
