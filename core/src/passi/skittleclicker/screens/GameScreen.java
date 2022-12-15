@@ -172,7 +172,7 @@ public class GameScreen implements Screen{
         miniSkittleTextures.add(new Texture("skittle_red.png"));
         miniSkittleTextures.add(new Texture("skittle_green.png"));
         miniSkittleTextures.add(new Texture("skittle_purple.png"));
-        this.overlayTexture = new Texture("grey_button_iron.png");
+        this.overlayTexture = new Texture("overlay_button2.png");
 
         this.clickerTexture = new Texture(Gdx.files.internal("pointer_white.png"));
 //        this.clickerTexture = scaleImage("pointer.png", 3, 3);
@@ -380,7 +380,9 @@ public class GameScreen implements Screen{
     private void setupImages(int index, Table table) {
         ShopGroup shopGroup = shop.getShopGroups().get(index + 1);
         String name = shop.shopgroupTypeToString(shopGroup.getType());
-        imageBackgroundTextures.add(new Texture("images/background_test.png")); //TODO add backgrounds
+//        imageBackgroundTextures.add(new Texture("images/background_" + ((index%6)+1) + ".png"));
+        imageBackgroundTextures.add(new Texture("images/background_test3.png"));
+        //TODO add backgrounds
         Image[] images = new Image[(int)shopGroup.getMAX_NUMBER()];
         for (int i = 0; i < images.length; i++) {
             if (index == 1){

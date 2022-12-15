@@ -189,7 +189,11 @@ public class MainMenuScreen implements Screen {
     private void drawButtonOverlay(Button button, Texture overlayTexture, String name) {
         int xPadding = 40;
         Vector2 buttonScreenCoords = ScreenUtil.getScreenCoords(button, camera);
-        game.getBatch().draw(overlayTexture, buttonScreenCoords.x + button.getWidth() - mousieHello.getWidth() - xPadding + 10, buttonScreenCoords.y -button.getHeight() + 10);
+        if (button.isOver()){
+            game.getBatch().draw(overlayTexture,
+                    buttonScreenCoords.x + button.getWidth() - mousieHello.getWidth() - xPadding + 10,
+                    buttonScreenCoords.y -button.getHeight() + 10);
+        }
         game.getFont().draw(game.getBatch(), name, buttonScreenCoords.x + xPadding, buttonScreenCoords.y - button.getHeight()/2.5f);
     }
 

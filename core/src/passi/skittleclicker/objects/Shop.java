@@ -91,7 +91,7 @@ public class Shop{
                 If you were thinking this game starts to drag on... I got you!
                 Dragon is the next way you can increase your skittles production.
                 More specifically skittles synthesized from the rare ingredient
-                dragon tail. Most dragons would never let you touch their tail,
+                dragon tail. Most dragons would never allow you touch to their tail,
                 but some are almost as enthusiastic about you eating their tail as
                 they are about wearing a maid outfit.""");
         ShopGroup danceFloorShopGroup = new ShopGroup(ShopGroup.Type.DANCE_FLOOR, 100, 24, 300, """
