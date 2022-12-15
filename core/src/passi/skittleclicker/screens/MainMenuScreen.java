@@ -35,6 +35,7 @@ public class MainMenuScreen implements Screen {
     Texture mousieCheese;
     Texture mousieRage;
     Texture mousieCry;
+    private static String layoutStyle;
 
     public MainMenuScreen(final SkittleClickerGame gam) {
         game = gam;
@@ -42,6 +43,7 @@ public class MainMenuScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         if (game.gameScreen == null)
             game.gameScreen = new GameScreen(game);
+        layoutStyle = game.getPreferences().getStageSkin();
     }
 
     @Override
@@ -61,9 +63,9 @@ public class MainMenuScreen implements Screen {
         mousieCry = new Texture("mousieCry86.png");
 
         Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
-        String imageUpPath = "button_iron.png";
-        String imageDownPath = "button_iron_shadow.png";
-        String imageMouseOverPath = "button_iron_light.png";
+        String imageUpPath = "button_" + layoutStyle + ".png";
+        String imageDownPath = "button_" + layoutStyle + "_shadow.png";
+        String imageMouseOverPath = "button_" + layoutStyle + "_light.png";
         int width = 350;
         int height= 105;
         Drawable drawable = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageUpPath,  width, height)));

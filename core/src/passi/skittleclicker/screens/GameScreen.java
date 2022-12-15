@@ -52,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GameScreen implements Screen{
 
+    private static String layoutStyle = "iron";
     private static final int MAX_DISPLAYED_UPGRADES = 5;
     private static final float MAX_GOLDLIGHT_SCALE = 1.1f;
     private static final float MIN_GOLDLIGHT_SCALE = 0.9f;
@@ -103,14 +104,14 @@ public class GameScreen implements Screen{
     private Table clickerTable;
     private final Skin skin;
     private final boolean IS_DEBUG_ENABLED = false;
-    private String borderVerticalPath = "iron_border.png";
-    private String borderHorizontalPath = "iron_border_horizontal.png";
+    private String borderVerticalPath = layoutStyle + "_border.png";
+    private String borderHorizontalPath = layoutStyle + "_border_horizontal.png";
     private final Texture milkTexture;
     private final TextureRegion milkRegion;
     private final Texture valhallaFrameSheet;
     private final Animation<TextureRegion> valhallaAnimation;
     private final List<Texture> valhallaSelections;
-    private final Texture borderHorizontalTexture = new Texture(borderHorizontalPath);
+    private final Texture borderHorizontalTexture;
     private float stateTime;
     private TextureRegion currentFrameValhalla;
     private final int MAX_VISIBLE_LOCKED_SHOPBUTTONS = 1;
@@ -129,6 +130,7 @@ public class GameScreen implements Screen{
     private final GlyphLayout tooltipTextLayout;
     private final GlyphLayout tooltipTitleLayout;
     private final GlyphLayout autosaveTextLayout;
+    private final GlyphLayout shopGroupNumberLayout;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -137,6 +139,9 @@ public class GameScreen implements Screen{
         this.stage = new Stage(new ScreenViewport());
         this.stateTime = 0;
         this.milkFrame = 0;
+
+        updateStageSkin();
+        borderHorizontalTexture = new Texture(borderHorizontalPath);
 
         this.format = new DecimalFormat("#,###");
         // temporary until we have asset manager in
@@ -172,7 +177,7 @@ public class GameScreen implements Screen{
         miniSkittleTextures.add(new Texture("skittle_red.png"));
         miniSkittleTextures.add(new Texture("skittle_green.png"));
         miniSkittleTextures.add(new Texture("skittle_purple.png"));
-        this.overlayTexture = new Texture("overlay_button2.png");
+        this.overlayTexture = new Texture("overlay_button_" + layoutStyle + ".png");
 
         this.clickerTexture = new Texture(Gdx.files.internal("pointer_white.png"));
 //        this.clickerTexture = scaleImage("pointer.png", 3, 3);
@@ -204,6 +209,7 @@ public class GameScreen implements Screen{
         tooltipTextLayout = new GlyphLayout();
         autosaveTextLayout = new GlyphLayout();
         autosaveTextLayout.setText(FontUtil.FONT_20, "Autosaved.");
+        shopGroupNumberLayout = new GlyphLayout();
 
         clickSound = Gdx.audio.newSound(Gdx.files.internal("click.wav"));
 
@@ -334,8 +340,8 @@ public class GameScreen implements Screen{
         int visibleLockedButtonCount = 0;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopTable.row(); //.pad(10, 0, 10, 0);
-            shopButtons.add(setupShopButton(shopClickListeners.get(i), "button_iron.png",
-                    "button_iron_shadow.png", "button_iron_light.png",
+            shopButtons.add(setupShopButton(shopClickListeners.get(i), "button_" + layoutStyle + ".png",
+                    "button_" + layoutStyle + "_shadow.png", "button_" + layoutStyle + "_light.png",
                     "shopgroups/" + shop.shopgroupTypeToString(shop.getShopGroups().get(i).getType()) + ".png"));
             shopTable.add(shopButtons.get(i)).fill().expand().left().maxWidth(500);
             //only show unlocked + max visible not unlocked shop group buttons
@@ -353,8 +359,8 @@ public class GameScreen implements Screen{
 
         int addedUpgrades = 0;
         for (int i = 0; i < shop.numberOfUpgrades(); i++) {
-            shopButtons.add(setupShopButton(shopClickListeners.get(shop.numberOfShopGroups()+i), "upgrade_iron.png",
-                    "upgrade_wood_shadow.png", "upgrade_wood_light.png",
+            shopButtons.add(setupShopButton(shopClickListeners.get(shop.numberOfShopGroups()+i), "upgrade_" + layoutStyle + ".png",
+                    "upgrade_" + layoutStyle + "_shadow.png", "upgrade_" + layoutStyle + "_light.png",
                     shop.getUpgrade(i).getImagePath()));
             if (shop.getUpgrades().get(i).isUnlocked()){
                 shop.displayedUpgrade(i);
@@ -584,9 +590,13 @@ public class GameScreen implements Screen{
                 Vector2 buttonScreenCoords = ScreenUtil.getScreenCoords(button, camera);
 
                 int yPadding = 25;
-                game.getFont().draw(game.getBatch(), shop.shopgroupTypeToString(shopGroup.getType()) + " " + shopGroup.getNumber(),
+                game.getFont().draw(game.getBatch(), shop.shopgroupTypeToString(shopGroup.getType()),
                         buttonScreenCoords.x + 100,
                         buttonScreenCoords.y - yPadding);
+                shopGroupNumberLayout.setText(FontUtil.FONT_60, shopGroup.getNumber()+"");
+                FontUtil.FONT_60.draw(game.getBatch(), shopGroupNumberLayout,
+                        buttonScreenCoords.x + button.getWidth() - shopGroupNumberLayout.width/2 - 70,
+                        buttonScreenCoords.y - yPadding - 10);
                 if (button.isGreyedOut()){
                     game.getBatch().draw(greySkittleTexture, buttonScreenCoords.x + 100,
                             buttonScreenCoords.y - (yPadding + 50), 20,20);
@@ -654,15 +664,6 @@ public class GameScreen implements Screen{
             }
         }
 
-//        for (int i = 0; i < imageClickListeners.size(); i++) {
-//            int j = 0;
-//            for (ClickListener c:
-//                 imageClickListeners.get(i)) {
-//                if(c.isOver()){
-//                    System.out.println("MOUSE OVER sg " + i + ", " + j++);
-//                }
-//            }
-//        }
 
         // Remove disappeared skittles
         miniSkittles.forEach(miniSkittle -> {
@@ -1145,8 +1146,8 @@ public class GameScreen implements Screen{
     }
 
     public void updateStageSkin() { // doesnt really do anything because textures inside tables are not changed
-        String skin = game.getPreferences().getStageSkin();
-        borderVerticalPath = skin + "_border.png";
-        borderHorizontalPath = skin + "_border_horizontal.png";
+        layoutStyle = game.getPreferences().getStageSkin();
+        borderVerticalPath = layoutStyle + "_border.png";
+        borderHorizontalPath = layoutStyle + "_border_horizontal.png";
     }
 }

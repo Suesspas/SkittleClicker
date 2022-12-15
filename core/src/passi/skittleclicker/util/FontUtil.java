@@ -35,6 +35,7 @@ public class FontUtil {
     public static BitmapFont FONT_15 = null;
     public static BitmapFont FONT_10 = null;
     public static BitmapFont FONT_8 = null;
+    public static BitmapFont FONT_60 = null;
 
     private FontUtil() {
         throw new UnsupportedOperationException();
@@ -66,6 +67,10 @@ public class FontUtil {
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 8;
         FONT_8 = generator.generateFont(parameter);
+
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 60;
+        FONT_60 = generator.generateFont(parameter);
 
     }
 }

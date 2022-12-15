@@ -111,7 +111,7 @@ public class PreferencesScreen implements Screen {
             }
         });
 
-        final CheckBox stageSkinCheckBox = new CheckBox(null, skin);
+        final CheckBox stageSkinCheckBox = new CheckBox("(requires restart)", skin);
         stageSkinCheckBox.setChecked(game.getPreferences().getStageSkin().equals("iron"));
         stageSkinCheckBox.addListener(new EventListener() {
             @Override
@@ -168,9 +168,9 @@ public class PreferencesScreen implements Screen {
         table.add(soundOnOffLabel).left();
         table.add(soundEffectsCheckbox);//.left();
         table.row().pad(padding,0,0,padding);
-//        table.add(stageSkinLabel).left();
-//        table.add(stageSkinCheckBox);
-//        table.row().pad(10,0,0,10);
+        table.add(stageSkinLabel).left();
+        table.add(stageSkinCheckBox);
+        table.row().pad(10,0,0,10);
         table.add(backButton).colspan(2);
         table.row().pad(10,0,0,10);
         table.add(menuButton).colspan(2);
