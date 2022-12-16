@@ -2,22 +2,20 @@ package passi.skittleclicker.objects;
 
 import com.badlogic.gdx.graphics.Color;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MilkState {
 
     enum State {
-        MILK,
-        CHOCY,
+        NORMAL,
+        CHOCCY,
         MACHA,
         CATGIRL
     }
     private static final Map<Integer, State> stateUpgradeIndices = new HashMap<>();
     private static State currentState = null;
-    private static Color[] stateColors = new Color[State.values().length];
+    private static final Color[] stateColors = new Color[State.values().length];
 
     public static void setUpStates(int[] upgradeIndices){
         for (int i = 0; i < upgradeIndices.length; i++) {

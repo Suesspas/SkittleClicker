@@ -50,12 +50,15 @@ public class Shop{
                 A certain Cat with a Knight Title forces
                 I mean politely asks the local neighbourhood grandmas
                 to help with the skittles production""");
-        ShopGroup duckShopGroup = new ShopGroup(ShopGroup.Type.DUCK, 10, 18, 250, """
-                In a remote skittles swamp many ducks
-                with normal amounts of legs can be found.
+        ShopGroup duckShopGroup = new ShopGroup(ShopGroup.Type.DUCK, 8, 18, 250, """
+                In a remote skittles swamp the rumored skittles duck
+                with a normal amount of legs can be found.
                 Granting you an increase in skittles production
-                by 1 Skittle per Second for every leg they possess.
-                +4 to SpS\s""");
+                by 2 Skittles per Second for every leg it possesses.
+                +8 to SpS
+                
+                (it is said that ducks with more than the normal amount of legs
+                produce more skittles per leg)\s""");
         ShopGroup skittlesBarShopGroup = new ShopGroup(ShopGroup.Type.SKITTLES_BAR, 50, 24, 1000, """
                 You start your own bar to share the sweet flavor of
                 skittles drinks with many people!
@@ -121,129 +124,228 @@ public class Shop{
         //Upgrades
         upgrades = new ArrayList<>();
         int[] milkStateIndices = new int[MilkState.State.values().length];
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade melk 1", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 1, "shopgroups/Granny.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 1", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 1, "upgrades/milk_normal.png"));
         milkStateIndices[0] = upgrades.size() - 1;
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade melk 2", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 2, "shopgroups/Granny.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 2", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 2, "upgrades/milk_choccy.png"));
         milkStateIndices[1] = upgrades.size() - 1;
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade melk 3", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 3, "shopgroups/Granny.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 3", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 3, "upgrades/milk_macha.png"));
         milkStateIndices[2] = upgrades.size() - 1;
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade melk 4", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 4, "shopgroups/Granny.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 4", 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #" + 4, "upgrades/milk_catgirl.png"));
         milkStateIndices[3] = upgrades.size() - 1;
         MilkState.setUpStates(milkStateIndices);
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade " + 1, 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.PLAYER) + "Upgrade #" + 1, "shopgroups/Granny.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all " + 1, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade #1\n\n" +
+                        """
+                        The rounder the skittles the better!
+                        And the only thing rounder than a cookie is a plu. 
+                        Increase your skittle production 
+                        by trying to emulate the superior shape
+                        +x to all skittles gains""", "upgrades/all_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all " + 2, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade #2\n\n" +
+                        """
+                        Your skittles still need to become rounder!
+                        Hire top notch scientist to research the
+                        origin of all that is round. Or as they call it,
+                        the plurigin.
+                        +x to all skittles gains""", "upgrades/all_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all " + 3, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade #3\n\n" +
+                        """
+                        This is it! Your skittles can't possibly become
+                        any rounder! With this improvement you might just hit
+                        the non-plu-ultra. 
+                        The pinnacle of roundness is achieved.
+                        +x to all skittles gains""", "upgrades/all_gold.png"));
+
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 1, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #1\n\n" +
+                        """
+                        Clicking is a great way to gain skittles.
+                        But a single mouse quickly reaches the limits of how
+                        many can be gained.
+                        With this upgrade an evil mousie clone materializes,
+                        helping you gain more skittles per click. 
+                        +x to skittles gained from clicking""", "upgrades/player_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 2, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #2\n\n" +
+                        """
+                        Evil Mousie has reached a frightening amount of
+                        self initiative. She even has her own 
+                        discord account since the 2 pc setup.
+                        She clones herself and makes even 
+                        more evil Mousies.
+                        +x to skittles gained from clicking """, "upgrades/player_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 3, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #3\n\n" +
+                        """
+                        The evil mousies have formed a council.
+                        Thats probably a bad thing, but they don't
+                        really include you in their discussions so you
+                        don't know what they are scheming.
+                        Whatever they did, it seems to further boost your
+                        skittles clicking power.
+                        +x to skittles gained from clicking """, "upgrades/player_gold.png"));
+
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 1, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #1\n\n" +
+                        """
+                        Improving the output of golden skittles 
+                        is no easy task. Only a few know how to do it.
+                        You summon an adorable tanuki to help you out.
+                        They seem to know a lot about gold
+                        and offer you some advice.
+                        Increase golden skittle multiplier by 100%""", "upgrades/gold_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 2, 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.GOLDEN) + "Upgrade #" + 1, "shopgroups/Granny.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade " + 3, 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.ALL) + "Upgrade #" + 1, "shopgroups/Granny.png"));
+                shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #" + 2, "upgrades/gold_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 3, 100, 2,
+                shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #3\n\n" +
+                        """
+                        With the power of KinKaiCookie 
+                        i mean Skittle you increase your 
+                        golden Skittle multiplier by x""" , "upgrades/gold_gold.png"));
+
         //bronze upgrades
         upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Bronze Clicker", 100, 2,
-                    shopgroupTypeToString(ShopGroup.Type.CLICKER) + "Bronze Upgrade, doubles production of Clickers",
+                    shopgroupTypeToString(ShopGroup.Type.CLICKER) + " Bronze Upgrade, doubles production of Clickers",
                 "upgrades/clicker_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Bronze Granny", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.GRANNY) + "Bronze Upgrade, doubles production of Grannies",
+                shopgroupTypeToString(ShopGroup.Type.GRANNY) + " Bronze Upgrade\n\n" +
+                        """
+                       Nothing motivates grannies to produce more 
+                       skittles quite as well as a ferocious cat 
+                       threatening to crash into them with a bike.
+                       These methods may seem questionable 
+                       but the results speak for themselves.
+                       Increases skittle production of all grannies by 100%""",
                 "upgrades/granny_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Bronze Ducks", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.DUCK) + "Bronze Upgrade, doubles production of Ducks",
+                shopgroupTypeToString(ShopGroup.Type.DUCK) + " Bronze Upgrade, doubles production of Ducks",
                 "upgrades/duck_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Bronze Skittles Bar", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + "Bronze Upgrade, doubles production of Skittles Bars",
+                shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + " Bronze Upgrade, doubles production of Skittles Bars",
                 "upgrades/skittles bar_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Bronze Cyberpunk Bar", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + "Bronze Upgrade, doubles production of Cyberpunk Bars",
+                shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + " Bronze Upgrade, doubles production of Cyberpunk Bars",
                 "upgrades/cyberpunk bar_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Bronze Mountain", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + "Bronze Upgrade, doubles production of Mountains",
+                shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + " Bronze Upgrade, doubles production of Mountains",
                 "upgrades/mountain_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Bronze Collab", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.COLLAB) + "Bronze Upgrade, doubles production of Collabs",
+                shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Bronze Upgrade, doubles production of Collabs",
                 "upgrades/collab_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Bronze Isekai", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.ISEKAI) + "Bronze Upgrade, doubles production of Isekais",
+                shopgroupTypeToString(ShopGroup.Type.ISEKAI) + " Bronze Upgrade, doubles production of Isekais",
                 "upgrades/isekai_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Bronze Tailor", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.TAILOR) + "Bronze Upgrade, doubles production of Tailors",
+                shopgroupTypeToString(ShopGroup.Type.TAILOR) + " Bronze Upgrade\n\n" +
+                        """
+                       Perfecting the art of combat in skittle fibre 
+                       combat dresses may seem hard. But you can actually
+                       spam two moves the whole time and you're gonna be fine.
+                       Learn the basics of COUNTER HITTO and GAADO BUREKO.
+                       +x skittles from tailors""",
                 "upgrades/tailor_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Bronze Dragon", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.DRAGON) + "Bronze Upgrade, doubles production of Dragons",
+                shopgroupTypeToString(ShopGroup.Type.DRAGON) + " Bronze Upgrade, doubles production of Dragons",
                 "upgrades/dragon_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Bronze Dance Floor", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + "Bronze Upgrade, doubles production of Dance Floors",
+                shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + " Bronze Upgrade, doubles production of Dance Floors",
                 "upgrades/dance floor_bronze.png"));
 
         //silver upgrades
         upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Silver Clicker", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.CLICKER) + "Silver Upgrade, doubles production of Clickers",
+                shopgroupTypeToString(ShopGroup.Type.CLICKER) + " Silver Upgrade, doubles production of Clickers",
                 "upgrades/clicker_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Silver Granny", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.GRANNY) + "Silver Upgrade, doubles production of Grannies",
+                shopgroupTypeToString(ShopGroup.Type.GRANNY) + " Silver Upgrade\n\n" +
+                        """
+                       Some of the grannies have started to turn
+                       religious, worshipping their lord and saviour, the cabbit.
+                       That does not fly well with their manager though.
+                       Free time and talk not related to skittles is now banned.
+                       Increasing granny skittle production by 100%""",
                 "upgrades/granny_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Silver Ducks", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.DUCK) + "Silver Upgrade, doubles production of Ducks",
+                shopgroupTypeToString(ShopGroup.Type.DUCK) + " Silver Upgrade, doubles production of Ducks",
                 "upgrades/duck_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Silver Skittles Bar", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + "Silver Upgrade, doubles production of Skittles Bars",
+                shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + " Silver Upgrade, doubles production of Skittles Bars",
                 "upgrades/skittles bar_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Silver Cyberpunk Bar", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + "Silver Upgrade, doubles production of Cyberpunk Bars",
+                shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + " Silver Upgrade, doubles production of Cyberpunk Bars",
                 "upgrades/cyberpunk bar_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Silver Mountain", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + "Silver Upgrade, doubles production of Mountains",
+                shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + " Silver Upgrade, doubles production of Mountains",
                 "upgrades/mountain_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Silver Collab", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.COLLAB) + "Silver Upgrade, doubles production of Collabs",
+                shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Silver Upgrade, doubles production of Collabs",
                 "upgrades/collab_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Silver Isekai", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.ISEKAI) + "Silver Upgrade, doubles production of Isekais",
+                shopgroupTypeToString(ShopGroup.Type.ISEKAI) + " Silver Upgrade, doubles production of Isekais",
                 "upgrades/isekai_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Silver Tailor", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.TAILOR) + "Silver Upgrade, doubles production of Tailors",
+                shopgroupTypeToString(ShopGroup.Type.TAILOR) + " Silver Upgrade\n\n" +
+                        """
+                       Improve your COUNTER HITTO and GAADO BUREKO.
+                       +x skittles from tailors""",
                 "upgrades/tailor_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Silver Dragon", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.DRAGON) + "Silver Upgrade, doubles production of Dragons",
+                shopgroupTypeToString(ShopGroup.Type.DRAGON) + " Silver Upgrade, doubles production of Dragons",
                 "upgrades/dragon_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Silver Dance Floor", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + "Silver Upgrade, doubles production of Dance Floors",
+                shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + " Silver Upgrade, doubles production of Dance Floors",
                 "upgrades/dance floor_silver.png"));
 
         //gold upgrades
         upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Gold Clicker", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.CLICKER) + "Gold Upgrade, doubles production of Clickers",
+                shopgroupTypeToString(ShopGroup.Type.CLICKER) + " Gold Upgrade, doubles production of Clickers",
                 "upgrades/clicker_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Gold Granny", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.GRANNY) + "Gold Upgrade, doubles production of Grannies",
+                shopgroupTypeToString(ShopGroup.Type.GRANNY) + " Gold Upgrade\n\n" +
+                        """
+                       The grannies have founded a labour union to stand
+                       against those \"ridiculous\" working conditions.
+                       Now it takes mor than just one Sir to keep them at bay.
+                       Luckily with this upgrade another knight joins 
+                       the management. She is also wielding a sword,
+                       making her arguments to work twice as hard pretty convincing.
+                       +100% grannies skittle production""",
                 "upgrades/granny_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Gold Ducks", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.DUCK) + "Gold Upgrade, doubles production of Ducks",
+                shopgroupTypeToString(ShopGroup.Type.DUCK) + " Gold Upgrade, doubles production of Ducks",
                 "upgrades/duck_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Gold Skittles Bar", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + "Gold Upgrade, doubles production of Skittles Bars",
+                shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + " Gold Upgrade, doubles production of Skittles Bars",
                 "upgrades/skittles bar_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Gold Cyberpunk Bar", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + "Gold Upgrade, doubles production of Cyberpunk Bars",
+                shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + " Gold Upgrade, doubles production of Cyberpunk Bars",
                 "upgrades/cyberpunk bar_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Gold Mountain", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + "Gold Upgrade, doubles production of Mountains",
+                shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + " Gold Upgrade, doubles production of Mountains",
                 "upgrades/mountain_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Gold Collab", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.COLLAB) + "Gold Upgrade, doubles production of Collabs",
+                shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Gold Upgrade, doubles production of Collabs",
                 "upgrades/collab_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Gold Isekai", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.ISEKAI) + "Gold Upgrade, doubles production of Isekais",
+                shopgroupTypeToString(ShopGroup.Type.ISEKAI) + " Gold Upgrade, doubles production of Isekais",
                 "upgrades/isekai_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Gold Tailor", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.TAILOR) + "Gold Upgrade, doubles production of Tailors",
+                shopgroupTypeToString(ShopGroup.Type.TAILOR) + " Gold Upgrade\n\n" +
+                        """
+                       Perfect your COUNTER HITTO and GAADO BUREKO.
+                       +x skittles from tailors""",
                 "upgrades/tailor_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Gold Dragon", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.DRAGON) + "Gold Upgrade, doubles production of Dragons",
+                shopgroupTypeToString(ShopGroup.Type.DRAGON) + " Gold Upgrade, doubles production of Dragons",
                 "upgrades/dragon_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Gold Dance Floor", 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + "Gold Upgrade, doubles production of Dance Floors",
+                shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + " Gold Upgrade, doubles production of Dance Floors",
                 "upgrades/dance floor_gold.png"));
 
         this.goldenActive = false;
@@ -389,7 +491,7 @@ public class Shop{
     }
 
     public void milkClickTimeDecrement(){
-        milkClicksMod -= milkClicksMod > 0 ? 0.1 : 0;
+        milkClicksMod -= milkClicksMod > 0.1 ? 0.1 : 0;
     }
     public double getMilkClicksMod() {
         return milkClicksMod;

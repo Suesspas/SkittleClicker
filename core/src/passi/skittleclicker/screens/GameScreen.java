@@ -168,7 +168,7 @@ public class GameScreen implements Screen{
         this.milkRegion = new TextureRegion(milkTexture);
         this.skittleTexture = new Texture(Gdx.files.internal("big_skittle.png"));
         this.greySkittleTexture = new Texture("grey_skittle.png");
-        this.goldenSkittleTexture = TextureUtil.scaleImage("golden_skittle.png",100,100);
+        this.goldenSkittleTexture = TextureUtil.scaleImage("big_skittle_gold.png",100,100);
         this.goldLightTexture = TextureUtil.scaleImage("gold_light4.png", (int)(SKITTLE_WIDTH + (2*LIGHT_RADIUS)), (int)(SKITTLE_HEIGHT+ (2*LIGHT_RADIUS)));
         this.goldLightSprite = new Sprite(goldLightTexture);
         goldLightSprite.setOrigin(goldLightSprite.getWidth()/2,goldLightSprite.getHeight()/2);
