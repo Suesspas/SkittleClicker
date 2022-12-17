@@ -90,6 +90,9 @@ public class CreditsScreen implements Screen {
                 Creative Commons — Attribution-NoDerivs 3.0 Unported — CC BY-ND 3.0
                 Music promoted by https://www.chosic.com/free-music/all/
                 \s""";
+        String musicCreditsPurr = """
+                Am A Mouse by SirPurrr | https://soundcloud.com/sirpurrr
+                Who was kind enough to allow me to use his music in the game.""";
         game.getBatch().end();
     }
 

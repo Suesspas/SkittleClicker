@@ -2,12 +2,16 @@ package passi.skittleclicker;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import passi.skittleclicker.screens.*;
 import passi.skittleclicker.util.AppPreferences;
 import passi.skittleclicker.util.FontUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SkittleClickerGame extends Game {
 
@@ -33,6 +37,18 @@ public class SkittleClickerGame extends Game {
         batch = new SpriteBatch();
         font = FontUtil.FONT_30;
         preferences = new AppPreferences();
+        String musicPath1 = "music/Faithful-Mission.mp3";
+        musicList.add(Gdx.audio.newMusic(Gdx.files.internal(musicPath1)));
+        String musicPath2 = "music/Ghostrifter-Official-City-Lights.mp3";
+        musicList.add(Gdx.audio.newMusic(Gdx.files.internal(musicPath2)));
+        String musicPath3 = "music/Morning-Routine-Lofi-Study-Music.mp3";
+        musicList.add(Gdx.audio.newMusic(Gdx.files.internal(musicPath3)));
+        String musicPath4 = "music/purrple-cat-field-of-fireflies.mp3";
+        musicList.add(Gdx.audio.newMusic(Gdx.files.internal(musicPath4)));
+        String musicPath5 = "music/When-I-Was-A-Boy.mp3";
+        musicList.add(Gdx.audio.newMusic(Gdx.files.internal(musicPath5)));
+        String musicPath6 = "music/Where-The-Waves-Take-Us.mp3";
+        musicList.add(Gdx.audio.newMusic(Gdx.files.internal(musicPath6)));
 
         setScreen(new MainMenuScreen(this));
     }
@@ -52,6 +68,10 @@ public class SkittleClickerGame extends Game {
         super.dispose();
         batch.dispose();
         font.dispose();
+        for (Music m:
+             musicList) {
+            m.dispose();
+        }
     }
 
     public SpriteBatch getBatch() {
@@ -96,6 +116,17 @@ public class SkittleClickerGame extends Game {
         }
     }
 
+    private final List<Music> musicList = new ArrayList<>();
+    private int musicChanges = 0;
+    public Music getNextBGM(){
+        Music nextMusic = musicList.get(musicChanges);
+        musicChanges = ++musicChanges % musicList.size();
+        return nextMusic;
+    }
+
+    public Music getCurrentBGM(){
+        return musicList.get((musicChanges - 1) % musicList.size());
+    }
     public AppPreferences getPreferences() {
         return this.preferences;
     }

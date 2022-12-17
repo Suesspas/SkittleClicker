@@ -22,7 +22,6 @@ package passi.skittleclicker.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -31,7 +30,6 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
@@ -80,6 +78,7 @@ public class GameScreen implements Screen{
     private final Ellipse skittleRepresentation;
     private final Ellipse goldenSkittleRepresentation;
     public Music bgm;
+    private final Music mousieMusic;
     private final Sound clickSound;
 
     private long skittlesPerSecond;
@@ -103,7 +102,7 @@ public class GameScreen implements Screen{
     private Image storeTitle;
     private Table clickerTable;
     private final Skin skin;
-    private final boolean IS_DEBUG_ENABLED = true;
+    private final boolean IS_DEBUG_ENABLED = false;
     private String borderVerticalPath = layoutStyle + "_border.png";
     private String borderHorizontalPath = layoutStyle + "_border_horizontal.png";
     private final Texture milkTexture;
@@ -184,17 +183,10 @@ public class GameScreen implements Screen{
 
         this.skittleRepresentation = new Ellipse();
         this.goldenSkittleRepresentation = new Ellipse();
-
         this.shapeRenderer = new CustomShapeRenderer();
 
-        bgm = Gdx.audio.newMusic(Gdx.files.internal("arcade.wav"));
-        bgm.setLooping(true);
-        bgm.setVolume(game.getPreferences().getMusicVolume());
-        if (game.getPreferences().isMusicEnabled()) {
-            bgm.play();
-        } else {
-            bgm.stop();
-        }
+        this.mousieMusic = Gdx.audio.newMusic(Gdx.files.internal("music/am_a_mouse.mp3"));
+        changeMusic();
 
         shopTextLayout = new GlyphLayout();
         shopTextLayout.setText(game.getFont(), "Shop");
@@ -238,6 +230,25 @@ public class GameScreen implements Screen{
         setupStage();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::saveProgress));
+    }
+
+    private void changeMusic() {
+        bgm = game.getNextBGM();
+        bgm.setLooping(false);
+        bgm.setVolume(game.getPreferences().getMusicVolume());
+        if (game.getPreferences().isMusicEnabled()) {
+            bgm.play();
+        } else {
+            bgm.stop();
+        }
+        bgm.setOnCompletionListener(new Music.OnCompletionListener() {
+            @Override
+            public void onCompletion(Music music) {
+                bgm.stop();
+                changeMusic();
+                bgm.play();
+            }
+        });
     }
 
     private void setupStage() {
@@ -703,6 +714,12 @@ public class GameScreen implements Screen{
 //            clickedGoldenSkittle();
             System.out.println("clicked golden skittle");
             GoldenSkittle.clicked();
+            //TODO start mousie music
+            bgm.pause();
+            bgm = mousieMusic;
+            float volume = game.getPreferences().getMusicVolume();
+            bgm.setVolume(Math.min(1f, volume*2));
+            bgm.play();
             shop.goldenActive(true);
         }
         Vector2 mousePos = getUnprojectedScreenCoords(0);
@@ -954,6 +971,10 @@ public class GameScreen implements Screen{
             } else if (GoldenSkittle.isActiveEndTime()){
                 System.out.println("end of golden duration");
                 GoldenSkittle.activeEnd();
+                bgm.stop();
+                bgm = game.getCurrentBGM();
+                bgm.setVolume(game.getPreferences().getMusicVolume());
+                bgm.play();
                 shop.goldenActive(false);
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);

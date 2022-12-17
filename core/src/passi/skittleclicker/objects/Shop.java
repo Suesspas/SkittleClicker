@@ -202,13 +202,19 @@ public class Shop{
                         and offer you some advice.
                         Increase golden skittle multiplier by 100%""", "upgrades/gold_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 2, 100, 2,
-                shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #" + 2, "upgrades/gold_silver.png"));
+                shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #2\n\n" +
+                        """
+                        You utilize the gold of some golden 
+                        strawberrerries to make your golden skittles
+                        even more refined!
+                        +x increase in Golden Skittles multiplier""", "upgrades/gold_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 3, 100, 2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #3\n\n" +
                         """
                         With the power of KinKaiCookie 
-                        i mean Skittle you increase your 
-                        golden Skittle multiplier by x""" , "upgrades/gold_gold.png"));
+                        I mean KinKaiSkittle, you further refine 
+                        the gold in your golden skittles. 
+                        +x increase in Golden Skittles multiplier""" , "upgrades/gold_gold.png"));
 
         //bronze upgrades
         upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Bronze Clicker", 100, 2,
