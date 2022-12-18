@@ -102,7 +102,7 @@ public class GameScreen implements Screen{
     private Image storeTitle;
     private Table clickerTable;
     private final Skin skin;
-    private final boolean IS_DEBUG_ENABLED = false;
+    private final boolean IS_DEBUG_ENABLED = true;
     private String borderVerticalPath = layoutStyle + "_border.png";
     private String borderHorizontalPath = layoutStyle + "_border_horizontal.png";
     private final Texture milkTexture;
