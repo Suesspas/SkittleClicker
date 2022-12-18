@@ -8,6 +8,7 @@ public class Upgrade {
     private final ShopGroup.Type type;
     private final String text;
     private final String imagePath;
+    private boolean visible;
 
     public Upgrade(ShopGroup.Type type, String name, long cost, double modifier, String text, String imagePath) {
         this.type = type;
@@ -17,6 +18,7 @@ public class Upgrade {
         this.unlocked = false;
         this.text = text;
         this.imagePath = imagePath;
+        this.visible = false;
     }
 
     public boolean isUnlocked() {
@@ -26,11 +28,6 @@ public class Upgrade {
     public void unlock() {
         this.unlocked = true;
     }
-
-    public void lock() {
-        this.unlocked = false;
-    }
-
     public String getName() {
         return Name;
     }
@@ -52,5 +49,11 @@ public class Upgrade {
 
     public String getImagePath() {
         return imagePath;
+    }
+    public void makeVisible(){
+        visible = true;
+    }
+    public boolean isVisible(){
+        return visible;
     }
 }

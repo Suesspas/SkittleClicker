@@ -35,6 +35,7 @@ public class Shop{
     private final double MILK_CLICKS_MOD_INCREMENT = 0.01;
     private double generalModifier = 1;
     private boolean goldenActive;
+    private final float updateVisibleFraction = 0.2f;
     List<ShopGroup> shopGroups;
     List<Upgrade> upgrades;
 
@@ -124,7 +125,7 @@ public class Shop{
         //Upgrades
         upgrades = new ArrayList<>();
         int[] milkStateIndices = new int[MilkState.State.values().length];
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 1", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 1", 1000, 2,
                 shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #1\n\n" +
                         """
                         Whats better than a skittle?
@@ -678,11 +679,20 @@ public class Shop{
         alreadyDisplayedUpgrades.add(index);
     }
 
-    public int getNewUpgradeIndex() {
-        for (int i = 0; i < upgrades.size(); i++) {
-            if (!alreadyDisplayedUpgrades.contains(i)) return i;
+    public int[] getNewUpgradeIndex() {
+        int[] indices = new int[5];
+        for (int i= 0; i < indices.length; i++) {
+            indices[i] = -1;
         }
-        return -1;
+        int index = 0;
+        for (int i = 0; i < upgrades.size(); i++) {
+            if (index == 5) return indices;
+            if (!alreadyDisplayedUpgrades.contains(i) && upgrades.get(i).isVisible()) {
+                indices[index] = i;
+                index++;
+            }
+        }
+        return indices;
     }
 
     public List<Integer> getAlreadyDisplayedUpgrades() {
@@ -712,4 +722,18 @@ public class Shop{
         return milkClicksMod/MAX_MILK_CLICKS_MOD;
     }
 
+    public void updateVisibleUpgrades() {
+        for (Upgrade u:
+             upgrades) {
+            ShopGroup.Type type = u.getType();
+            if (skittles >= u.getCost() * updateVisibleFraction){
+                if (type == ShopGroup.Type.ALL || type == ShopGroup.Type.GOLDEN
+                        || type == ShopGroup.Type.MILK || type == ShopGroup.Type.PLAYER) {
+                    u.makeVisible();
+                } else if (shopGroups.get(type.ordinal() - 4).getNumber() > 0){
+                    u.makeVisible();
+                }
+            }
+        }
+    }
 }

@@ -368,15 +368,17 @@ public class GameScreen implements Screen{
             }
         }
 
+        shop.updateVisibleUpgrades();
         int addedUpgrades = 0;
         for (int i = 0; i < shop.numberOfUpgrades(); i++) {
             shopButtons.add(setupShopButton(shopClickListeners.get(shop.numberOfShopGroups()+i), "upgrade_" + layoutStyle + ".png",
                     "upgrade_" + layoutStyle + "_shadow.png", "upgrade_" + layoutStyle + "_light.png",
                     shop.getUpgrade(i).getImagePath()));
-            if (shop.getUpgrades().get(i).isUnlocked()){
+            Upgrade upgrade = shop.getUpgrades().get(i);
+            if (upgrade.isUnlocked()){
                 shop.displayedUpgrade(i);
             } else {
-                if (addedUpgrades < MAX_DISPLAYED_UPGRADES) {
+                if (addedUpgrades < MAX_DISPLAYED_UPGRADES && upgrade.isVisible()) {
                     upgradeGroup.addActor(shopButtons.get(shop.numberOfShopGroups()+i));
                     shop.displayedUpgrade(i);
                     addedUpgrades++;
@@ -480,13 +482,19 @@ public class GameScreen implements Screen{
     }
 
     private void addNewUpgradeButton() {
-        int i = shop.getNewUpgradeIndex();
-        if (i == -1) {
+        int[] indices = shop.getNewUpgradeIndex();
+        if (indices == null) {
             System.out.println("no new upgrades found");
         } else {
-            System.out.println("removed and add button number " + (i+shop.numberOfShopGroups()));
-            upgradeGroup.addActor(shopButtons.get(i + shop.numberOfShopGroups()));
-            shop.displayedUpgrade(i);
+            for (int i:
+                 indices) {
+                if (i != -1 && upgradeGroup.getChildren().size < MAX_DISPLAYED_UPGRADES
+                        && shop.getUpgrade(i).isVisible()) {
+                    System.out.println("removed and add button number " + (i+shop.numberOfShopGroups()));
+                    upgradeGroup.addActor(shopButtons.get(i + shop.numberOfShopGroups()));
+                    shop.displayedUpgrade(i);
+                }
+            }
         }
     }
 
@@ -501,6 +509,9 @@ public class GameScreen implements Screen{
         } else {
             stateTime = 0;
         }
+
+        shop.updateVisibleUpgrades();
+        addNewUpgradeButton();
 
         currentFrameValhalla = valhallaAnimation.getKeyFrame(stateTime, true);
 
@@ -714,7 +725,6 @@ public class GameScreen implements Screen{
 //            clickedGoldenSkittle();
             System.out.println("clicked golden skittle");
             GoldenSkittle.clicked();
-            //TODO start mousie music
             bgm.pause();
             bgm = mousieMusic;
             float volume = game.getPreferences().getMusicVolume();
@@ -1163,7 +1173,7 @@ public class GameScreen implements Screen{
         MilkState.deleteSaveData();
         int displayedUpgrades = upgradeGroup.getChildren().size;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
-            shopButtons.get(i).setVisible(i < MAX_VISIBLE_LOCKED_SHOPBUTTONS);
+            shopButtons.get(i).setVisible(i < MAX_VISIBLE_LOCKED_SHOPBUTTONS); //TODO and upgrade.isVisible()
         }
         for (int i = 0; i < displayedUpgrades; i++) {
             upgradeGroup.removeActorAt(0, false);
