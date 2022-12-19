@@ -28,14 +28,14 @@ public class Shop{
     private long skittles = 0;
     private static final long baseSkittlesPerClick = 1;
     private double clickModifier = 1;
-    private double goldenModifier = 10;
+    private double goldenModifier = 2.5;
     private double milkModifier = 1;
     private double milkClicksMod = 0;
     private final double MAX_MILK_CLICKS_MOD = 1;
     private final double MILK_CLICKS_MOD_INCREMENT = 0.01;
     private double generalModifier = 1;
     private boolean goldenActive;
-    private final float updateVisibleFraction = 1f;
+    private final float updateVisibleFraction = 0.5f; //TODO subject to change probably between .3 and 1
     List<ShopGroup> shopGroups;
     List<Upgrade> upgrades;
     List<Integer> alreadyDisplayedUpgrades = new ArrayList<>();
@@ -145,7 +145,7 @@ public class Shop{
         //Upgrades
         upgrades = new ArrayList<>();
         int[] milkStateIndices = new int[MilkState.State.values().length];
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 1", 750, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Milk", 750, 2,
                 shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #1\n\n" +
                         """
                         Whats better than a skittle?
@@ -159,7 +159,7 @@ public class Shop{
                         
                         +100% max consecutive click multiplier""", "upgrades/milk_normal.png"));
         milkStateIndices[0] = upgrades.size() - 1;
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 2", 5000, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Choccy Milk", 5000, 2,
                 shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #2\n\n" +
                         """
                         The combination of skittles and milk can only 
@@ -170,7 +170,7 @@ public class Shop{
                         
                         +100% max consecutive click multiplier""", "upgrades/milk_choccy.png"));
         milkStateIndices[1] = upgrades.size() - 1;
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 3", 50000, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Macha Milk", 50000, 2,
                 shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #3\n\n" +
                         """
                         Being a certified weeb, you know the exquisite
@@ -181,7 +181,7 @@ public class Shop{
                         
                         +100% max consecutive click multiplier""", "upgrades/milk_macha.png"));
         milkStateIndices[2] = upgrades.size() - 1;
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 4", 500000, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Superior Milk", 500000, 2,
                 shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #4\n\n" +
                         """
                         How could you ever top macha milk?
@@ -197,7 +197,7 @@ public class Shop{
         milkStateIndices[3] = upgrades.size() - 1;
         MilkState.setUpStates(milkStateIndices);
 
-        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all production " + 1, 1000, 1.1,
+        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Better production", 1000, 1.1,
                 shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade #1\n\n" +
                         """
                         The rounder the skittles the better!
@@ -206,7 +206,7 @@ public class Shop{
                         by trying to emulate the superior shape
                         
                         +10% to all skittles gains""", "upgrades/all_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all production " + 2, 10000, 1.1,
+        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Better production", 10000, 1.1,
                 shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade #2\n\n" +
                         """
                         Your skittles still need to become rounder!
@@ -215,7 +215,7 @@ public class Shop{
                         the plurigin.
                         
                         +10% to all skittles gains""", "upgrades/all_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all production " + 3, 100000, 1.1,
+        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Better production", 100000, 1.1,
                 shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade #3\n\n" +
                         """
                         This is it! Your skittles can't possibly become
@@ -225,7 +225,7 @@ public class Shop{
                         
                         +10% to all skittles gains""", "upgrades/all_gold.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 1, 500, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Bronze", 500, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #1\n\n" +
                         """
                         Clicking is a great way to gain skittles.
@@ -234,8 +234,8 @@ public class Shop{
                         With this upgrade an evil mousie clone materializes,
                         helping you gain more skittles per click. 
                         
-                        +x to skittles gained from clicking""", "upgrades/player_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 2, 7500, 2,
+                        +100 more skittles gained from clicking""", "upgrades/player_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Silver", 7500, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #2\n\n" +
                         """
                         Evil Mousie has reached a frightening amount of
@@ -244,8 +244,8 @@ public class Shop{
                         She clones herself and makes even 
                         more evil Mousies.
                         
-                        +x to skittles gained from clicking """, "upgrades/player_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 3, 75000, 2,
+                        +100 more skittles gained from clicking """, "upgrades/player_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Gold", 75000, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #3\n\n" +
                         """
                         The evil mousies have formed a council.
@@ -255,9 +255,9 @@ public class Shop{
                         Whatever they did, it seems to further boost your
                         skittles clicking power.
                         
-                        +x to skittles gained from clicking """, "upgrades/player_gold.png"));
+                        +100 more skittles gained from clicking """, "upgrades/player_gold.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 1, 15000, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 15000, 2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #1\n\n" +
                         """
                         Improving the output of golden skittles 
@@ -267,7 +267,7 @@ public class Shop{
                         and offer you some advice.
                         
                         Increase golden skittle multiplier by 100%""", "upgrades/gold_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 2, 150000, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 150000, 2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #2\n\n" +
                         """
                         You utilize the gold of some golden 
@@ -275,7 +275,7 @@ public class Shop{
                         even more refined!
                         
                         +100% increase in Golden Skittles multiplier""", "upgrades/gold_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 3, 1500000, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 1500000, 2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #3\n\n" +
                         """
                         With the power of KinKaiCookie 
@@ -362,8 +362,14 @@ public class Shop{
                         +100% increase in Mountain skittles production""",
                 "upgrades/mountain_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Bronze Collab",
-                Math.round(shopGroupSkittles[5] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
-                shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Bronze Upgrade, doubles production of Collabs",
+                1, 2,
+                shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Bronze Upgrade\n\n" +
+                        """
+                        A good collab needs music. You ask your streamer friend 
+                        and pixel messiah blue guy™ for help and get some of 
+                        the best rave music there is. Meow meow meow meow…
+                                                                
+                        +100% increase in skittles from collabs""",
                 "upgrades/collab_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Bronze Isekai",
                 Math.round(shopGroupSkittles[7] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,

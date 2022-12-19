@@ -887,7 +887,8 @@ public class GameScreen implements Screen{
             text = "Current production: " + format.format(shopGroup.getSkittlesPerSecond()) + "\n\n" + shopGroup.getText();
         }  else {
             int upgradeIndex = i - shop.numberOfShopGroups();
-            title = "Upgrade " + upgradeIndex + " [Cost: "+ format.format(shop.getUpgrade(upgradeIndex).getCost()) +"]";
+            Upgrade upgrade = shop.getUpgrade(upgradeIndex);
+            title = upgrade.getName() + " [Cost: "+ format.format(upgrade.getCost()) +"]";
             text = shop.getUpgrade(upgradeIndex).getText();
         }
         tooltipTitleLayout.setText(FontUtil.FONT_30, title);
@@ -1177,7 +1178,7 @@ public class GameScreen implements Screen{
         MilkState.deleteSaveData();
         int displayedUpgrades = upgradeGroup.getChildren().size;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
-            shopButtons.get(i).setVisible(i < MAX_VISIBLE_LOCKED_SHOPBUTTONS); //TODO and upgrade.isVisible()
+            shopButtons.get(i).setVisible(i < MAX_VISIBLE_LOCKED_SHOPBUTTONS);
         }
         for (int i = 0; i < displayedUpgrades; i++) {
             upgradeGroup.removeActorAt(0, false);
