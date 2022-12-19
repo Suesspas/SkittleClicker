@@ -26,6 +26,7 @@ public class ShopGroup {
     private final long baseSkittles;
     private double modifier;
     private final String text;
+    private final double costIncreaseMult = 0.1;
 
 
     public ShopGroup(Type type, long baseSkittles, long MAX_NUMBER, long baseCost, String text) {
@@ -59,7 +60,7 @@ public class ShopGroup {
     }
 
     public long getCurrentCost() {
-        return baseCost * (number+1);
+        return Math.round(baseCost * ((number * costIncreaseMult) + 1));
     }
 
     public long getMAX_NUMBER() {

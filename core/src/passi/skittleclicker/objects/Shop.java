@@ -35,74 +35,94 @@ public class Shop{
     private final double MILK_CLICKS_MOD_INCREMENT = 0.01;
     private double generalModifier = 1;
     private boolean goldenActive;
-    private final float updateVisibleFraction = 0.2f;
+    private final float updateVisibleFraction = 1f;
     List<ShopGroup> shopGroups;
     List<Upgrade> upgrades;
-
     List<Integer> alreadyDisplayedUpgrades = new ArrayList<>();
+    private final long[] shopGroupSkittles;
+    private final long nextShopGroupMultiplier = 4;
+    private final long costMultiplier = 100;
+    private final double upgradeCostMultiplier = 2;
 
     public Shop(){
-        ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, 1, 54, 5, """
+        shopGroupSkittles = new long[11];
+        for (int i = 0; i < shopGroupSkittles.length; i++) {
+            shopGroupSkittles[i] = Math.round(Math.pow(nextShopGroupMultiplier, i));
+        }
+
+        ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, shopGroupSkittles[0],
+                54,shopGroupSkittles[0]*costMultiplier, """
                 Why click yourself when you can just let others do it?
-                People from chat come together and help you make more
-                and more skittles! 
+                People from chat come together and help you in
+                making more and more skittles! 
                 Spam those left mouse buttons for maximum skittles output.""");
-        ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, 3, 24, 100, """
+        ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, shopGroupSkittles[1],
+                24, shopGroupSkittles[1]*costMultiplier, """
                 A certain Cat with a Knight Title forces
                 I mean politely asks the local neighbourhood grandmas
                 to help with the skittles production""");
-        ShopGroup duckShopGroup = new ShopGroup(ShopGroup.Type.DUCK, 8, 18, 250, """
+        ShopGroup duckShopGroup = new ShopGroup(ShopGroup.Type.DUCK, shopGroupSkittles[2],
+                18, shopGroupSkittles[2]*costMultiplier, """
                 In a remote skittles swamp the rumored skittles duck
                 with a normal amount of legs can be found.
-                Granting you an increase in skittles production
-                by 2 Skittles per Second for every leg it possesses.
-                +8 to SpS
+                It grants you an increase in skittles production
+                by 4 Skittles per Second for every leg it possesses.
+                +16 to SpS
                 
-                (it is said that ducks with more than the normal amount of legs
-                produce more skittles)\s""");
-        ShopGroup skittlesBarShopGroup = new ShopGroup(ShopGroup.Type.SKITTLES_BAR, 50, 24, 1000, """
+                (it is said the more legs a duck has, the more
+                skittles it produces)\s""");
+        ShopGroup skittlesBarShopGroup = new ShopGroup(ShopGroup.Type.SKITTLES_BAR, shopGroupSkittles[3],
+                24, shopGroupSkittles[3]*costMultiplier, """
                 You start your own bar to share the sweet flavor of
                 skittles drinks with many people!
                 Somehow you still end up making more skittles with every
                 bar you open despite them being your main ingredient.""");
-        ShopGroup cyberpunkBarShopGroup = new ShopGroup(ShopGroup.Type.CYBERPUNK_BAR, 100, 15, 300, """
-                You already own skittles bars, but do you own
-                cyberpunk skittles bars? 
-                Hire knowledgeable people to work for you 
-                and contract them to create highly profitable drinks.
-                Just tell them to not overdo it with the Karmotrine.""");
-        ShopGroup mountainShopGroup = new ShopGroup(ShopGroup.Type.MOUNTAIN, 100, 24, 300, """
+
+        ShopGroup mountainShopGroup = new ShopGroup(ShopGroup.Type.MOUNTAIN, shopGroupSkittles[4],
+                24, shopGroupSkittles[4]*costMultiplier, """
                 It is said that Skittle Mountain holds many secrets and challenges.
                 But once you reach the summit you will have uncovered many things,
                 maybe even about yourself. 
                 This gives you the energy to make more and more skittles.
                 And the best part? You can climb the mountain multiple times
                 and keep improving your skittles production.""");
-        ShopGroup collabShopGroup = new ShopGroup(ShopGroup.Type.COLLAB, 100, 24, 300, """
+        ShopGroup collabShopGroup = new ShopGroup(ShopGroup.Type.COLLAB, shopGroupSkittles[5],
+                24, shopGroupSkittles[5]*costMultiplier, """
                 Live streaming skittles production seems to yield even more
                 delicious skittles!
                 Get together with your streaming friends for a big collab
                 and turn those virtual skittles into real ones.""");
-        ShopGroup isekaiShopGroup = new ShopGroup(ShopGroup.Type.ISEKAI, 100, 24, 300, """
+        ShopGroup cyberpunkBarShopGroup = new ShopGroup(ShopGroup.Type.CYBERPUNK_BAR, shopGroupSkittles[6], 15,
+                shopGroupSkittles[6]*costMultiplier, """
+                You already own skittles bars, but do you own
+                cyberpunk skittles bars? 
+                Hire knowledgeable people to work for you 
+                and contract them to create highly profitable drinks.
+                Just tell them to not overdo it with the Karmotrine.""");
+        ShopGroup isekaiShopGroup = new ShopGroup(ShopGroup.Type.ISEKAI, shopGroupSkittles[7],
+                24, shopGroupSkittles[7]*costMultiplier, """
                 The skittle reserves of this world are no longer enough for you.
                 Since you heard that in other worlds there might be magic,
                 you need to explore this option. 
                 If you're lucky you might even find someone 
                 that wields the highest form of attack magic:
                 Skittle Explosion Magic. EKSU PURO SION""");
-        ShopGroup tailorGroup = new ShopGroup(ShopGroup.Type.TAILOR, 100, 24, 300, """
+        ShopGroup tailorGroup = new ShopGroup(ShopGroup.Type.TAILOR, shopGroupSkittles[8],
+                24, shopGroupSkittles[8]*costMultiplier, """
                 Skilled Tailors, Making skittles clothes out of 
                 the Fabric of reality. Some can even harness the powers 
                 of those skittle dresses and wear them, 
                 granting them increased strength in combat.""");
-        ShopGroup dragonShopGroup = new ShopGroup(ShopGroup.Type.DRAGON, 100, 24, 300, """
+        ShopGroup dragonShopGroup = new ShopGroup(ShopGroup.Type.DRAGON, shopGroupSkittles[9],
+                24, shopGroupSkittles[9]*costMultiplier, """
                 If you were thinking this game starts to drag on... I got you!
                 Dragon is the next way you can increase your skittles production.
                 More specifically skittles synthesized from the rare ingredient
                 dragon tail. Most dragons would never allow you touch to their tail,
                 but some are almost as enthusiastic about you eating their tail as
                 they are about wearing a maid outfit.""");
-        ShopGroup danceFloorShopGroup = new ShopGroup(ShopGroup.Type.DANCE_FLOOR, 100, 24, 300, """
+        ShopGroup danceFloorShopGroup = new ShopGroup(ShopGroup.Type.DANCE_FLOOR, shopGroupSkittles[10],
+                24, shopGroupSkittles[10]*costMultiplier, """
                 HASHIRE SORI YO
                 KAZE NO YOU NI
                 TSUKIMIHARA WO
@@ -114,9 +134,9 @@ public class Shop{
         shopGroups.add(grannyShopGroup);
         shopGroups.add(duckShopGroup);
         shopGroups.add(skittlesBarShopGroup);
-        shopGroups.add(cyberpunkBarShopGroup);
         shopGroups.add(mountainShopGroup);
         shopGroups.add(collabShopGroup);
+        shopGroups.add(cyberpunkBarShopGroup);
         shopGroups.add(isekaiShopGroup);
         shopGroups.add(tailorGroup);
         shopGroups.add(dragonShopGroup);
@@ -125,20 +145,21 @@ public class Shop{
         //Upgrades
         upgrades = new ArrayList<>();
         int[] milkStateIndices = new int[MilkState.State.values().length];
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 1", 1000, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 1", 750, 2,
                 shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #1\n\n" +
                         """
                         Whats better than a skittle?
                         Right, a skittle dunked into milk.
                         With this upgrade you unlock milk, which
                         causes your consecutive clicks to be worth 
-                        more skittles. Each click only adds a little but
-                        if you spam click, it quickly adds up until it hits
-                        the max multiplier.
+                        more skittles. Each click only adds a little bit
+                        but if you spam click, it quickly adds up 
+                        until it hits the max multiplier.
                         The click multiplier decreases over time.
+                        
                         +100% max consecutive click multiplier""", "upgrades/milk_normal.png"));
         milkStateIndices[0] = upgrades.size() - 1;
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 2", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 2", 5000, 2,
                 shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #2\n\n" +
                         """
                         The combination of skittles and milk can only 
@@ -146,9 +167,10 @@ public class Shop{
                         Choccy milk is superior to normal milk in 
                         every regard after all.
                         Upgrade your milk to choccy milk and
+                        
                         +100% max consecutive click multiplier""", "upgrades/milk_choccy.png"));
         milkStateIndices[1] = upgrades.size() - 1;
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 3", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 3", 50000, 2,
                 shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #3\n\n" +
                         """
                         Being a certified weeb, you know the exquisite
@@ -156,9 +178,10 @@ public class Shop{
                         So here you go. Macha milk for all the land of the
                         rising sun enthusiasts.
                         Upgrade your milk to macha milk and
+                        
                         +100% max consecutive click multiplier""", "upgrades/milk_macha.png"));
         milkStateIndices[2] = upgrades.size() - 1;
-        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 4", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MILK,"Upgrade milk 4", 500000, 2,
                 shopgroupTypeToString(ShopGroup.Type.MILK) + "Upgrade #4\n\n" +
                         """
                         How could you ever top macha milk?
@@ -168,37 +191,41 @@ public class Shop{
                         at all in any way.
                         
                         
-                        ... Ok i lied, enjoy your catgirl milk you filthy nerds.
+                        ... Ok i lied, enjoy your catgirl milk you nerds.
+                        
                         +100% max consecutive click multiplier""", "upgrades/milk_catgirl.png"));
         milkStateIndices[3] = upgrades.size() - 1;
         MilkState.setUpStates(milkStateIndices);
 
-        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all " + 1, 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all production " + 1, 1000, 1.1,
                 shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade #1\n\n" +
                         """
                         The rounder the skittles the better!
-                        And the only thing rounder than a cookie is a plu. 
+                        And the only thing rounder than a skittle is a plu. 
                         Increase your skittle production 
                         by trying to emulate the superior shape
-                        +x to all skittles gains""", "upgrades/all_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all " + 2, 100, 2,
+                        
+                        +10% to all skittles gains""", "upgrades/all_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all production " + 2, 10000, 1.1,
                 shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade #2\n\n" +
                         """
                         Your skittles still need to become rounder!
                         Hire top notch scientist to research the
                         origin of all that is round. Or as they call it,
                         the plurigin.
-                        +x to all skittles gains""", "upgrades/all_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all " + 3, 100, 2,
+                        
+                        +10% to all skittles gains""", "upgrades/all_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.ALL,"Upgrade all production " + 3, 100000, 1.1,
                 shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade #3\n\n" +
                         """
                         This is it! Your skittles can't possibly become
                         any rounder! With this improvement you might just hit
                         the non-plu-ultra. 
                         The pinnacle of roundness is achieved.
-                        +x to all skittles gains""", "upgrades/all_gold.png"));
+                        
+                        +10% to all skittles gains""", "upgrades/all_gold.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 1, 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 1, 500, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #1\n\n" +
                         """
                         Clicking is a great way to gain skittles.
@@ -206,8 +233,9 @@ public class Shop{
                         many can be gained.
                         With this upgrade an evil mousie clone materializes,
                         helping you gain more skittles per click. 
+                        
                         +x to skittles gained from clicking""", "upgrades/player_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 2, 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 2, 7500, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #2\n\n" +
                         """
                         Evil Mousie has reached a frightening amount of
@@ -215,8 +243,9 @@ public class Shop{
                         discord account since the 2 pc setup.
                         She clones herself and makes even 
                         more evil Mousies.
+                        
                         +x to skittles gained from clicking """, "upgrades/player_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 3, 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Upgrade player clicks " + 3, 75000, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #3\n\n" +
                         """
                         The evil mousies have formed a council.
@@ -225,9 +254,10 @@ public class Shop{
                         don't know what they are scheming.
                         Whatever they did, it seems to further boost your
                         skittles clicking power.
+                        
                         +x to skittles gained from clicking """, "upgrades/player_gold.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 1, 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 1, 15000, 2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #1\n\n" +
                         """
                         Improving the output of golden skittles 
@@ -235,24 +265,28 @@ public class Shop{
                         You summon an adorable tanuki to help you out.
                         They seem to know a lot about gold
                         and offer you some advice.
+                        
                         Increase golden skittle multiplier by 100%""", "upgrades/gold_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 2, 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 2, 150000, 2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #2\n\n" +
                         """
                         You utilize the gold of some golden 
                         strawberrerries to make your golden skittles
                         even more refined!
-                        +x increase in Golden Skittles multiplier""", "upgrades/gold_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 3, 100, 2,
+                        
+                        +100% increase in Golden Skittles multiplier""", "upgrades/gold_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Upgrade " + 3, 1500000, 2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #3\n\n" +
                         """
                         With the power of KinKaiCookie 
                         I mean KinKaiSkittle, you further refine 
                         the gold in your golden skittles. 
-                        +x increase in Golden Skittles multiplier""" , "upgrades/gold_gold.png"));
+                        
+                        +100% increase in Golden Skittles multiplier""" , "upgrades/gold_gold.png"));
 
         //bronze upgrades
-        upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Bronze Clicker", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Bronze Clicker",
+                Math.round(shopGroupSkittles[0] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                     shopgroupTypeToString(ShopGroup.Type.CLICKER) + " Bronze Upgrade\n\n" +
                             """
                            Your clickers are led by the powerful AlphaSkittle.
@@ -260,9 +294,11 @@ public class Shop{
                            especially if people in chat need to get banned.
                            While your clickers don't reach the same level,
                            it still has a positive effect on them.
+                           
                            +100% increase in Clicker skittles production""",
                 "upgrades/clicker_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Bronze Granny", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Bronze Granny",
+                Math.round(shopGroupSkittles[1] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.GRANNY) + " Bronze Upgrade\n\n" +
                         """
                        Nothing motivates grannies to produce more 
@@ -270,9 +306,11 @@ public class Shop{
                        threatening to crash into them with a bike.
                        These methods may seem questionable 
                        but the results speak for themselves.
+                       
                        Increases skittle production of all grannies by 100%""",
                 "upgrades/granny_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Bronze Ducks", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Bronze Ducks",
+                Math.round(shopGroupSkittles[2] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.DUCK) + " Bronze Upgrade\n\n" +
                         """
                        Contrary to most other ways to get skittles
@@ -282,9 +320,11 @@ public class Shop{
                        This upgrade makes the legs of your duck 
                        regrow faster, so you can harvest more of 
                        those sweet skittles squeezed from their legs.
+                       
                        +100% increase in skittles producktion""",
                 "upgrades/duck_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Bronze Skittles Bar", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Bronze Skittles Bar",
+                Math.round(shopGroupSkittles[3] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + " Bronze Upgrade\n\n" +
                         """
                        Every bar needs good bouncers to keep order and Peace.
@@ -293,9 +333,11 @@ public class Shop{
                        customers and making sure they don't cause any problems.
                        This makes the atmosphere in your bar nicer 
                        and attracts more customers.
+                       
                        +100% increase in skittles bar production""",
                 "upgrades/skittles bar_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Bronze Cyberpunk Bar", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Bronze Cyberpunk Bar",
+                Math.round(shopGroupSkittles[6] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + " Bronze Upgrade\n\n" +
                         """
                        You expand your assortment of drinks to suit the
@@ -304,9 +346,11 @@ public class Shop{
                        This seems to be a success and attracts many of them,
                        especially a little red haired robot with a joyful
                        attitude and an equally perverted sense of humour.
+                       
                        +100% increase in cyberpunk bar production""",
                 "upgrades/cyberpunk bar_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Bronze Mountain", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Bronze Mountain",
+                Math.round(shopGroupSkittles[4] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + " Bronze Upgrade\n\n" +
                         """
                         Collecting strawberrerries is a great way to get skittles, 
@@ -314,75 +358,92 @@ public class Shop{
                         seems to yield a lot of skittles. Through a lot of 
                         training you improve your climbing skills and are now able 
                         to climb the mountain in only 42m 41s 594ms
+                        
                         +100% increase in Mountain skittles production""",
                 "upgrades/mountain_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Bronze Collab", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Bronze Collab",
+                Math.round(shopGroupSkittles[5] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Bronze Upgrade, doubles production of Collabs",
                 "upgrades/collab_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Bronze Isekai", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Bronze Isekai",
+                Math.round(shopGroupSkittles[7] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.ISEKAI) + " Bronze Upgrade\n\n" +
                         """
                        After arriving in this Wonderful World you receive God's Blessing. 
                        Or you thought it was god, but it is just a useless water arch priest.
                        Well nothing you can do about that. It seems to help your skittles
                        production anyway. Maybe this blue girl is not so useless after all...
+                       
                        +100% increase in skittles from isekais""",
                 "upgrades/isekai_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Bronze Tailor", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Bronze Tailor",
+                Math.round(shopGroupSkittles[8] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.TAILOR) + " Bronze Upgrade\n\n" +
                         """
                        Perfecting the art of combat in skittle fibre 
                        combat dresses may seem hard. But you can actually
                        spam two moves the whole time and you're gonna be fine.
                        Learn the basics of COUNTER HITTO and GAADO BUREKO.
+                       
                        +100% increase in skittles from tailors""",
                 "upgrades/tailor_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Bronze Dragon", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Bronze Dragon",
+                Math.round(shopGroupSkittles[9] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.DRAGON) + " Bronze Upgrade\n\n" +
                         """
                         You meet a dragon that plays video games all day
                         and is very much interested in treasures.
                         You convince him that skittles are the greatest treasure
                         in the world and that he should help you get more!
+                        
                         +100% increase in Dragon skittles production""",
                 "upgrades/dragon_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Bronze Dance Floor", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Bronze Dance Floor",
+                Math.round(shopGroupSkittles[10] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + " Bronze Upgrade\n\n" +
                         """
                         *padoruing intensifies*
+                        
                         +100% increase in Dance Floor skittles production""",
                 "upgrades/dance floor_bronze.png"));
 
         //silver upgrades
-        upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Silver Clicker", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Silver Clicker",
+                Math.round(shopGroupSkittles[0] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.CLICKER) + " Silver Upgrade\n\n" +
                         """
                        One of the clickers has started a skittle 
                        smuggling business. It seems to be going very well.
-                       To the point that the skittles acquired by smuggling match those
-                       earned trough clicks by all other clickers. But that's
-                       just a general estimate.
+                       To the point that the skittles acquired by smuggling are just
+                       as high in number as those earned by all other clickers. 
+                       But that's just_a_general estimate.
+                       
                        +100% increase in Clicker skittles production""",
                 "upgrades/clicker_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Silver Granny", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Silver Granny",
+                Math.round(shopGroupSkittles[1] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.GRANNY) + " Silver Upgrade\n\n" +
                         """
                        Some of the grannies have started to turn
                        religious, worshipping their lord and saviour, the cabbit.
                        That does not fly well with their manager though.
                        Free time and talk not related to skittles is now banned.
+                       
                        Increasing granny skittle production by 100%""",
                 "upgrades/granny_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Silver Ducks", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Silver Ducks",
+                Math.round(shopGroupSkittles[2] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.DUCK) + " Silver Upgrade\n\n" +"""
                        The legs of your duck need to grow even faster.
                        You show the duck gartic phone images of other
                        ducks with normal numbers of legs.
                        This helps motivate the duck to regrow its legs 
                        even faster. That and the preheated oven.
+                       
                        +100% increase in skittles producktion""",
                 "upgrades/duck_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Silver Skittles Bar", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Silver Skittles Bar",
+                Math.round(shopGroupSkittles[3] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + " Silver Upgrade\n\n" +
                         """
                        You hire another capable bouncer.
@@ -391,9 +452,11 @@ public class Shop{
                        bopping playlists and a huge anime catalogue.
                        This means you can start anime nights at your bar
                        and attract even more customers!
+                       
                        +100% increase in skittles bar production""",
                 "upgrades/skittles bar_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Silver Cyberpunk Bar", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Silver Cyberpunk Bar",
+                Math.round(shopGroupSkittles[6] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + " Silver Upgrade\n\n" +
                         """
                        You further expand your assortment of drinks.
@@ -402,9 +465,11 @@ public class Shop{
                        skittle nano machines technology and will help
                        bring more people to the bar. Mainly because of
                        their Stellar performances during karaoke nights.
+                       
                        +100% increase in cyberpunk bar production""",
                 "upgrades/cyberpunk bar_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Silver Mountain", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Silver Mountain",
+                Math.round(shopGroupSkittles[4] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + " Silver Upgrade\n\n" +
                         """
                         You keep training. You still have not reached your goal.
@@ -413,12 +478,15 @@ public class Shop{
                         And you are right. After learning new techniques and
                         even more training you achieve a time of
                         41m 23s 972ms!
+                        
                         +100% increase in Mountain skittles production""",
                 "upgrades/mountain_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Silver Collab", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Silver Collab",
+                Math.round(shopGroupSkittles[5] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Silver Upgrade, doubles production of Collabs",
                 "upgrades/collab_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Silver Isekai", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Silver Isekai",
+                Math.round(shopGroupSkittles[7] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.ISEKAI) + " Silver Upgrade\n\n" +
                         """
                        In this Wonderful World you meet a splendid Crusader.
@@ -427,15 +495,19 @@ public class Shop{
                        herself she says it's fine to work her to the bon 24/7.
                        So you take her up on her offer 
                        and let her handle the isekai skittles.
+                       
                        +100% increase in skittles from isekais""",
                 "upgrades/isekai_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Silver Tailor", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Silver Tailor",
+                Math.round(shopGroupSkittles[8] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.TAILOR) + " Silver Upgrade\n\n" +
                         """
                        Improve your COUNTER HITTO and GAADO BUREKO.
+                       
                        +x skittles from tailors""",
                 "upgrades/tailor_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Silver Dragon", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Silver Dragon",
+                Math.round(shopGroupSkittles[9] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.DRAGON) + " Silver Upgrade\n\n" +
                         """
                         There is a smol dragon kid that possesses strong 
@@ -443,17 +515,21 @@ public class Shop{
                         create an abomination of a skittle creature.
                         You decide to call it SkittleStein's monster,
                         as the dragon assumes that as a stage name.
+                        
                         +100% increase in Dragon skittles production""",
                 "upgrades/dragon_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Silver Dance Floor", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Silver Dance Floor",
+                Math.round(shopGroupSkittles[10] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
                 shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + " Silver Upgrade\n\n" +
                         """
                         *padoruing intensifies even more*
+                        
                         +100% increase in Dance Floor skittles production""",
                 "upgrades/dance floor_silver.png"));
 
         //gold upgrades
-        upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Gold Clicker", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Gold Clicker",
+                Math.round(shopGroupSkittles[0] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.CLICKER) + " Gold Upgrade\n\n" +
                         """
                        The skittle smuggling has started a whole skittle mafia.
@@ -461,9 +537,11 @@ public class Shop{
                        heist. Especially dangerous are the two mafia bosses 
                        working together and stealing tons and tons of skittles.
                        The clicker crime syndicate is at its peak.
+                       
                        +100% increase in Clicker skittles production""",
                 "upgrades/clicker_gold.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Gold Granny", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Gold Granny",
+                Math.round(shopGroupSkittles[1] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.GRANNY) + " Gold Upgrade\n\n" +
                         """
                        The grannies have founded a labour union to stand
@@ -472,9 +550,11 @@ public class Shop{
                        Luckily with this upgrade another knight joins 
                        the management. She is also wielding a sword,
                        making her arguments to work twice as hard pretty convincing.
+                       
                        +100% grannies skittle production""",
                 "upgrades/granny_gold.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Gold Ducks", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.DUCK,"Gold Ducks",
+                Math.round(shopGroupSkittles[2] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.DUCK) + " Gold Upgrade\n\n" +"""
                        The leg regrowth of your duck has reached a point
                        that seems quite concerning. The workers are having 
@@ -482,9 +562,11 @@ public class Shop{
                        as it regrows them. This even makes the newest season
                        of Made in Abyss pale in comparison.
                        You may have qualms but it's for the greater good!
+                       
                        +100% increase in skittles producktion""",
                 "upgrades/duck_gold.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Gold Skittles Bar", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.SKITTLES_BAR,"Gold Skittles Bar",
+                Math.round(shopGroupSkittles[3] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.SKITTLES_BAR) + " Gold Upgrade\n\n" +
                         """
                        The numbers of customers in your bar are only growing
@@ -495,9 +577,11 @@ public class Shop{
                        who has studied the arts of bloon popping for a long time.
                        Even more people join the bar 
                        and seem to enjoy the popping sounds.
+                       
                        +100% increase in skittles bar production""",
                 "upgrades/skittles bar_gold.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Gold Cyberpunk Bar", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.CYBERPUNK_BAR,"Gold Cyberpunk Bar",
+                Math.round(shopGroupSkittles[6] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.CYBERPUNK_BAR) + " Gold Upgrade\n\n" +
                         """
                        You and your boss work together to improve your 
@@ -506,9 +590,11 @@ public class Shop{
                        and the people working there.
                        Just dont cause any ruckus or she will literally crush
                        you with her mechanical arm.
+                       
                        +100% increase in cyberpunk bar production""",
                 "upgrades/cyberpunk bar_gold.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Gold Mountain", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.MOUNTAIN,"Gold Mountain",
+                Math.round(shopGroupSkittles[4] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.MOUNTAIN) + " Gold Upgrade\n\n" +
                         """
                         You are already fast as frick. But you still have one more goal.
@@ -519,12 +605,15 @@ public class Shop{
                         And what a climb it was! With a whopping 39m 00s 968ms, you not only
                         reach your goal, but shatter it completely by almost a whole minute.
                         Now that's an achievement.
+                        
                         +100% increase in Mountain skittles production""",
                 "upgrades/mountain_gold.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Gold Collab", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Gold Collab",
+                Math.round(shopGroupSkittles[5] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Gold Upgrade, doubles production of Collabs",
                 "upgrades/collab_gold.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Gold Isekai", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Gold Isekai",
+                Math.round(shopGroupSkittles[7] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.ISEKAI) + " Gold Upgrade\n\n" +
                         """
                        You have finally found it. The ultimate magic.
@@ -533,15 +622,19 @@ public class Shop{
                        and together you cast the highest level magic spell
                        Multiple Explosions Greater Ultimate Maximum Inferno Nuke.
                        Or M.E.G.U.M.I.N for short.
+                       
                        +100% increase in skittles from isekais""",
                 "upgrades/isekai_gold.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Gold Tailor", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.TAILOR,"Gold Tailor",
+                Math.round(shopGroupSkittles[8] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.TAILOR) + " Gold Upgrade\n\n" +
                         """
                        Perfect your COUNTER HITTO and GAADO BUREKO.
+                       
                        +x skittles from tailors""",
                 "upgrades/tailor_gold.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Gold Dragon", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Gold Dragon",
+                Math.round(shopGroupSkittles[9] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.DRAGON) + " Gold Upgrade\n\n" +
                         """
                         Arguments about best girls in anime are 
@@ -552,12 +645,15 @@ public class Shop{
                         this possible be any better?
                         Where was I... Ah yes, together with the best dragon maid
                         you improve your dragon tail production by a lot!
+                        
                         +100% increase in Dragon skittles production""",
                 "upgrades/dragon_gold.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Gold Dance Floor", 100, 2,
+        upgrades.add(new Upgrade(ShopGroup.Type.DANCE_FLOOR,"Gold Dance Floor",
+                Math.round(shopGroupSkittles[10] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.DANCE_FLOOR) + " Gold Upgrade\n\n" +
                         """
                         *you padoru so hard, every day is now christmas*
+                        
                         +100% increase in Dance Floor skittles production""",
                 "upgrades/dance floor_gold.png"));
 
@@ -735,5 +831,9 @@ public class Shop{
                 }
             }
         }
+    }
+
+    public void enableTestMode() {
+        skittles += 9999999999999L;
     }
 }

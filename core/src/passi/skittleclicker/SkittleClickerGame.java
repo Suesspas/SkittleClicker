@@ -108,7 +108,7 @@ public class SkittleClickerGame extends Game {
                 this.setScreen(gameScreen);
                 break;
             case ENDGAME:
-                this.setScreen(new TestScreen(this));
+                this.setScreen(new CreditsScreen(this));
                 break;
             case EXIT:
                 this.setScreen(new ExitScreen(this, ExitScreen.EXIT));
@@ -133,5 +133,9 @@ public class SkittleClickerGame extends Game {
 
     public void updateStageSkin() {
         gameScreen.updateStageSkin();
+    }
+
+    public void enableTestMode() {
+        gameScreen.enableTestMode();
     }
 }

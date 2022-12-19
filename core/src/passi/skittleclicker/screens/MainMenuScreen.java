@@ -30,7 +30,7 @@ public class MainMenuScreen implements Screen {
     ImageButton preferences;
     ImageButton deleteSaveData;
     ImageButton exit;
-    ImageButton test;
+    ImageButton credits;
     Texture mousieHello;
     Texture mousieCheese;
     Texture mousieRage;
@@ -86,7 +86,7 @@ public class MainMenuScreen implements Screen {
         preferences = new ImageButton(imageButtonStyle);
         deleteSaveData = new ImageButton(imageButtonStyle);
         exit = new ImageButton(imageButtonStyle);
-        test = new ImageButton(imageButtonStyle);
+        credits = new ImageButton(imageButtonStyle);
 
         //add buttons to table
         table.add(playGame);
@@ -98,7 +98,7 @@ public class MainMenuScreen implements Screen {
         table.row().pad(10, 0, 10, 0);
         table.add(exit);
         table.row().pad(10, 0, 10, 0);
-        table.add(test);
+        table.add(credits);
 //        table.row().pad(10, 0, 10, 0);
 //        table.add(test).fillX().uniformX();
 //        table.row().pad(10, 0, 10, 0);
@@ -138,7 +138,7 @@ public class MainMenuScreen implements Screen {
                 game.changeScreen(SkittleClickerGame.PREFERENCES);
             }
         });
-        test.addListener(new ChangeListener() {
+        credits.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 stage.clear();
@@ -170,7 +170,7 @@ public class MainMenuScreen implements Screen {
         drawButtonOverlay(preferences, mousieCheese, "Preferences");
         drawButtonOverlay(deleteSaveData, mousieRage, "Delete Data");
         drawButtonOverlay(exit, mousieCry, "Exit");
-        drawButtonOverlay(test, mousieCheese, "Test");
+        drawButtonOverlay(credits, mousieCheese, "Test");
         game.getBatch().end();
 //        if (System.currentTimeMillis() - aniTime > 500){
 //            stage.clear();

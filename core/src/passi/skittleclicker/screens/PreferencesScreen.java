@@ -30,6 +30,7 @@ public class PreferencesScreen implements Screen {
     private Label musicOnOffLabel;
     private Label soundOnOffLabel;
     private Label stageSkinLabel;
+    private Label enableTestLabel;
     OrthographicCamera camera;
 
     public PreferencesScreen(final SkittleClickerGame gam) {
@@ -127,6 +128,17 @@ public class PreferencesScreen implements Screen {
             }
         });
 
+        final CheckBox testModeCheckBox = new CheckBox("(gives you loads of skittles for testing)", skin);
+        testModeCheckBox.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if(testModeCheckBox.isChecked()) {
+                    game.enableTestMode();
+                }
+                return false;
+            }
+        });
+
         // return to game and main menu screen buttons
         final TextButton backButton = new TextButton("To Game", skin);//"small" //stylename
         backButton.addListener(new ChangeListener() {
@@ -152,6 +164,7 @@ public class PreferencesScreen implements Screen {
         musicOnOffLabel = new Label( "Music enabled", skin );
         soundOnOffLabel = new Label( "Sound enabled", skin );
         stageSkinLabel = new Label("Stage Skin", skin);
+        enableTestLabel = new Label("Test Mode", skin);
 
         int padding = 10;
         table.add(titleLabel).colspan(2);
@@ -170,6 +183,9 @@ public class PreferencesScreen implements Screen {
         table.row().pad(padding,0,0,padding);
         table.add(stageSkinLabel).left();
         table.add(stageSkinCheckBox);
+        table.row().pad(padding,0,0,padding);
+        table.add(enableTestLabel).left();
+        table.add(testModeCheckBox);
         table.row().pad(10,0,0,10);
         table.add(backButton).colspan(2);
         table.row().pad(10,0,0,10);

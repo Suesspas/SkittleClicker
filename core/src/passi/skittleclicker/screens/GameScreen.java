@@ -102,7 +102,7 @@ public class GameScreen implements Screen{
     private Image storeTitle;
     private Table clickerTable;
     private final Skin skin;
-    private final boolean IS_DEBUG_ENABLED = true;
+    private final boolean IS_DEBUG_ENABLED = false;
     private String borderVerticalPath = layoutStyle + "_border.png";
     private String borderHorizontalPath = layoutStyle + "_border_horizontal.png";
     private final Texture milkTexture;
@@ -599,7 +599,7 @@ public class GameScreen implements Screen{
             //draw debug info
             if (IS_DEBUG_ENABLED){
                 game.getFont().draw(game.getBatch(), shopGroup.getType()+" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
-                                + " [Cost: "+ shopGroup.getCurrentCost()+"] skittles per sec " + shopGroup.getSkittlesPerSecond(),
+                                + " [Cost: "+ format.format(shopGroup.getCurrentCost())+"] skittles per sec " + format.format(shopGroup.getSkittlesPerSecond()),
                         camera.position.x - (camera.viewportWidth / 2.2f) - 50,
                         camera.position.y + (camera.viewportHeight / 2.2f) - 300 - yOffset
                 );
@@ -621,24 +621,28 @@ public class GameScreen implements Screen{
                 shopGroupNumberLayout.setText(FontUtil.FONT_60, shopGroup.getNumber()+"");
                 FontUtil.FONT_60.draw(game.getBatch(), shopGroupNumberLayout,
                         buttonScreenCoords.x + button.getWidth() - shopGroupNumberLayout.width/2 - 70,
-                        buttonScreenCoords.y - yPadding - 10);
-                if (button.isGreyedOut()){
-                    game.getBatch().draw(greySkittleTexture, buttonScreenCoords.x + 100,
-                            buttonScreenCoords.y - (yPadding + 50), 20,20);
-                } else {
-                    game.getBatch().draw(skittleTexture, buttonScreenCoords.x + 100,
-                            buttonScreenCoords.y - (yPadding + 50), 20,20);
+                        buttonScreenCoords.y - yPadding - 7);
+
+                if (shopGroup.getNumber() < shopGroup.getMAX_NUMBER()){
+                    if (button.isGreyedOut()){
+                        game.getBatch().draw(greySkittleTexture, buttonScreenCoords.x + 100,
+                                buttonScreenCoords.y - (yPadding + 50), 20,20);
+                    } else {
+                        game.getBatch().draw(skittleTexture, buttonScreenCoords.x + 100,
+                                buttonScreenCoords.y - (yPadding + 50), 20,20);
+                    }
+                    FontUtil.FONT_20.draw(game.getBatch(), format.format(shopGroup.getCurrentCost()) + "",
+                            buttonScreenCoords.x + 125,
+                            buttonScreenCoords.y - (yPadding + 32));
                 }
 
-                FontUtil.FONT_20.draw(game.getBatch(), shopGroup.getCurrentCost() + "",
-                        buttonScreenCoords.x + 125,
-                        buttonScreenCoords.y - (yPadding + 32));
-
-                button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
+                button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles()
+                        || shopGroup.getNumber() == shopGroup.getMAX_NUMBER());
             } else {
                 if (visibleLockedButtonCount < MAX_VISIBLE_LOCKED_SHOPBUTTONS){
                     button.setVisible(true);
-                    button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles());
+                    button.setIsGreyedOut(shopGroup.getCurrentCost() > shop.getSkittles()
+                            || shopGroup.getNumber() == shopGroup.getMAX_NUMBER());
                     visibleLockedButtonCount++;
                 }
             }
@@ -778,7 +782,7 @@ public class GameScreen implements Screen{
             int number = (int) shop.getShopGroups().get(index).getNumber();
 //            drawActor(dummyImage, valhallaTexture);
             if (number > 0) {
-                if (index == 4){ // valhalla is 4th shopgroup
+                if (index == 6){ // valhalla is 6th shopgroup
                     drawAnimation(dummyImage, currentFrameValhalla);
                     drawActor(dummyImage, valhallaSelections.get(Math.min(number, valhallaSelections.size()-1)));
                 } else if (index == 2) {
@@ -879,11 +883,11 @@ public class GameScreen implements Screen{
         if (i < shop.numberOfShopGroups()){
             ShopGroup shopGroup = shop.getShopGroups().get(i);
             title = shop.shopgroupTypeToString(shopGroup.getType()) +" " + shopGroup.getNumber() + " / " + shopGroup.getMAX_NUMBER()
-                    + " [Cost: "+ shopGroup.getCurrentCost() +"]";
-            text = shopGroup.getText();
+                    + " [Cost: "+ format.format(shopGroup.getCurrentCost()) +"]";
+            text = "Current production: " + format.format(shopGroup.getSkittlesPerSecond()) + "\n\n" + shopGroup.getText();
         }  else {
             int upgradeIndex = i - shop.numberOfShopGroups();
-            title = "Upgrade " + upgradeIndex + " [Cost: "+ shop.getUpgrade(upgradeIndex).getCost() +"]";
+            title = "Upgrade " + upgradeIndex + " [Cost: "+ format.format(shop.getUpgrade(upgradeIndex).getCost()) +"]";
             text = shop.getUpgrade(upgradeIndex).getText();
         }
         tooltipTitleLayout.setText(FontUtil.FONT_30, title);
@@ -925,7 +929,7 @@ public class GameScreen implements Screen{
                 overlayTexture.getWidth(), borderSize);
 
         FontUtil.FONT_30.draw(game.getBatch(), tooltipTitleLayout, x - padding, y + height - 30);
-        FontUtil.FONT_20.draw(game.getBatch(), tooltipTextLayout, x - padding, y + height - 75);
+        FontUtil.FONT_20.draw(game.getBatch(), tooltipTextLayout, x - padding, y + height - tooltipTitleLayout.height - 50);
         game.getBatch().end();
     }
 
@@ -1187,5 +1191,9 @@ public class GameScreen implements Screen{
         layoutStyle = game.getPreferences().getStageSkin();
         borderVerticalPath = layoutStyle + "_border.png";
         borderHorizontalPath = layoutStyle + "_border_horizontal.png";
+    }
+
+    public void enableTestMode() {
+        shop.enableTestMode();
     }
 }
