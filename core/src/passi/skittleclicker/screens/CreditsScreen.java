@@ -23,9 +23,12 @@ package passi.skittleclicker.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -91,10 +94,14 @@ public class CreditsScreen implements Screen {
             "Music used: \n\n" + musicCreditsPurr+ "\n\n" + musicCredits1 + "\n\n" + musicCredits2 + "\n\n"
             + musicCredits3 + "\n\n" + musicCredits4 + "\n\n"
             + musicCredits5 + "\n\n" + musicCredits6 + "\n\n\n"
-            + "Backgrounds from Screaming Brain Studios\n" +
-            "https://screamingbrainstudios.itch.io/seamless-space-backgrounds";
+            + "The backgrounds are AI generated. So no credits here.\n" +
+            "Just wanted to make it clear I did not draw them.";
+//            + "Backgrounds from Screaming Brain Studios\n" +
+//            "https://screamingbrainstudios.itch.io/seamless-space-backgrounds";
     private final List<Image> dummyImageList;
-    private Texture background = new Texture("backgrounds/Starfield_08-1024x1024.png");
+    private TextureRegion background; //= new Texture("backgrounds/Starfield_08-1024x1024.png");
+    private BitmapFont font = FontUtil.FONT_20;
+    private final Texture darkBG = new Texture("dark_background.png");
 
     public CreditsScreen(SkittleClickerGame game) {
         this.game = game;
@@ -104,6 +111,7 @@ public class CreditsScreen implements Screen {
         table.setFillParent(false);
         table.setDebug(false);
 
+        this.background = game.getBackground(3);//2
         dummyImageList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             Image image = new Image(TextureUtil.scaleImage("image_placeholder.png",
@@ -128,6 +136,7 @@ public class CreditsScreen implements Screen {
     public void show() {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.input.setInputProcessor(stage);
+//        font.setColor(Color.BLACK);
     }
 
     @Override
@@ -142,7 +151,11 @@ public class CreditsScreen implements Screen {
         game.getBatch().begin();
         game.getBatch().draw(background, 0, 0, camera.viewportWidth, camera.viewportHeight);
         Vector2 screenCoords = ScreenUtil.getScreenCoords(dummyImageList.get(0), camera);
-        FontUtil.FONT_20.draw(game.getBatch(), creditsLayout, screenCoords.x + 3, screenCoords.y - 100);
+//        font.setColor(Color.BLACK);
+        game.getBatch().draw(darkBG, dummyImageList.get(dummyImageList.size()-1).getX() - 50,
+                dummyImageList.get(dummyImageList.size()-1).getY(), 1000, 2000);
+        game.getFont().draw(game.getBatch(), "Credits", screenCoords.x + 3, screenCoords.y - 50);
+        font.draw(game.getBatch(), credits, screenCoords.x + 3, screenCoords.y - 150);
 
 //        FontUtil.FONT_20.draw(game.getBatch(), credits, 100, Gdx.graphics.getHeight() - 50);
 

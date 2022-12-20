@@ -74,7 +74,7 @@ public class GameScreen implements Screen{
     private final Sprite goldLightSprite;
     private final List<Texture> miniSkittleTextures;
     private final Texture clickerTexture;
-    private Texture background = new Texture("backgrounds/Purple_Nebula_05-1024x1024.png");
+    private TextureRegion background; //= new Texture("backgrounds/Purple_Nebula_05-1024x1024.png");
 
     private final Ellipse skittleRepresentation;
     private final Ellipse goldenSkittleRepresentation;
@@ -145,6 +145,7 @@ public class GameScreen implements Screen{
 
         updateStageSkin();
         borderHorizontalTexture = new Texture(borderHorizontalPath);
+        this.background = game.getBackground(1);
 
         this.format = new DecimalFormat("#,###");
         // temporary until we have asset manager in

@@ -4,11 +4,14 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import passi.skittleclicker.screens.*;
 import passi.skittleclicker.util.AppPreferences;
 import passi.skittleclicker.util.FontUtil;
+import passi.skittleclicker.util.TextureUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ public class SkittleClickerGame extends Game {
     public GameScreen gameScreen;
     public PreferencesScreen preferencesScreen;
     private AppPreferences preferences;
+    private TextureRegion[] backgrounds;
 
     @Override
     public void create() {
@@ -49,6 +53,10 @@ public class SkittleClickerGame extends Game {
         musicList.add(Gdx.audio.newMusic(Gdx.files.internal(musicPath5)));
         String musicPath6 = "music/Where-The-Waves-Take-Us.mp3";
         musicList.add(Gdx.audio.newMusic(Gdx.files.internal(musicPath6)));
+
+        backgrounds = TextureUtil.getTextureRegions( //wood_tavern.jpg
+                new Texture("backgrounds/skittles_forest.jpg"), 2, 2);
+
 
         setScreen(new MainMenuScreen(this));
     }
@@ -137,5 +145,13 @@ public class SkittleClickerGame extends Game {
 
     public void enableTestMode() {
         gameScreen.enableTestMode();
+    }
+
+    public TextureRegion getBackground(int i){
+        if (i >= backgrounds.length) {
+            System.err.println("Background " + i + "does not exist");
+            return null;
+        }
+        return backgrounds[i];
     }
 }

@@ -35,7 +35,7 @@ public class MainMenuScreen implements Screen {
     Texture mousieRage;
     Texture mousieCry;
     private static String layoutStyle;
-    private Texture background = new Texture("backgrounds/Blue_Nebula_02-1024x1024.png");
+    private final TextureRegion background;//new Texture("backgrounds/Blue_Nebula_02-1024x1024.png");
 
     public MainMenuScreen(final SkittleClickerGame gam) {
         game = gam;
@@ -44,6 +44,7 @@ public class MainMenuScreen implements Screen {
         if (game.gameScreen == null)
             game.gameScreen = new GameScreen(game);
         layoutStyle = game.getPreferences().getStageSkin();
+        background = game.getBackground(2);//3
     }
 
     @Override
