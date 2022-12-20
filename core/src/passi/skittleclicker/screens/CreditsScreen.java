@@ -84,7 +84,11 @@ public class CreditsScreen implements Screen {
     private final String musicCreditsPurr = """
                 Am A Mouse by SirPurrr | https://soundcloud.com/sirpurrr
                 Who was kind enough to allow me to use his music in the game.""";
-    private final String credits = "Game inspired by Cookie Clicker\n\n" +
+    private final String credits = "This is a non-commercial game for Mousie and\n" +
+            "her beautiful community on twitch.tv/mousiefuzz.\n" +
+            "It's always a pleasure to hang out there and I am glad\n" +
+            "that I am a part of this community.\n\n" +
+            "The game is inspired by Cookie Clicker\n" +
             "Check it out at https://orteil.dashnet.org/cookieclicker/ \n" +
             "Or buy the steam version to support the creators:\n" +
             "https://store.steampowered.com/app/1454400/Cookie_Clicker/ \n\n" +
@@ -94,8 +98,14 @@ public class CreditsScreen implements Screen {
             "Music used: \n\n" + musicCreditsPurr+ "\n\n" + musicCredits1 + "\n\n" + musicCredits2 + "\n\n"
             + musicCredits3 + "\n\n" + musicCredits4 + "\n\n"
             + musicCredits5 + "\n\n" + musicCredits6 + "\n\n\n"
+            + "Art: \n\n"
+            + "Emotes and some Pixel Art of Mousiefuzz used.\n" +
+            "Namely the Strawberries, Padoru Mousie and Valhalla Animation\n" +
+            "were made by her.\n" +
+            "Follow her at twitch.tv/mousiefuzz.\n\n"
             + "The backgrounds are AI generated. So no credits here.\n" +
-            "Just wanted to make it clear I did not draw them.";
+            "Just wanted to make it clear I did not draw them.\n\n" +
+            "The rest of the pixel art and animations are made by me.";
 //            + "Backgrounds from Screaming Brain Studios\n" +
 //            "https://screamingbrainstudios.itch.io/seamless-space-backgrounds";
     private final List<Image> dummyImageList;
@@ -113,7 +123,7 @@ public class CreditsScreen implements Screen {
 
         this.background = game.getBackground(3);//2
         dummyImageList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             Image image = new Image(TextureUtil.scaleImage("image_placeholder.png",
                     1000,
                     300));

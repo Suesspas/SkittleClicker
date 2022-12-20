@@ -21,19 +21,20 @@ import passi.skittleclicker.util.TextureUtil;
 
 public class MainMenuScreen implements Screen {
 
-    final SkittleClickerGame game;
-    OrthographicCamera camera;
+    private final SkittleClickerGame game;
+    private OrthographicCamera camera;
     private Stage stage;
-    long aniTime = Long.MAX_VALUE;
-    ImageButton playGame;
-    ImageButton preferences;
-    ImageButton deleteSaveData;
-    ImageButton exit;
-    ImageButton credits;
-    Texture mousieHello;
-    Texture mousieCheese;
-    Texture mousieRage;
-    Texture mousieCry;
+//    long aniTime = Long.MAX_VALUE;
+    private ImageButton playGame;
+    private ImageButton preferences;
+    private ImageButton deleteSaveData;
+    private ImageButton exit;
+    private ImageButton credits;
+    private final Texture mousieHello;
+    private final Texture mousieCheese;
+    private final Texture mousieRage;
+    private final Texture mousieCry;
+    private final Texture mousieSSJ;
     private static String layoutStyle;
     private final TextureRegion background;//new Texture("backgrounds/Blue_Nebula_02-1024x1024.png");
 
@@ -45,6 +46,12 @@ public class MainMenuScreen implements Screen {
             game.gameScreen = new GameScreen(game);
         layoutStyle = game.getPreferences().getStageSkin();
         background = game.getBackground(2);//3
+
+        mousieHello = new Texture("mousieHello86.png");
+        mousieCheese = new Texture("mousieCheese86.png");
+        mousieRage = new Texture("mousieRage86.png");
+        mousieCry = new Texture("mousieCry86.png");
+        mousieSSJ = new Texture("mousieSSJ86.png");
     }
 
     @Override
@@ -58,10 +65,7 @@ public class MainMenuScreen implements Screen {
         stage.addActor(table);
 
         // temporary until we have asset manager in
-        mousieHello = new Texture("mousieHello86.png");
-        mousieCheese = new Texture("mousieCheese86.png");
-        mousieRage = new Texture("mousieRage86.png");
-        mousieCry = new Texture("mousieCry86.png");
+
 
         Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
         ImageButton.ImageButtonStyle imageButtonStyle = TextureUtil.getImageButtonStyle(layoutStyle, 350, 105);
@@ -164,7 +168,7 @@ public class MainMenuScreen implements Screen {
         drawButtonOverlay(playGame, mousieHello, "Play Game");
         drawButtonOverlay(preferences, mousieCheese, "Preferences");
         drawButtonOverlay(deleteSaveData, mousieRage, "Delete Data");
-        drawButtonOverlay(credits, mousieCheese, "Credits");
+        drawButtonOverlay(credits, mousieSSJ, "Credits");
         drawButtonOverlay(exit, mousieCry, "Exit");
         game.getBatch().end();
 //        if (System.currentTimeMillis() - aniTime > 500){
