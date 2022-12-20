@@ -22,11 +22,9 @@ package passi.skittleclicker.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-
-import java.awt.*;
-import java.awt.font.TextAttribute;
-import java.util.Map;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class FontUtil {
 

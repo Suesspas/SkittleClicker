@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class TextureUtil {
     public static TextureRegion[] getTextureRegions(Texture sheet, int FRAME_COLS, int FRAME_ROWS) {
@@ -63,7 +65,18 @@ public class TextureUtil {
                 false);                  /* flipY whether to flip the sprite vertically */
     }
 
-
+    public static ImageButton.ImageButtonStyle getImageButtonStyle(String layoutStyle, int width, int height) {
+        String imageUpPath = "button_" + layoutStyle + ".png";
+        String imageDownPath = "button_" + layoutStyle + "_shadow.png";
+        String imageMouseOverPath = "button_" + layoutStyle + "_light.png";
+        Drawable drawable = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageUpPath,  width, height)));
+        Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageDownPath, width, height)));
+        Drawable drawableMouseOver = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageMouseOverPath, width, height)));
+//        GreyedOutImageButton shopButton = new GreyedOutImageButton(drawable, drawablePressed, shader);
+        ImageButton.ImageButtonStyle imageButtonStyle = new ImageButton.ImageButtonStyle(null,null,null, drawable, drawablePressed,null);
+        imageButtonStyle.imageOver = drawableMouseOver;
+        return imageButtonStyle;
+    }
 
     public static Texture scaleImage(String path, int width, int height){
         Pixmap original = new Pixmap(Gdx.files.internal(path));

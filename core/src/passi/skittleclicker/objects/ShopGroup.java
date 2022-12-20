@@ -2,7 +2,7 @@ package passi.skittleclicker.objects;
 
 public class ShopGroup {
 
-    enum Type {
+    public enum Type {
         PLAYER,
         GOLDEN,
         MILK,

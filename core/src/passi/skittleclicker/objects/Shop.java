@@ -20,6 +20,8 @@
 
 package passi.skittleclicker.objects;
 
+import passi.skittleclicker.screens.GameScreen;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -234,7 +236,7 @@ public class Shop{
                         With this upgrade an evil mousie clone materializes,
                         helping you gain more skittles per click. 
                         
-                        +100 more skittles gained from clicking""", "upgrades/player_bronze.png"));
+                        +100% more skittles gained from clicking""", "upgrades/player_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Silver", 7500, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #2\n\n" +
                         """
@@ -244,7 +246,7 @@ public class Shop{
                         She clones herself and makes even 
                         more evil Mousies.
                         
-                        +100 more skittles gained from clicking """, "upgrades/player_silver.png"));
+                        +100% more skittles gained from clicking """, "upgrades/player_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Gold", 75000, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #3\n\n" +
                         """
@@ -255,7 +257,17 @@ public class Shop{
                         Whatever they did, it seems to further boost your
                         skittles clicking power.
                         
-                        +100 more skittles gained from clicking """, "upgrades/player_gold.png"));
+                        +100% more skittles gained from clicking """, "upgrades/player_gold.png"));
+
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Diamond", 750000, 2,
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #3\n\n" +
+                        """
+                        The evil mousies have figured out a way to stop aging 
+                        and stay 22 forever. They have founded the
+                        Mousie Intergalactic Council of Knowing Everlasting Youth. 
+                        Or M.I.C.K.E.Y. for short
+                                                                
+                        +100% more skittles gained from clicking""", "upgrades/player_gold.png"));
 
         upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 15000, 2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #1\n\n" +
@@ -362,11 +374,11 @@ public class Shop{
                         +100% increase in Mountain skittles production""",
                 "upgrades/mountain_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Bronze Collab",
-                1, 2,
+                Math.round(shopGroupSkittles[5] * costMultiplier * Math.pow(upgradeCostMultiplier, 1)), 2,
                 shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Bronze Upgrade\n\n" +
                         """
                         A good collab needs music. You ask your streamer friend 
-                        and pixel messiah blue guy™ for help and get some of 
+                        and pixel messiah, blue guy, for help and get some of 
                         the best rave music there is. Meow meow meow meow…
                                                                 
                         +100% increase in skittles from collabs""",
@@ -489,7 +501,14 @@ public class Shop{
                 "upgrades/mountain_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Silver Collab",
                 Math.round(shopGroupSkittles[5] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
-                shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Silver Upgrade, doubles production of Collabs",
+                shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Silver Upgrade\n\n" +
+                        """
+                        You collab with a streamer that is very wholesome
+                        most of the time but can also hammer very hard. uwu
+                        You play some weird bunny game and have a great time
+                        laughing together.
+                                          
+                        +100% increase in skittles from collabs""",
                 "upgrades/collab_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Silver Isekai",
                 Math.round(shopGroupSkittles[7] * costMultiplier * Math.pow(upgradeCostMultiplier, 2)), 2,
@@ -616,7 +635,14 @@ public class Shop{
                 "upgrades/mountain_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Gold Collab",
                 Math.round(shopGroupSkittles[5] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
-                shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Gold Upgrade, doubles production of Collabs",
+                shopgroupTypeToString(ShopGroup.Type.COLLAB) + " Gold Upgrade\n\n" +
+                        """
+                        Mouse and flying mouse make a great duo.
+                        And their combined Ara Aras are really something else.
+                        With the combined powers of two japanese onee-san
+                        nothing can stop you.
+                                          
+                        +100% increase in skittles from collabs""",
                 "upgrades/collab_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.ISEKAI,"Gold Isekai",
                 Math.round(shopGroupSkittles[7] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
@@ -643,14 +669,9 @@ public class Shop{
                 Math.round(shopGroupSkittles[9] * costMultiplier * Math.pow(upgradeCostMultiplier, 3)), 2,
                 shopgroupTypeToString(ShopGroup.Type.DRAGON) + " Gold Upgrade\n\n" +
                         """
-                        Arguments about best girls in anime are 
-                        never gonna end well.
-                        That's why we won't make this an argument and
-                        just state the hard truth that Tohru is best girl.
-                        I mean, come one, a dragon AND a maid? How could
-                        this possible be any better?
-                        Where was I... Ah yes, together with the best dragon maid
+                        Together with Tohru (the objectively best dragon)
                         you improve your dragon tail production by a lot!
+                        Nothing beats maid dragons after all.
                         
                         +100% increase in Dragon skittles production""",
                 "upgrades/dragon_gold.png"));

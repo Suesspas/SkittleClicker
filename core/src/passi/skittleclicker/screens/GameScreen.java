@@ -74,12 +74,14 @@ public class GameScreen implements Screen{
     private final Sprite goldLightSprite;
     private final List<Texture> miniSkittleTextures;
     private final Texture clickerTexture;
+    private Texture background = new Texture("backgrounds/Purple_Nebula_05-1024x1024.png");
 
     private final Ellipse skittleRepresentation;
     private final Ellipse goldenSkittleRepresentation;
     public Music bgm;
     private final Music mousieMusic;
     private final Sound clickSound;
+    private final Music padoruMusic;
 
     private long skittlesPerSecond;
     private int clickerAnimationIndex;
@@ -130,6 +132,8 @@ public class GameScreen implements Screen{
     private final GlyphLayout tooltipTitleLayout;
     private final GlyphLayout autosaveTextLayout;
     private final GlyphLayout shopGroupNumberLayout;
+    final ImageButton menuButton;
+    final ImageButton prefButton;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -204,6 +208,15 @@ public class GameScreen implements Screen{
         shopGroupNumberLayout = new GlyphLayout();
 
         clickSound = Gdx.audio.newSound(Gdx.files.internal("click.wav"));
+        padoruMusic = Gdx.audio.newMusic(Gdx.files.internal("padoru.mp3"));
+        padoruMusic.setVolume(game.getPreferences().getMusicVolume());
+        padoruMusic.setOnCompletionListener(new Music.OnCompletionListener() {
+            @Override
+            public void onCompletion(Music music) {
+                padoruMusic.stop();
+                bgm.play();
+            }
+        });
 
         this.shopClickListeners = new ArrayList<>();
         int numberOfClickListeners = shop.numberOfShopGroups() + shop.numberOfUpgrades();
@@ -222,6 +235,10 @@ public class GameScreen implements Screen{
         this.shopButtons = new ArrayList<>();
         this.dummyImageList = new ArrayList<>();
         this.borderList= new ArrayList<>();
+
+        ImageButton.ImageButtonStyle imageButtonStyle = TextureUtil.getImageButtonStyle(layoutStyle, 100,50);
+        menuButton = new ImageButton(imageButtonStyle);//new TextButton("\n Main Menu \n", skin);
+        prefButton = new ImageButton(imageButtonStyle);//new TextButton("\n Preferences \n", skin);
 
         this.autoSaveTimer = 58;
 
@@ -289,8 +306,7 @@ public class GameScreen implements Screen{
 //        Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(scaleImage("upgrade_wood2.png", 50, 50)));
 //        ImageButton menuButton1 = new ImageButton(drawable, drawablePressed); //alternative mit image button
 
-        final TextButton menuButton = new TextButton("\n Main Menu \n", skin); //TODO de-scuff this, probably imagebutton without skin
-        final TextButton prefButton = new TextButton("\n Preferences \n", skin);
+
         menuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -470,6 +486,10 @@ public class GameScreen implements Screen{
                      if (shop.getSkittles() >= shop.getUpgrades().get(index).getCost()){
                          System.out.println("Upgrade" + index +" purchased");
                          shop.unlockUpgrade(index);
+                         Upgrade upgrade = shop.getUpgrade(index);
+                         if (upgrade.getType() == ShopGroup.Type.DANCE_FLOOR){
+                             playPadoruSound();
+                         }
                          shop.pay(shop.getUpgrade(index).getCost());
                          shopButton.remove();
                          addNewUpgradeButton();
@@ -479,6 +499,15 @@ public class GameScreen implements Screen{
         });
         shopButton.addListener(clickListener);
         return shopButton;
+    }
+
+    public void playPadoruSound(){
+        bgm.pause();
+        if (game.getPreferences().isMusicEnabled()) {
+            padoruMusic.play();
+        } else {
+            padoruMusic.stop();
+        }
     }
 
     private void addNewUpgradeButton() {
@@ -524,6 +553,7 @@ public class GameScreen implements Screen{
         game.getBatch().setProjectionMatrix(camera.combined);
 
         game.getBatch().begin();
+        game.getBatch().draw(background, 0, 0, camera.viewportWidth, camera.viewportHeight);
         if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){
             renderGoldLight();
         } else if (game.getBatch().getColor() != Color.WHITE){
@@ -575,6 +605,11 @@ public class GameScreen implements Screen{
                 (clickerTable.getWidth() - skittlesPerSecTextLayout.width)/2,
                 camera.viewportHeight - menuBar.getHeight() - 120);
 
+        //menu button text
+        Vector2 buttonCoords = ScreenUtil.getScreenCoords(menuButton, camera);
+        FontUtil.FONT_20.draw(game.getBatch(), "Menu", buttonCoords.x + 20, buttonCoords.y - menuButton.getHeight()/2.5f);
+        buttonCoords = ScreenUtil.getScreenCoords(prefButton, camera);
+        FontUtil.FONT_20.draw(game.getBatch(), "Prefs", buttonCoords.x + 20, buttonCoords.y - menuButton.getHeight()/2.5f);
 
         if (IS_DEBUG_ENABLED){
             game.getFont().draw(game.getBatch(), "Click Milk Mod " + shop.getMilkClicksMod(),
@@ -958,7 +993,7 @@ public class GameScreen implements Screen{
                 e.printStackTrace();
             }
             shop.updateSkittles();
-            skittlesPerSecond = shop.getSkittlesPerSecond() + Math.round(clicksPerSecond * shop.getClickModifier());
+            skittlesPerSecond = shop.getSkittlesPerSecond() + Math.round(clicksPerSecond * shop.getSkittlesPerClick());
             addSkittle();
             clicksPerSecond = 0;
 //            for (int j = 0; j < shop.getUpgrades().size(); j++) {

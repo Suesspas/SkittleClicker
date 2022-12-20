@@ -24,7 +24,6 @@ public class MainMenuScreen implements Screen {
     final SkittleClickerGame game;
     OrthographicCamera camera;
     private Stage stage;
-    Texture background;
     long aniTime = Long.MAX_VALUE;
     ImageButton playGame;
     ImageButton preferences;
@@ -36,6 +35,7 @@ public class MainMenuScreen implements Screen {
     Texture mousieRage;
     Texture mousieCry;
     private static String layoutStyle;
+    private Texture background = new Texture("backgrounds/Blue_Nebula_02-1024x1024.png");
 
     public MainMenuScreen(final SkittleClickerGame gam) {
         game = gam;
@@ -63,23 +63,13 @@ public class MainMenuScreen implements Screen {
         mousieCry = new Texture("mousieCry86.png");
 
         Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
-        String imageUpPath = "button_" + layoutStyle + ".png";
-        String imageDownPath = "button_" + layoutStyle + "_shadow.png";
-        String imageMouseOverPath = "button_" + layoutStyle + "_light.png";
-        int width = 350;
-        int height= 105;
-        Drawable drawable = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageUpPath,  width, height)));
-        Drawable drawablePressed = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageDownPath, width, height)));
-        Drawable drawableMouseOver = new TextureRegionDrawable(new TextureRegion(TextureUtil.scaleImage(imageMouseOverPath, width, height)));
-//        GreyedOutImageButton shopButton = new GreyedOutImageButton(drawable, drawablePressed, shader);
-        ImageButton.ImageButtonStyle imageButtonStyle = new ImageButton.ImageButtonStyle(null,null,null, drawable, drawablePressed,null);
-        imageButtonStyle.imageOver = drawableMouseOver;
+        ImageButton.ImageButtonStyle imageButtonStyle = TextureUtil.getImageButtonStyle(layoutStyle, 350, 105);
 
 //        ScrollPane scrollPane = new ScrollPane(table);
 //        scrollPane.setFillParent(true);
 //        stage.addActor(scrollPane);
 
-        background = new Texture(Gdx.files.internal("mousiePop2.png"));
+
 
         //create buttons
         playGame = new ImageButton(imageButtonStyle);
@@ -96,9 +86,10 @@ public class MainMenuScreen implements Screen {
         table.row();
         table.add(deleteSaveData).fillX().uniformX();
         table.row().pad(10, 0, 10, 0);
-        table.add(exit);
-        table.row().pad(10, 0, 10, 0);
         table.add(credits);
+        table.row().pad(10, 0, 10, 0);
+        table.add(exit);
+
 //        table.row().pad(10, 0, 10, 0);
 //        table.add(test).fillX().uniformX();
 //        table.row().pad(10, 0, 10, 0);
@@ -156,6 +147,9 @@ public class MainMenuScreen implements Screen {
 
         camera.update();
         game.getBatch().setProjectionMatrix(camera.combined);
+        game.getBatch().begin();
+        game.getBatch().draw(background, 0, 0, camera.viewportWidth, camera.viewportHeight);
+        game.getBatch().end();
 //        game.getBatch().begin();
         //game.batch.draw(background,0,0);
 //        game.getFont().draw(game.getBatch(), "Skittle Clicker Game v0.0.1 ", Gdx.graphics.getWidth() - 200, 20);
@@ -169,8 +163,8 @@ public class MainMenuScreen implements Screen {
         drawButtonOverlay(playGame, mousieHello, "Play Game");
         drawButtonOverlay(preferences, mousieCheese, "Preferences");
         drawButtonOverlay(deleteSaveData, mousieRage, "Delete Data");
+        drawButtonOverlay(credits, mousieCheese, "Credits");
         drawButtonOverlay(exit, mousieCry, "Exit");
-        drawButtonOverlay(credits, mousieCheese, "Test");
         game.getBatch().end();
 //        if (System.currentTimeMillis() - aniTime > 500){
 //            stage.clear();

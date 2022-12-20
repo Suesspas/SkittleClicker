@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -32,6 +33,7 @@ public class PreferencesScreen implements Screen {
     private Label stageSkinLabel;
     private Label enableTestLabel;
     OrthographicCamera camera;
+    private Texture background = new Texture("backgrounds/Green_Nebula_07-1024x1024.png");
 
     public PreferencesScreen(final SkittleClickerGame gam) {
         game = gam;
@@ -202,6 +204,10 @@ public class PreferencesScreen implements Screen {
         camera.update();
         game.getBatch().setProjectionMatrix(camera.combined);
 
+        game.getBatch().begin();
+        game.getBatch().draw(background, 0, 0, camera.viewportWidth, camera.viewportHeight);
+        game.getBatch().end();
+
         /*
         game.batch.begin();
         game.font.draw(game.batch, "Preferences screen", 100, 150);
@@ -228,6 +234,7 @@ public class PreferencesScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        camera.setToOrtho(false, width, height);
         stage.getViewport().update(width, height, true);
     }
 
