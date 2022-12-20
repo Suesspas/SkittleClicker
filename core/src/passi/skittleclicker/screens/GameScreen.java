@@ -80,6 +80,7 @@ public class GameScreen implements Screen{
     private final Ellipse goldenSkittleRepresentation;
     public Music bgm;
     private final Music mousieMusic;
+    private final Music endGameMusic;
     private final Sound clickSound;
     private final Music padoruMusic;
 
@@ -132,8 +133,10 @@ public class GameScreen implements Screen{
     private final GlyphLayout tooltipTitleLayout;
     private final GlyphLayout autosaveTextLayout;
     private final GlyphLayout shopGroupNumberLayout;
-    final ImageButton menuButton;
-    final ImageButton prefButton;
+    private final ImageButton menuButton;
+    private final ImageButton prefButton;
+    private boolean endGame;
+    private final Texture gSkittle;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -142,12 +145,14 @@ public class GameScreen implements Screen{
         this.stage = new Stage(new ScreenViewport());
         this.stateTime = 0;
         this.milkFrame = 0;
+        this.endGame = false;
 
         updateStageSkin();
         borderHorizontalTexture = new Texture(borderHorizontalPath);
         this.background = game.getBackground(1);
 
         this.format = new DecimalFormat("#,###");
+        this.gSkittle = new Texture("g_skittle.png");
         // temporary until we have asset manager in
         skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
 
@@ -191,6 +196,12 @@ public class GameScreen implements Screen{
         this.shapeRenderer = new CustomShapeRenderer();
 
         this.mousieMusic = Gdx.audio.newMusic(Gdx.files.internal("music/am_a_mouse.mp3"));
+        this.endGameMusic = Gdx.audio.newMusic(Gdx.files.internal("music/Happy.mp3"));
+        endGameMusic.setOnCompletionListener(music -> {
+            bgm.stop();
+            changeMusic();
+            bgm.play();
+        });
         changeMusic();
 
         shopTextLayout = new GlyphLayout();
@@ -211,12 +222,9 @@ public class GameScreen implements Screen{
         clickSound = Gdx.audio.newSound(Gdx.files.internal("click.wav"));
         padoruMusic = Gdx.audio.newMusic(Gdx.files.internal("padoru.mp3"));
         padoruMusic.setVolume(game.getPreferences().getMusicVolume());
-        padoruMusic.setOnCompletionListener(new Music.OnCompletionListener() {
-            @Override
-            public void onCompletion(Music music) {
-                padoruMusic.stop();
-                bgm.play();
-            }
+        padoruMusic.setOnCompletionListener(music -> {
+            padoruMusic.stop();
+            bgm.play();
         });
 
         this.shopClickListeners = new ArrayList<>();
@@ -259,13 +267,10 @@ public class GameScreen implements Screen{
         } else {
             bgm.stop();
         }
-        bgm.setOnCompletionListener(new Music.OnCompletionListener() {
-            @Override
-            public void onCompletion(Music music) {
-                bgm.stop();
-                changeMusic();
-                bgm.play();
-            }
+        bgm.setOnCompletionListener(music -> {
+            bgm.stop();
+            changeMusic();
+            bgm.play();
         });
     }
 
@@ -490,6 +495,9 @@ public class GameScreen implements Screen{
                          Upgrade upgrade = shop.getUpgrade(index);
                          if (upgrade.getType() == ShopGroup.Type.DANCE_FLOOR){
                              playPadoruSound();
+                         }
+                         if (upgrade.getName().equals("Finale")){
+                                 endGame = true;
                          }
                          shop.pay(shop.getUpgrade(index).getCost());
                          shopButton.remove();
@@ -766,9 +774,9 @@ public class GameScreen implements Screen{
             System.out.println("clicked golden skittle");
             GoldenSkittle.clicked();
             bgm.pause();
-            bgm = mousieMusic;
             float volume = game.getPreferences().getMusicVolume();
-            bgm.setVolume(Math.min(1f, volume*2));
+            mousieMusic.setVolume(Math.min(1f, volume*2));
+            bgm = mousieMusic;
             bgm.play();
             shop.goldenActive(true);
         }
@@ -783,6 +791,28 @@ public class GameScreen implements Screen{
                 }
             }
         }
+        //handle endgame
+        if (endGame){
+            renderGG();
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)
+                    || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                endGame = false;
+                bgm.pause();
+                float volume = game.getPreferences().getMusicVolume();
+                endGameMusic.setVolume(Math.min(1f, volume*1.1f));
+                bgm = endGameMusic;
+                bgm.play();
+                changeScreen(SkittleClickerGame.ENDGAME);
+            }
+        }
+    }
+
+    private void renderGG() {
+        float size = camera.viewportWidth/2;
+        game.getBatch().begin();
+        game.getBatch().draw(gSkittle, 0, 0, size, size);
+        game.getBatch().draw(gSkittle, size, 0, size, size);
+        game.getBatch().end();
     }
 
     private void renderMilk() {

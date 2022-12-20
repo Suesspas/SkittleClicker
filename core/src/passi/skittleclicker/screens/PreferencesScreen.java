@@ -63,12 +63,12 @@ public class PreferencesScreen implements Screen {
         Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_glass/glassy-ui.json"
 
         // music volume
-        final Slider volumeMusicSlider = new Slider(0f, 1f, 0.02f, false, skin);
-        volumeMusicSlider.setValue(game.getPreferences().getMusicVolume());
-        volumeMusicSlider.addListener(new EventListener() {
+        final Slider musicSlider = new Slider(0f, 1f, 0.02f, false, skin);
+        musicSlider.setValue(game.getPreferences().getMusicVolume());
+        musicSlider.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
-                game.getPreferences().setMusicVolume(volumeMusicSlider.getValue());
+                game.getPreferences().setMusicVolume(musicSlider.getValue());
                 game.gameScreen.bgm.setVolume(game.getPreferences().getMusicVolume());
                 // updateVolumeLabel();
                 return false;
@@ -76,12 +76,12 @@ public class PreferencesScreen implements Screen {
         });
 
         // sound volume
-        final Slider soundMusicSlider = new Slider(0f, 1f, 0.1f, false, skin);
-        soundMusicSlider.setValue(game.getPreferences().getSoundVolume());
-        soundMusicSlider.addListener(new EventListener() {
+        final Slider soundSlider = new Slider(0f, 1f, 0.02f, false, skin);
+        soundSlider.setValue(game.getPreferences().getSoundVolume());
+        soundSlider.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
-                game.getPreferences().setSoundVolume(soundMusicSlider.getValue());
+                game.getPreferences().setSoundVolume(soundSlider.getValue());
                 //game.gameScreen.pickUpSound.setVolume(1,game.getPreferences().getMusicVolume());
                 // updateVolumeLabel();
                 return false;
@@ -174,13 +174,13 @@ public class PreferencesScreen implements Screen {
         table.add(titleLabel).colspan(2);
         table.row().pad(padding,0,0,padding);
         table.add(volumeMusicLabel).left();
-        table.add(volumeMusicSlider);
+        table.add(musicSlider);
         table.row().pad(padding,0,0,padding);
         table.add(musicOnOffLabel).left();
         table.add(musicCheckbox);//.left();
         table.row().pad(padding,0,0,padding);
         table.add(volumeSoundLabel).left();
-        table.add(soundMusicSlider);
+        table.add(soundSlider);
         table.row().pad(padding,0,0,padding);
         table.add(soundOnOffLabel).left();
         table.add(soundEffectsCheckbox);//.left();

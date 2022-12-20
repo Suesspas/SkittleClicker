@@ -43,6 +43,7 @@ public class Shop{
     private final long nextShopGroupMultiplier = 4;
     private final long[] costMultipliers;
     private final double upgradeCostMultiplier = 2;
+    private final boolean testing = true; //TODO dont forget to set to false after sending to purr
 
     public Shop(){
         shopGroupSkittles = new long[11];
@@ -59,7 +60,9 @@ public class Shop{
                 making more and more skittles! 
                 Spam those left mouse buttons for maximum skittles output.""");
         ShopGroup grannyShopGroup = new ShopGroup(ShopGroup.Type.GRANNY, shopGroupSkittles[1],
-                24, shopGroupSkittles[1]*costMultipliers[1], """
+                24, shopGroupSkittles[1]*costMultipliers[1],
+                testing ? "Local Neighbourhood grandmas help\nyou the with skittles production" :
+                """
                 A certain Cat with a Knight Title forces
                 I mean politely asks the local neighbourhood grandmas
                 to help with the skittles production""");
@@ -257,7 +260,7 @@ public class Shop{
                         +100% more skittles gained from clicking """, "upgrades/player_gold.png"));
 
         upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Diamond", 750000, 4,
-                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #3\n\n" +
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #4\n\n" +
                         """
                         The evil mousies have figured out a way to stop aging 
                         and stay 22 forever. They have founded the
@@ -265,6 +268,58 @@ public class Shop{
                         Or M.I.C.K.E.Y. for short
                                                                 
                         +300% more skittles gained from clicking""", "upgrades/player_diamond.png"));
+
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Emerald", 3000000, 5,
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #5\n\n" +
+                        """
+                        Nothing is safe from the evil mousies anymore.
+                        They have taken over the universe and keep
+                        making more and more skittles.
+                                                                
+                        +400% more skittles gained from clicking""", "upgrades/player_emerald.png"));
+
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Ruby", 10000000, 6,
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #6\n\n" +
+                        """
+                        You can't understand how but the Mousie Clone
+                        Council is still expanding their skittles production.
+                                                                
+                        +500% more skittles gained from clicking""", "upgrades/player_ruby.png"));
+
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Sapphire", 30000000, 7,
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #7\n\n" +
+                        """
+                        H opefully you know the Mousie Clone Council.
+                        E veryone likes them!
+                        L oving them is a given. They are not evil after all.
+                        P roducing more and more skittles surely helps everyone.
+                                                                
+                        +600% more skittles gained from clicking""", "upgrades/player_sapphire.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Amethyst", 100000000, 11,
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #8\n\n" +
+                        """
+                         Bpm Uwcaqm Kwcvkqt pia bismv wdmz mdmzg ibwu\s
+                         qv bpm cvqdmzam ivl kwvdmzbml qb qvbw asqbbtma.
+                         Qn gwc kiv zmil bpqa umaaiom qb qa itzmilg bw tibm.
+                         Qb qa mvkzgxbml ivl apwea qbamtn wvtg ib bpm mvl.
+                         Bpqa qa qb.
+                         Gwc kwvdmzbml mdmzgbpqvo qvbw asqbbtma ivl bpmzm qa
+                         vwbpqvo tmnb.
+                                                      
+                         +1000% more skittles gained from clicking""", "upgrades/player_amethyst.png"));
+
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Finale", 1000000000, 100,
+                 "Last Upgrade \n\n" +
+                        """
+                        The Mousie Council has taken over every atom 
+                        in the universe and converted it into skittles.
+                        If you can read this message it is already to late.
+                        It is encrypted and shows itself only at the end.
+                        This is it.
+                        You converted everything into skittles and there is
+                        nothing left.
+                        
+                        Buy to end the game.""", "upgrades/finale.png"));
 
         upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 15000, 1.5,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #1\n\n" +
@@ -308,6 +363,7 @@ public class Shop{
                 "upgrades/clicker_bronze.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Bronze Granny",
                 getShopGroupUpgradeCost(1, 1), 2,
+                testing ? "Increases skittle production of all grannies by 100%" :
                 shopgroupTypeToString(ShopGroup.Type.GRANNY) + " Bronze Upgrade\n\n" +
                         """
                        Nothing motivates grannies to produce more 
@@ -437,6 +493,7 @@ public class Shop{
                 "upgrades/clicker_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Silver Granny",
                 getShopGroupUpgradeCost(1, 2), 2,
+                testing ? "Increases skittle production of all grannies by 100%" :
                 shopgroupTypeToString(ShopGroup.Type.GRANNY) + " Silver Upgrade\n\n" +
                         """
                        Some of the grannies have started to turn
@@ -564,6 +621,7 @@ public class Shop{
                 "upgrades/clicker_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.GRANNY,"Gold Granny",
                 getShopGroupUpgradeCost(1, 3), 2,
+                testing ? "+100% grannies skittle production" :
                 shopgroupTypeToString(ShopGroup.Type.GRANNY) + " Gold Upgrade\n\n" +
                         """
                        The grannies have founded a labour union to stand
