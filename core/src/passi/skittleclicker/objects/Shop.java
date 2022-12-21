@@ -571,7 +571,7 @@ public class Shop{
                        In this Wonderful World you meet a splendid Crusader.
                        She seems to have strong defenses and insists on helping
                        you produce more skittles. Transporting all the skittles by
-                       herself she says it's fine to work her to the bon 24/7.
+                       herself she says it's fine to work her to the bone 24/7.
                        So you take her up on her offer 
                        and let her handle the isekai skittles.
                        

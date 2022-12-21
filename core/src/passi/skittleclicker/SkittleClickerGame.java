@@ -27,6 +27,7 @@ public class SkittleClickerGame extends Game {
     public final static int APPLICATION = 2;
     public final static int EXIT = 3;
     public final static int ENDGAME = 4;
+    public final static int UNLOCKS = 5;
 
     public MainMenuScreen menuScreen;
     public GameScreen gameScreen;
@@ -120,6 +121,9 @@ public class SkittleClickerGame extends Game {
                 break;
             case EXIT:
                 this.setScreen(new ExitScreen(this, ExitScreen.EXIT));
+                break;
+            case UNLOCKS:
+                this.setScreen(new UnlocksScreen(this));
                 break;
         }
     }

@@ -25,6 +25,11 @@ public class GreyedOutImageButton extends ImageButton {
         isGreyedOut = false;
         this.shader = shader;
     }
+    public GreyedOutImageButton(GreyedOutImageButton greyedOutImageButton) {
+        super(greyedOutImageButton.getStyle());
+        isGreyedOut = false;
+        shader = null;
+    }
     public GreyedOutImageButton(Drawable up, Drawable down, ShaderProgram shader) {
         super(up, down);
         this.setIsGreyedOut(false);

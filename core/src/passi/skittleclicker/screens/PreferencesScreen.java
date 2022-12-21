@@ -95,7 +95,7 @@ public class PreferencesScreen implements Screen {
             @Override
             public boolean handle(Event event) {
                 boolean enabled = musicCheckbox.isChecked();
-                game.getPreferences().setMusicEnabled(enabled); //TODO handle case where gameScreen is not instantiated yet, also move play/pause calls
+                game.getPreferences().setMusicEnabled(enabled);
                 if (enabled)
                     game.gameScreen.bgm.play();
                 else

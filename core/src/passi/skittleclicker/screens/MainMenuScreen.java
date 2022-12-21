@@ -29,6 +29,7 @@ public class MainMenuScreen implements Screen {
     private ImageButton preferences;
     private ImageButton deleteSaveData;
     private ImageButton exit;
+    private ImageButton unlocks;
     private ImageButton credits;
     private final Texture mousieHello;
     private final Texture mousieCheese;
@@ -81,6 +82,8 @@ public class MainMenuScreen implements Screen {
         preferences = new ImageButton(imageButtonStyle);
         deleteSaveData = new ImageButton(imageButtonStyle);
         exit = new ImageButton(imageButtonStyle);
+        unlocks = new ImageButton(imageButtonStyle);
+
         credits = new ImageButton(imageButtonStyle);
 
         //add buttons to table
@@ -88,6 +91,8 @@ public class MainMenuScreen implements Screen {
 //        table.add(new Image(new Texture("mousieHello86.png")));
         table.row().pad(10, 0, 10, 0);
         table.add(preferences);
+        table.row();
+        table.add(unlocks);
         table.row();
         table.add(deleteSaveData).fillX().uniformX();
         table.row().pad(10, 0, 10, 0);
@@ -110,6 +115,14 @@ public class MainMenuScreen implements Screen {
             }
         });
 
+        unlocks.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                stage.clear();
+                game.changeScreen(SkittleClickerGame.UNLOCKS);
+            }
+        });
+
         playGame.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -122,8 +135,6 @@ public class MainMenuScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(new ExitScreen(game, ExitScreen.DELETE_DATA));
-                game.deleteSaveData();
-                System.out.println("Save Data deleted");
             }
         });
 

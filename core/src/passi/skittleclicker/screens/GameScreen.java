@@ -1,23 +1,3 @@
-/*
- *  Copyright (c) 2018 Cerus
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Contributors:
- * Cerus
- *
- */
-
 package passi.skittleclicker.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -251,11 +231,14 @@ public class GameScreen implements Screen{
 
         this.autoSaveTimer = 58;
 
+
+
         loadDataForShop();
 
         setupStage();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::saveProgress));
+
     }
 
     private void changeMusic() {
@@ -341,10 +324,12 @@ public class GameScreen implements Screen{
         Texture valhallaTexture = new Texture("valhalla.png");
         Texture borderPlaceholder = new Texture("placeholder_border_horizontal.png");
         double valTexScale = 0.75;
+        Texture scaledTexture = TextureUtil.scaleImage("image_placeholder.png",
+                (int) Math.round(valhallaTexture.getWidth()*valTexScale),
+                (int) Math.round(valhallaTexture.getHeight()*valTexScale));
+
         for (int i = 0; i < shop.numberOfShopGroups()-1; i++) {
-            Image image = new Image (TextureUtil.scaleImage("image_placeholder.png",
-                    (int) Math.round(valhallaTexture.getWidth()*valTexScale),
-                    (int) Math.round(valhallaTexture.getHeight()*valTexScale)));
+            Image image = new Image(scaledTexture);
             dummyImageList.add(image);
             imageTable.add(dummyImageList.get(i)).fillX();//scaleImage("valhalla_frame1.png", 500, 100)
             imageTable.row();
@@ -391,6 +376,7 @@ public class GameScreen implements Screen{
         }
 
         shop.updateVisibleUpgrades();
+
         int addedUpgrades = 0;
         for (int i = 0; i < shop.numberOfUpgrades(); i++) {
             shopButtons.add(setupShopButton(shopClickListeners.get(shop.numberOfShopGroups()+i), "upgrade_" + layoutStyle + ".png",
@@ -416,6 +402,8 @@ public class GameScreen implements Screen{
         rootTable.add(scrollShopTable).width(500);
 
         stage.addActor(rootTable);
+
+
     }
 
     private void setupImages(int index, Table table) {
@@ -733,7 +721,7 @@ public class GameScreen implements Screen{
 
         for (int i = 0; i < shopClickListeners.size(); i++) {
             if(shopClickListeners.get(i).isOver()){
-                renderToolTip(i);
+                renderToolTip(i, -1, -1);
             }
         }
 
@@ -794,6 +782,8 @@ public class GameScreen implements Screen{
         //handle endgame
         if (endGame){
             renderGG();
+            //TODO disable other buttons when clicking
+            //TODO or check for click into gg skittles?
             if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)
                     || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 endGame = false;
@@ -878,7 +868,7 @@ public class GameScreen implements Screen{
             float yOffset = 10 + borderScreenCoords.y;
             for (int i = 0; i < number; i++) {
                 if (i < 12){
-                    images[i].setPosition( xOffset+ 50*i,  yOffset- a.getHeight() + 50); //TODO set pos
+                    images[i].setPosition( xOffset+ 50*i,  yOffset- a.getHeight() + 50);
                 } else {
                     images[i].setPosition(xOffset + 50* (i - 12), yOffset - a.getHeight());
                 }
@@ -929,7 +919,7 @@ public class GameScreen implements Screen{
     private void renderGoldLight(){
         Color c = game.getBatch().getColor();
         goldLightSprite.setPosition(skittleRepresentation.x - LIGHT_RADIUS, skittleRepresentation.y - LIGHT_RADIUS);
-        game.getBatch().setColor(255, 220, 0, 0.3f); //TODO maybe replace with actual shader for left screen part ar one point
+        game.getBatch().setColor(255, 220, 0, 0.3f);
         goldLightSprite.rotate(0.2f);
         if (goldLightIsGrowing){
             goldLightSprite.setScale(goldLightSprite.getScaleX() + goldLightGrowSpeed);
@@ -943,7 +933,7 @@ public class GameScreen implements Screen{
 //        game.getBatch().setColor(Color.WHITE);
     }
 
-    private void renderToolTip(int i) {
+    public void renderToolTip(int i, float xPos, float yPos) {
         String title;
         String text;
         if (i < shop.numberOfShopGroups()){
@@ -962,8 +952,9 @@ public class GameScreen implements Screen{
         float padding = 50;
         float width = Math.max(tooltipTitleLayout.width, tooltipTextLayout.width);
         float height = tooltipTitleLayout.height + tooltipTextLayout.height;
-        float x = camera.viewportWidth - shopButtons.get(0).getWidth() - width;
-        float y = Math.max(2*padding, getUnprojectedScreenCoords(0).y - height);
+        float x = xPos == -1 ? camera.viewportWidth - shopButtons.get(0).getWidth() - width : xPos;
+        float y = yPos == -1 ? Math.max(2*padding, getUnprojectedScreenCoords(0).y - height)
+                : Math.max(2*padding, yPos - height);
 //        renderRoundRect(x - 2*padding, y - 2*padding, width + 2*padding, height + 2*padding);
         game.getBatch().begin();
 //        game.getBatch().draw(overlayTexture, x - 2*padding, y - 2*padding, width + 2*padding, height + 2*padding);
@@ -1058,10 +1049,16 @@ public class GameScreen implements Screen{
                 bgm.play();
                 shop.goldenActive(false);
             }
+            if (bgm == mousieMusic && !GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){
+                bgm.stop();
+                bgm = game.getCurrentBGM();
+                bgm.setVolume(game.getPreferences().getMusicVolume());
+                bgm.play();
+            }
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
-    private Vector2 getUnprojectedScreenCoords(float minus) {
+    public Vector2 getUnprojectedScreenCoords(float minus) {
         Vector3 screenCoords = new Vector3();
         screenCoords.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(screenCoords);
@@ -1262,5 +1259,12 @@ public class GameScreen implements Screen{
 
     public void enableTestMode() {
         shop.enableTestMode();
+    }
+
+    public List<GreyedOutImageButton> getUpgradeButtons(){
+        return shopButtons.subList(shop.numberOfShopGroups(), shopButtons.size()-1);
+    }
+    public boolean isUpgradeVisible(int index){
+        return shop.getUpgrade(index).isVisible();
     }
 }

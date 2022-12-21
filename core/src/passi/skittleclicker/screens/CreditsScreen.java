@@ -83,7 +83,7 @@ public class CreditsScreen implements Screen {
                 Am A Mouse by SirPurrr | https://soundcloud.com/sirpurrr
                 Who was kind enough to allow me to use his music in the game.""";
     private final String credits = "This is a non-commercial game for Mousie and\n" +
-            "her beautiful community at twitch.tv/mousiefuzz.\n" +
+            "the beautiful community at twitch.tv/mousiefuzz.\n" +
             "It's always a pleasure to hang out there and I am glad\n" +
             "that I am a part of this community.\n\n" +
             "The game is inspired by Cookie Clicker\n" +

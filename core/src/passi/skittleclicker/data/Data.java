@@ -37,12 +37,14 @@ public class Data {
     public static List<Object> loadProgress(int numberOfShopGroups, int numberOfUpgrades) {
         List<Object> objects = new ArrayList<>();
         if (!file.exists()) {
+            objects.add(0);
             for (int i = 0; i < numberOfShopGroups; i++) {
                 objects.add(0);
             }
             for (int i = 0; i < numberOfUpgrades; i++) {
                 objects.add(false);
             }
+            return objects;
         }
 
         try {
