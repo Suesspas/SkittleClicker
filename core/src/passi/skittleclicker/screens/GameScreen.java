@@ -88,10 +88,14 @@ public class GameScreen implements Screen{
     private final TextureRegion milkRegion;
     private final Texture valhallaFrameSheet;
     private final Animation<TextureRegion> valhallaAnimation;
+    private final Texture goldenStrawbFrameSheet;
+    private final Animation<TextureRegion> goldenStrawbAnimation;
     private final List<Texture> valhallaSelections;
     private final Texture borderHorizontalTexture;
     private float stateTime;
     private TextureRegion currentFrameValhalla;
+    private TextureRegion currentFrameGoldenStrawb;
+    private Drawable drawableCurrentFrameGoldenStrawb;
     private final int MAX_VISIBLE_LOCKED_SHOPBUTTONS = 1;
     private int milkFrame;
     private final Texture darkBackground;
@@ -138,6 +142,11 @@ public class GameScreen implements Screen{
         this.valhallaFrameSheet = new Texture("valhalla_framegrid.png");
         TextureRegion[] valhallaFrames = TextureUtil.getTextureRegions(valhallaFrameSheet, 4, 6);
         valhallaAnimation = new Animation<>(0.12f,valhallaFrames);
+        this.goldenStrawbFrameSheet = new Texture("images/Mountain_framegrid.png");
+        TextureRegion[] goldenStrawbFrames = TextureUtil.getTextureRegions(goldenStrawbFrameSheet, 19, 2);
+        goldenStrawbAnimation = new Animation<>(0.07f, goldenStrawbFrames);
+//        drawableCurrentFrameGoldenStrawb = new TextureRegionDrawable(new TextureRegion(new Texture("")));
+//        drawableCurrentFrameGoldenStrawb.
 //        currentFrameValhalla = valhallaAnimation.getKeyFrame(stateTime, true);
         this.valhallaSelections = new ArrayList<>();
         for (int i = 0; i <= 15; i++) {
@@ -535,6 +544,7 @@ public class GameScreen implements Screen{
         addNewUpgradeButton();
 
         currentFrameValhalla = valhallaAnimation.getKeyFrame(stateTime, true);
+        currentFrameGoldenStrawb = goldenStrawbAnimation.getKeyFrame(stateTime, true);
 
 //        Gdx.gl.glClearColor(0.21f/* + b*/, 0.53f/* + b*/, 0.70f/* + b*/, 1);
         Gdx.gl.glClearColor(0f, 0.1f, 0.2f, 1);
@@ -848,6 +858,10 @@ public class GameScreen implements Screen{
                     Vector2 borderScreenCoords = ScreenUtil.getScreenCoords(dummyImage, camera);
                     duckImage.setPosition(borderScreenCoords.x + dummyImage.getWidth()/2 -duckImage.getWidth()/2,borderScreenCoords.y - duckImage.getHeight());
                     duckImage.draw(game.getBatch(), 1);
+                }  else if (index == 4 && shop.getUpgradeByName("Gold Mountain").isUnlocked()) {
+                    drawActor(dummyImage, imageBackgroundTextures.get(index - 1));
+                    drawMultipleAnimations(dummyImage, currentFrameGoldenStrawb, number);
+//                    imageRepresentations.get(1)[1].set
                 } else {
                     drawActor(dummyImage, imageBackgroundTextures.get(index - 1));
                     drawImages(dummyImage, imageRepresentations.get(index - 1), number);
@@ -858,6 +872,23 @@ public class GameScreen implements Screen{
 //            Animation = new ?
 //            drawActor(dummyImage, texture);
             index++;
+        }
+    }
+
+    private void drawMultipleAnimations(Actor a, TextureRegion currentFrameGoldenStrawb, int number) {
+        Vector2 borderScreenCoords = ScreenUtil.getScreenCoords(a, camera);
+        if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
+            float xOffset = 10 + borderScreenCoords.x;
+            float yOffset = 10 + borderScreenCoords.y;
+            for (int i = 0; i < number; i++) {
+                if (i < 12){
+                    game.getBatch().draw(currentFrameGoldenStrawb,xOffset+ 50*i,
+                            yOffset- a.getHeight() + 50,50,50);
+                } else {
+                    game.getBatch().draw(currentFrameGoldenStrawb,xOffset + 50* (i - 12),
+                            yOffset - a.getHeight(),50,50);
+                }
+            }
         }
     }
 

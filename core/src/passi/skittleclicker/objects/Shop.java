@@ -8,7 +8,7 @@ public class Shop{
     private long skittles = 0;
     private static final long baseSkittlesPerClick = 1;
     private double clickModifier = 1;
-    private double goldenModifier = 2;
+    private double goldenModifier = 1.5;
     private double milkModifier = 1;
     private double milkClicksMod = 0;
     private final double MAX_MILK_CLICKS_MOD = 1;
@@ -30,7 +30,7 @@ public class Shop{
         costMultipliers = new long[shopGroupSkittles.length];
         for (int i = 0; i < shopGroupSkittles.length; i++) {
             shopGroupSkittles[i] = Math.round(Math.pow(nextShopGroupMultiplier, i));
-            costMultipliers[i] = Math.round(120 * (1 + (i * 0.3)));
+            costMultipliers[i] = Math.round(120 * (1 + (i * 1.3))); //(Math.pow(1.3, i) ?
         }
 
         ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, shopGroupSkittles[0],
@@ -249,24 +249,24 @@ public class Shop{
                                                                 
                         +300% more skittles gained from clicking""", "upgrades/player_diamond.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Emerald", 3000000, 5,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Emerald", 3000000, 4,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #5\n\n" +
                         """
                         Nothing is safe from the evil mousies anymore.
                         They have taken over the universe and keep
                         making more and more skittles.
                                                                 
-                        +400% more skittles gained from clicking""", "upgrades/player_emerald.png"));
+                        +300% more skittles gained from clicking""", "upgrades/player_emerald.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Ruby", 10000000, 6,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Ruby", 10000000, 4,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #6\n\n" +
                         """
                         You can't understand how but the Mousie Clone
                         Council is still expanding their skittles production.
                                                                 
-                        +500% more skittles gained from clicking""", "upgrades/player_ruby.png"));
+                        +300% more skittles gained from clicking""", "upgrades/player_ruby.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Sapphire", 30000000, 7,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Sapphire", 30000000, 4,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #7\n\n" +
                         """
                         H opefully you know the Mousie Clone Council.
@@ -274,8 +274,8 @@ public class Shop{
                         L oving them is a given. They are not evil after all.
                         P roducing more and more skittles surely helps everyone.
                                                                 
-                        +600% more skittles gained from clicking""", "upgrades/player_sapphire.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Amethyst", 100000000, 11,
+                        +300% more skittles gained from clicking""", "upgrades/player_sapphire.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Amethyst", 100000000, 9,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Caesar #8\n\n" +
                         """
                         Lw vwb kwvbqvcm lwev bpqa xibp.
@@ -284,16 +284,16 @@ public class Shop{
                         Bpm ncbczm pwtla vwbpqvo jcb asqbbtma.
                         Ivl bpmzm ewv'b jm ivg zwwu nwz ivgbpqvo mtam.
                                                              
-                        +1000% more skittles gained from clicking""", "upgrades/player_amethyst.png"));
+                        +800% more skittles gained from clicking""", "upgrades/player_amethyst.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Void", 500000000, 42.42,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Void", 1000000000, 42.42,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #9\n\n" +
                         """
                         The Mousie Council has taken over every atom 
                         in the universe and converted it into skittles.
                         So you just convert the void into skittles.
-                        That is right, you found the true nature of dark matter
-                        and it's sweet and round.
+                        That is right, you found the true nature of dark matter,
+                        and it's sweet and round!
                         Increase your skittles per click to the max.
                         
                         +4242% more skittles gained from clicking""", "upgrades/player_void.png"));
@@ -313,7 +313,7 @@ public class Shop{
                         Buy to end the game.
                         (only unlocks if all other things have been bought)""", "upgrades/finale.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 30000, 1.3,
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 30000, 1.2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #1\n\n" +
                         """
                         Improving the output of golden skittles 
@@ -323,7 +323,7 @@ public class Shop{
                         and offer you some advice.
                         
                         Increase golden skittle multiplier by 30%""", "upgrades/gold_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 300000, 1.3,
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 300000, 1.2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #2\n\n" +
                         """
                         You utilize the gold of some golden 
@@ -331,7 +331,7 @@ public class Shop{
                         even more refined!
                         
                         +30% increase in Golden Skittles multiplier""", "upgrades/gold_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 3000000, 1.3,
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 3000000, 1.2,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #3\n\n" +
                         """
                         With the power of KinKaiCookie 
@@ -678,7 +678,8 @@ public class Shop{
                         reach your goal, but shatter it completely by almost a whole minute.
                         Now that's an achievement.
                         
-                        +100% increase in Mountain skittles production""",
+                        +100% increase in Mountain skittles production
+                        Also unlocks golden Strawberrery animation""",
                 "upgrades/mountain_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.COLLAB,"Gold Collab",
                 getShopGroupUpgradeCost(5, 3), 2,
@@ -928,5 +929,12 @@ public class Shop{
             }
         }
         return true;
+    }
+    public Upgrade getUpgradeByName(String name){
+        for (Upgrade u:
+        upgrades) {
+            if (u.getName().equals(name)) return u;
+        }
+        return null;
     }
 }
