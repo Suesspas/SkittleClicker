@@ -36,6 +36,7 @@ public class MainMenuScreen implements Screen {
     private final Texture mousieRage;
     private final Texture mousieCry;
     private final Texture mousieSSJ;
+    private final Texture mousieShy;
     private static String layoutStyle;
     private final TextureRegion background;//new Texture("backgrounds/Blue_Nebula_02-1024x1024.png");
 
@@ -53,6 +54,7 @@ public class MainMenuScreen implements Screen {
         mousieRage = new Texture("mousieRage86.png");
         mousieCry = new Texture("mousieCry86.png");
         mousieSSJ = new Texture("mousieSSJ86.png");
+        mousieShy = new Texture("mousieShy86.png");
     }
 
     @Override
@@ -89,15 +91,15 @@ public class MainMenuScreen implements Screen {
         //add buttons to table
         table.add(playGame);
 //        table.add(new Image(new Texture("mousieHello86.png")));
-        table.row().pad(10, 0, 10, 0);
+        table.row().pad(10, 0, 0, 0);
         table.add(preferences);
-        table.row();
+        table.row().pad(10, 0, 0, 0);;
         table.add(unlocks);
-        table.row();
+        table.row().pad(10, 0, 0, 0);;
         table.add(deleteSaveData).fillX().uniformX();
-        table.row().pad(10, 0, 10, 0);
+        table.row().pad(10, 0, 0, 0);
         table.add(credits);
-        table.row().pad(10, 0, 10, 0);
+        table.row().pad(10, 0, 0, 0);
         table.add(exit);
 
 //        table.row().pad(10, 0, 10, 0);
@@ -179,7 +181,8 @@ public class MainMenuScreen implements Screen {
         drawButtonOverlay(playGame, mousieHello, "Play Game");
         drawButtonOverlay(preferences, mousieCheese, "Preferences");
         drawButtonOverlay(deleteSaveData, mousieRage, "Delete Data");
-        drawButtonOverlay(credits, mousieSSJ, "Credits");
+        drawButtonOverlay(credits, mousieShy, "Credits");
+        drawButtonOverlay(unlocks, mousieSSJ, "Unlocks");
         drawButtonOverlay(exit, mousieCry, "Exit");
         game.getBatch().end();
 //        if (System.currentTimeMillis() - aniTime > 500){

@@ -196,11 +196,11 @@ public class GameScreen implements Screen{
 
         clickSound = Gdx.audio.newSound(Gdx.files.internal("click.wav"));
         padoruMusic = Gdx.audio.newMusic(Gdx.files.internal("padoru.mp3"));
-        padoruMusic.setVolume(game.getPreferences().getMusicVolume());
-        padoruMusic.setOnCompletionListener(music -> {
-            padoruMusic.stop();
-            bgm.play();
-        });
+        padoruMusic.setVolume(Math.min(game.getPreferences().getMusicVolume()*1.3f, 1));
+//        padoruMusic.setOnCompletionListener(music -> {
+//            padoruMusic.stop();
+//            bgm.play();
+//        });
 
         this.shopClickListeners = new ArrayList<>();
         int numberOfClickListeners = shop.numberOfShopGroups() + shop.numberOfUpgrades();
@@ -494,7 +494,7 @@ public class GameScreen implements Screen{
     }
 
     public void playPadoruSound(){
-        bgm.pause();
+//        bgm.pause();
         if (game.getPreferences().isMusicEnabled()) {
             padoruMusic.play();
         } else {
@@ -682,11 +682,17 @@ public class GameScreen implements Screen{
                 shopNameScreenCoords.x + storeTitle.getWidth()/2 - shopTextLayout.width/2,
                 shopNameScreenCoords.y - storeTitle.getHeight()/3);
 
+        Upgrade upgrade;
         for (Actor a:
              upgradeGroup.getChildren()) {
             GreyedOutImageButton button = (GreyedOutImageButton) a;
             int index = shopButtons.indexOf(button) - shop.numberOfShopGroups();
-            button.setIsGreyedOut(shop.getUpgrade(index).getCost() > shop.getSkittles());
+            upgrade = shop.getUpgrade(index);
+            if (upgrade.getName().equals("Finale")){
+                button.setIsGreyedOut(!(upgrade.getCost() < shop.getSkittles() && shop.isAllUnlocked()));
+            } else {
+                button.setIsGreyedOut(upgrade.getCost() > shop.getSkittles());
+            }
         }
 
 //        renderMilk();

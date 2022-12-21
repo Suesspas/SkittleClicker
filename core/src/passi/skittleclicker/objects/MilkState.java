@@ -23,7 +23,7 @@ public class MilkState {
         }
         stateColors[0] = Color.WHITE;
         stateColors[1] = Color.BROWN;
-        stateColors[2] = Color.GREEN;
+        stateColors[2] = new Color(0, 0.7f, 0.1f, 1f);
         stateColors[3] = Color.PINK;
     }
     public static void changeState(int upgradeIndex){

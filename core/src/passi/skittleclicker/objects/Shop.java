@@ -30,11 +30,11 @@ public class Shop{
         costMultipliers = new long[shopGroupSkittles.length];
         for (int i = 0; i < shopGroupSkittles.length; i++) {
             shopGroupSkittles[i] = Math.round(Math.pow(nextShopGroupMultiplier, i));
-            costMultipliers[i] = Math.round(100 * (1 + (i * 0.2)));
+            costMultipliers[i] = Math.round(120 * (1 + (i * 0.3)));
         }
 
         ShopGroup clickerShopGroup = new ShopGroup(ShopGroup.Type.CLICKER, shopGroupSkittles[0],
-                54,shopGroupSkittles[0]*costMultipliers[0], """
+                36,shopGroupSkittles[0]*costMultipliers[0], """ 
                 Why click yourself when you can just let others do it?
                 People from chat come together and help you in
                 making more and more skittles! 
@@ -276,32 +276,44 @@ public class Shop{
                                                                 
                         +600% more skittles gained from clicking""", "upgrades/player_sapphire.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Amethyst", 100000000, 11,
-                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #8\n\n" +
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Caesar #8\n\n" +
                         """
-                         Bpm Uwcaqm Kwcvkqt pia bismv wdmz mdmzg ibwu\s
-                         qv bpm cvqdmzam ivl kwvdmzbml qb qvbw asqbbtma.
-                         Qn gwc kiv zmil bpqa umaaiom qb qa itzmilg bw tibm.
-                         Qb qa mvkzgxbml ivl apwea qbamtn wvtg ib bpm mvl.
-                         Bpqa qa qb.
-                         Gwc kwvdmzbml mdmzgbpqvo qvbw asqbbtma ivl bpmzm qa
-                         vwbpqvo tmnb.
-                                                      
-                         +1000% more skittles gained from clicking""", "upgrades/player_amethyst.png"));
+                        Lw vwb kwvbqvcm lwev bpqa xibp.
+                        Vwbpqvo jcb uilvmaa (ivl asqbbtma) eqtt jm tmnb.
+                        Bpqa qa i eizvqvo.
+                        Bpm ncbczm pwtla vwbpqvo jcb asqbbtma.
+                        Ivl bpmzm ewv'b jm ivg zwwu nwz ivgbpqvo mtam.
+                                                             
+                        +1000% more skittles gained from clicking""", "upgrades/player_amethyst.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Finale", 1000000000, 100,
-                 "Last Upgrade \n\n" +
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Void", 500000000, 42.42,
+                shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #9\n\n" +
                         """
                         The Mousie Council has taken over every atom 
                         in the universe and converted it into skittles.
+                        So you just convert the void into skittles.
+                        That is right, you found the true nature of dark matter
+                        and it's sweet and round.
+                        Increase your skittles per click to the max.
+                        
+                        +4242% more skittles gained from clicking""", "upgrades/player_void.png"));
+
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Finale", 10000000000L, 100,
+                 "Last Upgrade \n\n" +
+                        """
+                        Everything is skittles.
+                        Heck even nothing is skittles now.
+                        There is nothing else left.
                         If you can read this message it is already to late.
                         It is encrypted and shows itself only at the end.
+                        The attempt to send an encrypted message to warn you
+                        must have failed.
                         This is it.
-                        You converted everything into skittles and there is
-                        nothing left.
                         
-                        Buy to end the game.""", "upgrades/finale.png"));
+                        Buy to end the game.
+                        (only unlocks if all other things have been bought)""", "upgrades/finale.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 15000, 1.5,
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 30000, 1.3,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #1\n\n" +
                         """
                         Improving the output of golden skittles 
@@ -310,23 +322,23 @@ public class Shop{
                         They seem to know a lot about gold
                         and offer you some advice.
                         
-                        Increase golden skittle multiplier by 50%""", "upgrades/gold_bronze.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 150000, 1.5,
+                        Increase golden skittle multiplier by 30%""", "upgrades/gold_bronze.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 300000, 1.3,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #2\n\n" +
                         """
                         You utilize the gold of some golden 
                         strawberrerries to make your golden skittles
                         even more refined!
                         
-                        +50% increase in Golden Skittles multiplier""", "upgrades/gold_silver.png"));
-        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 1500000, 1.5,
+                        +30% increase in Golden Skittles multiplier""", "upgrades/gold_silver.png"));
+        upgrades.add(new Upgrade(ShopGroup.Type.GOLDEN,"Better Gold Skittles", 3000000, 1.3,
                 shopgroupTypeToString(ShopGroup.Type.GOLDEN) + " Upgrade #3\n\n" +
                         """
                         With the power of KinKaiCookie 
                         I mean KinKaiSkittle, you further refine 
                         the gold in your golden skittles. 
                         
-                        +50% increase in Golden Skittles multiplier""" , "upgrades/gold_gold.png"));
+                        +30% increase in Golden Skittles multiplier""" , "upgrades/gold_gold.png"));
 
         //bronze upgrades
         upgrades.add(new Upgrade(ShopGroup.Type.CLICKER,"Bronze Clicker",
@@ -551,7 +563,7 @@ public class Shop{
                        In this Wonderful World you meet a splendid Crusader.
                        She seems to have strong defenses and insists on helping
                        you produce more skittles. Transporting all the skittles by
-                       herself she says it's fine to work her to the bone 24/7.
+                       herself, she says it's fine to work her to the bone 24/7.
                        So you take her up on her offer 
                        and let her handle the isekai skittles.
                        
@@ -563,7 +575,7 @@ public class Shop{
                         """
                        Improve your COUNTER HITTO and GAADO BUREKO.
                        
-                       +x skittles from tailors""",
+                       +100% skittles from tailors""",
                 "upgrades/tailor_silver.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Silver Dragon",
                 getShopGroupUpgradeCost(9, 2), 2,
@@ -698,7 +710,7 @@ public class Shop{
                         """
                        Perfect your COUNTER HITTO and GAADO BUREKO.
                        
-                       +x skittles from tailors""",
+                       +100% skittles from tailors""",
                 "upgrades/tailor_gold.png"));
         upgrades.add(new Upgrade(ShopGroup.Type.DRAGON,"Gold Dragon",
                 getShopGroupUpgradeCost(9, 3), 2,
@@ -724,7 +736,7 @@ public class Shop{
 
     private long getShopGroupUpgradeCost(int shopgroupNumber, int upgradeNumber) {
         return Math.round(shopGroupSkittles[shopgroupNumber] * costMultipliers[shopgroupNumber]
-                * Math.pow(upgradeCostMultiplier, upgradeNumber * upgradeNumber));
+                * Math.pow(upgradeCostMultiplier, (2*upgradeNumber) - 1)); //TODO figure out right pow, used to be upgradenumber^2
     }
 
     public void setupShop(List<Object> objects){
@@ -902,5 +914,19 @@ public class Shop{
 
     public void enableTestMode() {
         skittles += 9999999999999L;
+    }
+
+    public boolean isAllUnlocked() {
+        for (ShopGroup s:
+             shopGroups) {
+            if (s.getNumber() < s.getMAX_NUMBER()) return false;
+        }
+        for (Upgrade u:
+             upgrades) {
+            if (!u.getName().equals("Finale")){
+                if (!u.isUnlocked()) return false;
+            }
+        }
+        return true;
     }
 }

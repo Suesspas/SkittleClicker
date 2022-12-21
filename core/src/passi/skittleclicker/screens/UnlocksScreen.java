@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.util.AutoFocusScrollPane;
+import passi.skittleclicker.util.FontUtil;
 import passi.skittleclicker.util.GreyedOutImageButton;
 import passi.skittleclicker.util.TextureUtil;
 
@@ -31,6 +32,7 @@ public class UnlocksScreen implements Screen {
     private final TextureRegion background;
     private static String layoutStyle;
     List<GreyedOutImageButton> upgradeButtons;
+    boolean noUnlocks = true;
 
     public UnlocksScreen(final SkittleClickerGame gam) {
         game = gam;
@@ -66,7 +68,9 @@ public class UnlocksScreen implements Screen {
                 upButtons) {
             GreyedOutImageButton upgradeButton = new GreyedOutImageButton(button);
             upgradeButton.setDisabled(true);
-            upgradeButton.setVisible(game.gameScreen.isUpgradeVisible(upButtons.indexOf(button)));
+            boolean visible = game.gameScreen.isUpgradeVisible(upButtons.indexOf(button));
+            upgradeButton.setVisible(visible);
+            noUnlocks = noUnlocks && !visible;
             table.add(upgradeButton).right();
             upgradeButtons.add(upgradeButton);
             index++;
@@ -92,6 +96,10 @@ public class UnlocksScreen implements Screen {
         game.getBatch().setProjectionMatrix(camera.combined);
         game.getBatch().begin();
         game.getBatch().draw(background, 0, 0, camera.viewportWidth, camera.viewportHeight);
+        if (noUnlocks) {
+            FontUtil.FONT_60.draw(game.getBatch(), "No unlocks yet :(",
+                    camera.viewportWidth/2 - 200, camera.viewportHeight/2);
+        }
         game.getBatch().end();
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
