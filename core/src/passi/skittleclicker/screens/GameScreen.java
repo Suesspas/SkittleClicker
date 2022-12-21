@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import passi.skittleclicker.SkittleClickerGame;
 import passi.skittleclicker.data.Data;
-import passi.skittleclicker.fixes.CustomShapeRenderer;
 import passi.skittleclicker.objects.*;
 import passi.skittleclicker.util.*;
 
@@ -39,9 +38,6 @@ public class GameScreen implements Screen{
     private static float SKITTLE_WIDTH = 200;
     private static float SKITTLE_HEIGHT = 200;
     private static final float LIGHT_RADIUS = 100;
-
-    private final CustomShapeRenderer shapeRenderer;
-
     private final SkittleClickerGame game;
     private final OrthographicCamera camera;
     private Shop shop;
@@ -173,7 +169,6 @@ public class GameScreen implements Screen{
 
         this.skittleRepresentation = new Ellipse();
         this.goldenSkittleRepresentation = new Ellipse();
-        this.shapeRenderer = new CustomShapeRenderer();
 
         this.mousieMusic = Gdx.audio.newMusic(Gdx.files.internal("music/am_a_mouse.mp3"));
         this.endGameMusic = Gdx.audio.newMusic(Gdx.files.internal("music/Happy.mp3"));
@@ -1225,7 +1220,6 @@ public class GameScreen implements Screen{
 
     @Override
     public void dispose() {
-        shapeRenderer.dispose();
         skittleTexture.dispose();
         clickerTexture.dispose();
         for (Texture t:
