@@ -180,6 +180,7 @@ public class GameScreen implements Screen{
         this.goldenSkittleRepresentation = new Ellipse();
 
         this.mousieMusic = Gdx.audio.newMusic(Gdx.files.internal("music/am_a_mouse.mp3"));
+        mousieMusic.setLooping(true);
         this.endGameMusic = Gdx.audio.newMusic(Gdx.files.internal("music/Happy.mp3"));
         endGameMusic.setOnCompletionListener(music -> {
             bgm.stop();
@@ -420,15 +421,17 @@ public class GameScreen implements Screen{
         for (int i = 0; i < images.length; i++) {
             if (index == 1){
                 images[i] = new Image(new Texture("images/ducks/" + name + "_" + (i+1) + ".png"));
+            } else if (index == 2){
+                images[i] = new Image(TextureUtil.scaleImage("images/" + name + ".png", 25, 25));
             } else {
                 images[i] = new Image(TextureUtil.scaleImage("images/" + name + ".png", 50, 50));
             }
-
+        }
 
 //            images[i].setScale(0.1f);
 //            images[i].addListener(imageClickListeners.get(index)[i]);
 //            stage.addListener(imageClickListeners.get(index)[i]);
-        }
+
         imageRepresentations.add(images);
     }
 
@@ -755,7 +758,9 @@ public class GameScreen implements Screen{
                 && skittleRepresentation.contains(getUnprojectedScreenCoords(100))) {
             SKITTLE_HEIGHT -= 10;
             SKITTLE_WIDTH -= 10;
-            clickSound.play(game.getPreferences().getSoundVolume() * 0.3f);
+            if (game.getPreferences().isSoundEffectsEnabled()){
+                clickSound.play(game.getPreferences().getSoundVolume() * 0.3f);
+            }
             shop.click();
             clicksPerSecond++;
             addSkittle();
@@ -776,20 +781,25 @@ public class GameScreen implements Screen{
             float volume = game.getPreferences().getMusicVolume();
             mousieMusic.setVolume(Math.min(1f, volume*2));
             bgm = mousieMusic;
-            bgm.play();
+            if (game.getPreferences().isMusicEnabled()) {
+                bgm.play();
+            }
             shop.goldenActive(true);
         }
         Vector2 mousePos = getUnprojectedScreenCoords(0);
-        for (Image[] i:
-             imageRepresentations) {
-            for (int j = 0; j < i.length; j++) {
-//                if ( i[j].isTouchFocusTarget()) System.out.println("MOUSE IS OVER");
-                if (mousePos.x > i[j].getX() && mousePos.x < i[j].getX() + i[j].getWidth()*i[j].getScaleX()
-                && mousePos.y > i[j].getY() && mousePos.y < i[j].getY() + i[j].getHeight()*i[j].getScaleY()){
-                    System.out.println(imageRepresentations.indexOf(i) + ", " + j); //TODO show names of twitch subs / channels in tooltip
-                }
+//        for (Image[] i:
+//             imageRepresentations) {
+        Image[] i = imageRepresentations.get(2);
+        game.getBatch().begin();
+        for (int j = 0; j < i.length; j++) {
+            if (mousePos.x > i[j].getX() && mousePos.x < i[j].getX() + i[j].getWidth() * i[j].getScaleX()
+                    && mousePos.y > i[j].getY() && mousePos.y < i[j].getY() + i[j].getHeight() * i[j].getScaleY()) {
+//                System.out.println(imageRepresentations.indexOf(i) + ", " + j); //TODO show names of twitch subs / channels in tooltip
+                FontUtil.FONT_20.draw(game.getBatch(), shop.getBarVisitorName(j), mousePos.x,  mousePos.y + 50);
             }
         }
+        game.getBatch().end();
+//        }
         //handle endgame
         if (endGame){
             renderGG();
@@ -802,7 +812,10 @@ public class GameScreen implements Screen{
                 float volume = game.getPreferences().getMusicVolume();
                 endGameMusic.setVolume(Math.min(1f, volume*1.1f));
                 bgm = endGameMusic;
-                bgm.play();
+
+                if (game.getPreferences().isMusicEnabled()) {
+                    bgm.play();
+                }
                 game.setScreen(new CreditsScreen(game, CreditsScreen.ENDGAME));
             }
         }
@@ -897,14 +910,12 @@ public class GameScreen implements Screen{
         if (borderScreenCoords.y < camera.viewportHeight + a.getHeight() && borderScreenCoords.y > -a.getHeight()){
 //            game.getBatch().draw(image);
             float xOffset = 10 + borderScreenCoords.x;
-            float yOffset = 10 + borderScreenCoords.y;
+            float yOffset = -10 + borderScreenCoords.y;
+            float imageWidth = images[1].getWidth();
+            float imageHeight = images[1].getHeight();
             for (int i = 0; i < number; i++) {
-                if (i < 12){
-                    images[i].setPosition( xOffset+ 50*i,  yOffset- a.getHeight() + 50);
-                } else {
-                    images[i].setPosition(xOffset + 50* (i - 12), yOffset - a.getHeight());
-                }
-
+                images[i].setPosition( xOffset+ ((images[i].getWidth()*i) % 600),
+                        yOffset - (images[i].getHeight() * (Math.floorDiv((int) (images[i].getWidth()*i), 600)+1)));
                 images[i].draw(game.getBatch(), 1);
             }
         }
@@ -951,7 +962,7 @@ public class GameScreen implements Screen{
     private void renderGoldLight(){
         Color c = game.getBatch().getColor();
         goldLightSprite.setPosition(skittleRepresentation.x - LIGHT_RADIUS, skittleRepresentation.y - LIGHT_RADIUS);
-        game.getBatch().setColor(255, 220, 0, 0.3f);
+        game.getBatch().setColor(255, 220, 0, 0.1f);
         goldLightSprite.rotate(0.2f);
         if (goldLightIsGrowing){
             goldLightSprite.setScale(goldLightSprite.getScaleX() + goldLightGrowSpeed);
@@ -1077,15 +1088,22 @@ public class GameScreen implements Screen{
                 GoldenSkittle.activeEnd();
                 bgm.stop();
                 bgm = game.getCurrentBGM();
+                System.out.println("setting music back to " + game.getCurrentBGM().toString());
                 bgm.setVolume(game.getPreferences().getMusicVolume());
-                bgm.play();
+                if (game.getPreferences().isMusicEnabled()) {
+                    bgm.play();
+                }
                 shop.goldenActive(false);
             }
             if (bgm == mousieMusic && !GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)){
+                System.err.println("whoops, bgm is still mousie music and golden skittle is no longer in active state");
                 bgm.stop();
                 bgm = game.getCurrentBGM();
                 bgm.setVolume(game.getPreferences().getMusicVolume());
-                bgm.play();
+                if (game.getPreferences().isMusicEnabled()) {
+                    bgm.play();
+                }
+                System.out.println("setting music back to " + game.getCurrentBGM().toString());
             }
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
@@ -1293,7 +1311,7 @@ public class GameScreen implements Screen{
     }
 
     public List<GreyedOutImageButton> getUpgradeButtons(){
-        return shopButtons.subList(shop.numberOfShopGroups(), shopButtons.size()-1);
+        return shopButtons.subList(shop.numberOfShopGroups(), shopButtons.size());
     }
     public boolean isUpgradeVisible(int index){
         return shop.getUpgrade(index).isVisible();

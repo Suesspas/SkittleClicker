@@ -24,6 +24,7 @@ public class Shop{
     private final long[] costMultipliers;
     private final double upgradeCostMultiplier = 2;
     private final boolean testing = true; //TODO dont forget to set to false after sending to purr
+    private final List<String> barVisitorNames;
 
     public Shop(){
         shopGroupSkittles = new long[11];
@@ -57,11 +58,14 @@ public class Shop{
                 (it is said the more legs a duck has, the more
                 skittles it produces)\s""");
         ShopGroup skittlesBarShopGroup = new ShopGroup(ShopGroup.Type.SKITTLES_BAR, shopGroupSkittles[3],
-                24, shopGroupSkittles[3]*costMultipliers[3], """
+                96, shopGroupSkittles[3]*costMultipliers[3], """
                 You start your own bar to share the sweet flavor of
                 skittles drinks with many people!
                 Somehow you still end up making more skittles with every
-                bar you open despite them being your main ingredient.""");
+                bar you open despite them being your main ingredient.
+                
+                Some familiar names might show up in the bar.
+                (You might wanna hover over the individual drinks)""");
 
         ShopGroup mountainShopGroup = new ShopGroup(ShopGroup.Type.MOUNTAIN, shopGroupSkittles[4],
                 24, shopGroupSkittles[4]*costMultipliers[4], """
@@ -733,6 +737,104 @@ public class Shop{
                 "upgrades/dance floor_gold.png"));
 
         this.goldenActive = false;
+        this.barVisitorNames = new ArrayList<>();
+        barVisitorNames.add("echo_gogo");
+        barVisitorNames.add("peacemillian");
+        barVisitorNames.add("sirpurrr");
+        barVisitorNames.add("dr3adfulbear");
+        barVisitorNames.add("alphatater");
+        barVisitorNames.add("mokka_jm");
+        barVisitorNames.add("mr__mongo");
+        barVisitorNames.add("hispeedhit");
+        barVisitorNames.add("bloodstaineddragon");
+        barVisitorNames.add("kinkaikii");
+        barVisitorNames.add("nonpareille");
+        barVisitorNames.add("just_a_jen");
+        barVisitorNames.add("mattyworth");
+        barVisitorNames.add("strikestwice");
+        barVisitorNames.add("hazymelon7");
+        barVisitorNames.add("chicken_beer");
+        barVisitorNames.add("nepunepuuu");
+        barVisitorNames.add("chaincat");
+        barVisitorNames.add("dashinka5632");
+        barVisitorNames.add("jasons_wrong");
+        barVisitorNames.add("solice55");
+        barVisitorNames.add("domhugs");
+        barVisitorNames.add("izori_");
+        barVisitorNames.add("jud3_cryobyte");
+        barVisitorNames.add("marinlicious");
+        barVisitorNames.add("hoseoak");
+        barVisitorNames.add("sevenjace");
+        barVisitorNames.add("apeirocell");
+        barVisitorNames.add("arzosah77");
+        barVisitorNames.add("alwein");
+        barVisitorNames.add("mastakazam");
+        barVisitorNames.add("kasokuzo");
+        barVisitorNames.add("aninsaneyandere");
+        barVisitorNames.add("basicallya_neet");
+        barVisitorNames.add("t3mulin");
+        barVisitorNames.add("el_peluchini");
+        barVisitorNames.add("ozzzybeef");
+        barVisitorNames.add("gem_supern0va89");
+        barVisitorNames.add("hardcoremethaddict");
+        barVisitorNames.add("themasterofblubb");
+        barVisitorNames.add("dromeivirpio");
+        barVisitorNames.add("passi2612");
+        barVisitorNames.add("malinalliy");
+        barVisitorNames.add("fiachandraw");
+        barVisitorNames.add("allozingy");
+        barVisitorNames.add("jasperzev_vt");
+        barVisitorNames.add("sakoneko");
+        barVisitorNames.add("geneoloro");
+        barVisitorNames.add("dimirinfiltrator");
+        barVisitorNames.add("citrussushi");
+        barVisitorNames.add("kaszkaaaa_");
+        barVisitorNames.add("riderknight_");
+        barVisitorNames.add("redsun_nl");
+        barVisitorNames.add("thezikes");
+        barVisitorNames.add("bratunor");
+        barVisitorNames.add("razgrizthedemon");
+        barVisitorNames.add("littlehizi");
+        barVisitorNames.add("eavee");
+        barVisitorNames.add("deanerrl");
+        barVisitorNames.add("cipher1010");
+        barVisitorNames.add("rilous");
+        barVisitorNames.add("plururu_");
+        barVisitorNames.add("fruitbatanyu");
+        barVisitorNames.add("maylouuu");
+        barVisitorNames.add("willowandbiscuit");
+        barVisitorNames.add("simnoire");
+        barVisitorNames.add("cinnabar");
+        barVisitorNames.add("duelscreens");
+        barVisitorNames.add("armazion");
+        barVisitorNames.add("leydrewle");
+        barVisitorNames.add("saltiestbun");
+        barVisitorNames.add("kyrie_gamin");
+        barVisitorNames.add("renerte");
+        barVisitorNames.add("anoorah");
+        barVisitorNames.add("creeperwaldo");
+        barVisitorNames.add("prettyprincesspotato");
+        barVisitorNames.add("clunia");
+        barVisitorNames.add("inu_anzu");
+        barVisitorNames.add("myuknekoshita");
+        barVisitorNames.add("kimion");
+        barVisitorNames.add("sir jude");
+        barVisitorNames.add("saltiestofsquids");
+        barVisitorNames.add("exodiac");
+        barVisitorNames.add("raitaro");
+        barVisitorNames.add("lewdcharizard");
+        barVisitorNames.add("skyebison");
+        barVisitorNames.add("sumage");
+        barVisitorNames.add("akiba_illusion");
+        barVisitorNames.add("monokoyumi");
+        barVisitorNames.add("mrpockets150");
+        barVisitorNames.add("harrajuku");
+        barVisitorNames.add("xeirno");
+        barVisitorNames.add("totouri");
+        barVisitorNames.add("kingcobra");
+        barVisitorNames.add("musicomp");
+        barVisitorNames.add("moonsadow");
+        System.out.println("number of names: " + barVisitorNames.size());
     }
 
     private long getShopGroupUpgradeCost(int shopgroupNumber, int upgradeNumber) {
@@ -936,5 +1038,8 @@ public class Shop{
             if (u.getName().equals(name)) return u;
         }
         return null;
+    }
+    public String getBarVisitorName(int index){
+        return barVisitorNames.get(index);
     }
 }
