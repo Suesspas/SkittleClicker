@@ -42,7 +42,8 @@ public class ExitScreen implements Screen {
         // temporary until we have asset manager in
         Skin skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
 
-        Label label = new Label(action == 1 ? "Are you sure you want to delete ALL your save data permanently?" : "Are you sure you want to exit?" , skin);
+        Label label = new Label(action == DELETE_DATA ? "Are you sure you want to delete ALL your save data permanently?"
+                : "Are you sure you want to exit?" , skin);
         label.setColor(Color.WHITE);
 
         //create buttons
@@ -62,7 +63,7 @@ public class ExitScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 stage.clear();
-                if (action == 1){
+                if (action == DELETE_DATA){
                     game.deleteSaveData();
                     stage.clear();
                     game.changeScreen(SkittleClickerGame.MENU);

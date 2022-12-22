@@ -803,7 +803,7 @@ public class GameScreen implements Screen{
                 endGameMusic.setVolume(Math.min(1f, volume*1.1f));
                 bgm = endGameMusic;
                 bgm.play();
-                changeScreen(SkittleClickerGame.ENDGAME);
+                game.setScreen(new CreditsScreen(game, CreditsScreen.ENDGAME));
             }
         }
     }

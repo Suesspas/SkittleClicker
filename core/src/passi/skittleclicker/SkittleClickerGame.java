@@ -58,6 +58,14 @@ public class SkittleClickerGame extends Game {
         backgrounds = TextureUtil.getTextureRegions( //wood_tavern.jpg
                 new Texture("backgrounds/skittles_forest.jpg"), 2, 2);
 
+        //trim edges from overlapping bgs
+        backgrounds[0].setRegion(backgrounds[0].getRegionX(), backgrounds[0].getRegionY(),
+                backgrounds[0].getRegionWidth()-10, backgrounds[0].getRegionHeight());
+        backgrounds[1].setRegion(backgrounds[1].getRegionX()+4, backgrounds[1].getRegionY(),
+                backgrounds[1].getRegionWidth(), backgrounds[1].getRegionHeight());
+        backgrounds[2].setRegion(backgrounds[2].getRegionX(), backgrounds[2].getRegionY(),
+                backgrounds[2].getRegionWidth()-10, backgrounds[2].getRegionHeight());
+
 
         setScreen(new MainMenuScreen(this));
     }
@@ -117,7 +125,7 @@ public class SkittleClickerGame extends Game {
                 this.setScreen(gameScreen);
                 break;
             case ENDGAME:
-                this.setScreen(new CreditsScreen(this));
+                this.setScreen(new CreditsScreen(this, CreditsScreen.CREDITS));
                 break;
             case EXIT:
                 this.setScreen(new ExitScreen(this, ExitScreen.EXIT));
