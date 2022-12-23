@@ -40,4 +40,8 @@ public abstract class GoldenSkittle {
     public static void activeEnd() {
         currentState = State.INACTIVE;
     }
+    public static void reset(){
+        currentState = State.INACTIVE;
+        timer = 0;
+    }
 }

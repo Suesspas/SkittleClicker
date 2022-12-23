@@ -42,6 +42,49 @@ public class TextureUtil {
 
         return textureResult;
     }
+
+    public static TextureRegion[] timedGoldenStrawbFrames(TextureRegion[] regions){
+        return new TextureRegion[]{
+                regions[0], regions[0], regions[0], regions[0], regions[0], regions[0], regions[0], regions[0],
+                regions[1],
+                regions[2],
+                regions[3],
+                regions[4],
+                regions[5], regions[5],
+                regions[6], regions[6],
+                regions[7], regions[7],
+                regions[8], regions[8],
+                regions[9], regions[9],
+                regions[10], regions[10],
+                regions[11], regions[11],
+                regions[12], regions[12],
+                regions[13],  regions[13],
+                regions[14], regions[14],
+                regions[15],
+                regions[16],
+                regions[17],
+                regions[18],
+                regions[19],
+                regions[20],
+                regions[21], regions[21], regions[21], regions[21], regions[21], regions[21], regions[21], regions[21],
+                regions[22], regions[22],
+                regions[23], regions[23],
+                regions[24], regions[24],
+                regions[25], regions[25],
+                regions[26], regions[26],
+                regions[27], regions[27], regions[27],
+                regions[28], regions[28], regions[28], regions[28], regions[28], regions[28], regions[28], regions[28],
+                regions[29], regions[29],
+                regions[30],
+                regions[31],
+                regions[32],
+                regions[33],
+                regions[34],
+                regions[35],
+                regions[36],
+                regions[37],
+        };
+    }
     public static void drawPartOfSprite(SpriteBatch batch, Texture texture, float x, float y, float width, float height,
                                         int partX, int partY, int partWidth, int partHeight){
         batch.draw(

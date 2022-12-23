@@ -144,7 +144,8 @@ public class GameScreen implements Screen{
         valhallaAnimation = new Animation<>(0.12f,valhallaFrames);
         this.goldenStrawbFrameSheet = new Texture("images/Mountain_framegrid.png");
         TextureRegion[] goldenStrawbFrames = TextureUtil.getTextureRegions(goldenStrawbFrameSheet, 19, 2);
-        goldenStrawbAnimation = new Animation<>(0.07f, goldenStrawbFrames);
+
+        goldenStrawbAnimation = new Animation<>(0.05f, TextureUtil.timedGoldenStrawbFrames(goldenStrawbFrames));
 //        drawableCurrentFrameGoldenStrawb = new TextureRegionDrawable(new TextureRegion(new Texture("")));
 //        drawableCurrentFrameGoldenStrawb.
 //        currentFrameValhalla = valhallaAnimation.getKeyFrame(stateTime, true);
@@ -792,7 +793,8 @@ public class GameScreen implements Screen{
         Image[] i = imageRepresentations.get(2);
         game.getBatch().begin();
         for (int j = 0; j < i.length; j++) {
-            if (mousePos.x > i[j].getX() && mousePos.x < i[j].getX() + i[j].getWidth() * i[j].getScaleX()
+            if (shop.getShopGroups().get(3).getNumber() > j &&
+                    mousePos.x > i[j].getX() && mousePos.x < i[j].getX() + i[j].getWidth() * i[j].getScaleX()
                     && mousePos.y > i[j].getY() && mousePos.y < i[j].getY() + i[j].getHeight() * i[j].getScaleY()) {
 //                System.out.println(imageRepresentations.indexOf(i) + ", " + j); //TODO show names of twitch subs / channels in tooltip
                 FontUtil.FONT_20.draw(game.getBatch(), shop.getBarVisitorName(j), mousePos.x,  mousePos.y + 50);
@@ -1052,11 +1054,11 @@ public class GameScreen implements Screen{
 
     private void scheduleService(ScheduledExecutorService service) {
         service.scheduleAtFixedRate(() -> {
-            try {
-                Thread.sleep(25);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(25);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
             shop.updateSkittles();
             skittlesPerSecond = shop.getSkittlesPerSecond() + Math.round(clicksPerSecond * shop.getSkittlesPerClick());
             addSkittle();
@@ -1288,6 +1290,14 @@ public class GameScreen implements Screen{
 //        shop.deleteSaveData();
         shop = new Shop();
         MilkState.deleteSaveData();
+        autoSaveTimer = 0;
+        GoldenSkittle.reset();
+        bgm.stop();
+        bgm = game.getNextBGM();
+        bgm.setVolume(game.getPreferences().getMusicVolume());
+        if (game.getPreferences().isMusicEnabled()){
+            bgm.play();
+        }
         int displayedUpgrades = upgradeGroup.getChildren().size;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopButtons.get(i).setVisible(i < MAX_VISIBLE_LOCKED_SHOPBUTTONS);

@@ -145,7 +145,7 @@ public class SkittleClickerGame extends Game {
     }
 
     public Music getCurrentBGM(){
-        return musicList.get((musicChanges - 1) % musicList.size());
+        return musicList.get((musicChanges + musicList.size() - 1) % musicList.size());
     }
     public AppPreferences getPreferences() {
         return this.preferences;
