@@ -211,6 +211,32 @@ public class Shop{
                         
                         +30% to all skittles gains""", "upgrades/all_gold.png"));
 
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Left Ear of the Forbidden One", 10000000000L, 5,
+                shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade \n\n" +
+                        """
+                        You were thinking a plu is the roundest thing
+                        there will ever be.
+                        But you discover an entity so perfectly round,
+                        that reality bends itself around it.
+                        Forming a giant black hole size circle.
+                        If you get this and the Right Ear of the 
+                        Forbidden One, you will gain unlimited power!
+                        
+                        +400% to all skittles gains""", "upgrades/left_ear.png"));
+
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Right Ear of the Forbidden One", 10000000000L, 5,
+                shopgroupTypeToString(ShopGroup.Type.ALL) + " Upgrade \n\n" +
+                        """
+                        You were thinking a plu is the roundest thing
+                        there will ever be.
+                        But you discover an entity so perfectly round,
+                        that reality bends itself around it.
+                        Forming a giant black hole size circle.
+                        If you get this and the Left Ear of the 
+                        Forbidden One, you will gain unlimited power!
+                        
+                        +400% to all skittles gains""", "upgrades/right_ear.png"));
+
         upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Bronze", 500, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #1\n\n" +
                         """
@@ -243,7 +269,7 @@ public class Shop{
                         
                         +100% more skittles gained from clicking """, "upgrades/player_gold.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Diamond", 750000, 4,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Diamond", 750000, 2, //TODO
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #4\n\n" +
                         """
                         The evil mousies have figured out a way to stop aging 
@@ -253,7 +279,7 @@ public class Shop{
                                                                 
                         +300% more skittles gained from clicking""", "upgrades/player_diamond.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Emerald", 3000000, 4,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Emerald", 3000000, 2, //TODO
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #5\n\n" +
                         """
                         Nothing is safe from the evil mousies anymore.
@@ -302,14 +328,14 @@ public class Shop{
                         
                         +4242% more skittles gained from clicking""", "upgrades/player_void.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Finale", 10000000000L, 100,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Finale", 50000000000L, 100,
                  "Last Upgrade \n\n" +
                         """
                         Everything is skittles.
                         Heck even nothing is skittles now.
                         There is nothing else left.
                         If you can read this message it is already to late.
-                        It is encrypted and shows itself only at the end.
+                        It only shows itself at the end.
                         The attempt to send an encrypted message to warn you
                         must have failed.
                         This is it.

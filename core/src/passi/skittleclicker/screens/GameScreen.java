@@ -117,6 +117,8 @@ public class GameScreen implements Screen{
     private final ImageButton prefButton;
     private boolean endGame;
     private final Texture gSkittle;
+    private int cheatCodeTimer;
+    private String currentCheatCode;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -126,6 +128,7 @@ public class GameScreen implements Screen{
         this.stateTime = 0;
         this.milkFrame = 0;
         this.endGame = false;
+        this.cheatCodeTimer = 0;
 
         updateStageSkin();
         borderHorizontalTexture = new Texture(borderHorizontalPath);
@@ -537,6 +540,14 @@ public class GameScreen implements Screen{
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             changeScreen(SkittleClickerGame.MENU);
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
+            String code = ScreenUtil.checkIfCheatCodeEntered();
+            if (code != null){
+                cheatCodeTimer = 5;
+                handleCheatCode(code);
+                currentCheatCode = code;
+            }
+        }
 
         if (stateTime < Float.MAX_VALUE/3 ){
             stateTime += Gdx.graphics.getDeltaTime();
@@ -718,7 +729,12 @@ public class GameScreen implements Screen{
         } else if (GoldenSkittle.isInState(GoldenSkittle.State.ACTIVE)) {
             game.getBatch().draw(goldGlow, 0, 0, clickerTable.getWidth(), clickerTable.getHeight());
         }
-
+        if (cheatCodeTimer > 0){
+            Vector2 coords = ScreenUtil.getScreenCoords(menuBar, camera);
+            FontUtil.FONT_20.draw(game.getBatch(), "Code entered: " + currentCheatCode,
+                    coords.x + menuButton.getWidth() + 20,
+                    coords.y - 20);
+        }
         game.getBatch().end();
 
 
@@ -800,7 +816,9 @@ public class GameScreen implements Screen{
                 FontUtil.FONT_20.draw(game.getBatch(), shop.getBarVisitorName(j), mousePos.x,  mousePos.y + 50);
             }
         }
+
         game.getBatch().end();
+
 //        }
         //handle endgame
         if (endGame){
@@ -821,6 +839,10 @@ public class GameScreen implements Screen{
                 game.setScreen(new CreditsScreen(game, CreditsScreen.ENDGAME));
             }
         }
+    }
+
+    private void handleCheatCode(String code) {
+
     }
 
     private void renderGG() {
@@ -1074,6 +1096,9 @@ public class GameScreen implements Screen{
             } else  if (autoSaveTimer % 5 == 0){
                 shop.milkClickTimeDecrement();
             }
+            if (cheatCodeTimer > 0){
+                cheatCodeTimer--;
+            }
 
             GoldenSkittle.incrementTimer();
             if (GoldenSkittle.isRespawnTime()){
@@ -1090,7 +1115,6 @@ public class GameScreen implements Screen{
                 GoldenSkittle.activeEnd();
                 bgm.stop();
                 bgm = game.getCurrentBGM();
-                System.out.println("setting music back to " + game.getCurrentBGM().toString());
                 bgm.setVolume(game.getPreferences().getMusicVolume());
                 if (game.getPreferences().isMusicEnabled()) {
                     bgm.play();
@@ -1293,11 +1317,8 @@ public class GameScreen implements Screen{
         autoSaveTimer = 0;
         GoldenSkittle.reset();
         bgm.stop();
-        bgm = game.getNextBGM();
-        bgm.setVolume(game.getPreferences().getMusicVolume());
-        if (game.getPreferences().isMusicEnabled()){
-            bgm.play();
-        }
+        changeMusic();
+        bgm.play();
         int displayedUpgrades = upgradeGroup.getChildren().size;
         for (int i = 0; i < shop.numberOfShopGroups(); i++) {
             shopButtons.get(i).setVisible(i < MAX_VISIBLE_LOCKED_SHOPBUTTONS);

@@ -34,6 +34,7 @@ public class SkittleClickerGame extends Game {
     public PreferencesScreen preferencesScreen;
     private AppPreferences preferences;
     private TextureRegion[] backgrounds;
+    private final List<Music> musicList = new ArrayList<>();
 
     @Override
     public void create() {
@@ -135,8 +136,6 @@ public class SkittleClickerGame extends Game {
                 break;
         }
     }
-
-    private final List<Music> musicList = new ArrayList<>();
     private int musicChanges = 0;
     public Music getNextBGM(){
         Music nextMusic = musicList.get(musicChanges);
@@ -145,6 +144,7 @@ public class SkittleClickerGame extends Game {
     }
 
     public Music getCurrentBGM(){
+        System.out.println("get current bgm: number " + ((musicChanges + musicList.size() - 1) % musicList.size()));
         return musicList.get((musicChanges + musicList.size() - 1) % musicList.size());
     }
     public AppPreferences getPreferences() {
