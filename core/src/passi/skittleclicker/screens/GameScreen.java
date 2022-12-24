@@ -90,12 +90,15 @@ public class GameScreen implements Screen{
     private final Animation<TextureRegion> valhallaAnimation;
     private final Texture goldenStrawbFrameSheet;
     private final Animation<TextureRegion> goldenStrawbAnimation;
+    private final Texture pickleFrameSheet;
+    private final Animation<TextureRegion> pickleAnimation;
     private final List<Texture> valhallaSelections;
     private final Texture borderHorizontalTexture;
     private float stateTime;
     private TextureRegion currentFrameValhalla;
     private TextureRegion currentFrameGoldenStrawb;
-    private Drawable drawableCurrentFrameGoldenStrawb;
+    private TextureRegion currentFramePickle;
+    private int pickleCount;
     private final int MAX_VISIBLE_LOCKED_SHOPBUTTONS = 1;
     private int milkFrame;
     private final Texture darkBackground;
@@ -119,6 +122,7 @@ public class GameScreen implements Screen{
     private final Texture gSkittle;
     private int cheatCodeTimer;
     private String currentCheatCode;
+    private Music explosionMusic;
 
     public GameScreen(SkittleClickerGame game) {
         this.game = game;
@@ -135,7 +139,7 @@ public class GameScreen implements Screen{
         this.background = game.getBackground(1);
 
         this.format = new DecimalFormat("#,###");
-        this.gSkittle = new Texture("g_skittle.png");
+        this.gSkittle = new Texture("g_skittle_grey.png");
         // temporary until we have asset manager in
         skin = new Skin(Gdx.files.internal("skin_default/uiskin.json"));//"skin_neutralizer/neutralizer-ui.json"
 
@@ -149,6 +153,10 @@ public class GameScreen implements Screen{
         TextureRegion[] goldenStrawbFrames = TextureUtil.getTextureRegions(goldenStrawbFrameSheet, 19, 2);
 
         goldenStrawbAnimation = new Animation<>(0.05f, TextureUtil.timedGoldenStrawbFrames(goldenStrawbFrames));
+        this.pickleFrameSheet = new Texture("pickle_framegrid.png");
+        TextureRegion[] pickleFrames = TextureUtil.getTextureRegions(pickleFrameSheet, 3, 4);
+        pickleAnimation = new Animation<>(0.1f, pickleFrames);
+        pickleCount = 0;
 //        drawableCurrentFrameGoldenStrawb = new TextureRegionDrawable(new TextureRegion(new Texture("")));
 //        drawableCurrentFrameGoldenStrawb.
 //        currentFrameValhalla = valhallaAnimation.getKeyFrame(stateTime, true);
@@ -211,6 +219,8 @@ public class GameScreen implements Screen{
         clickSound = Gdx.audio.newSound(Gdx.files.internal("click.wav"));
         padoruMusic = Gdx.audio.newMusic(Gdx.files.internal("padoru.mp3"));
         padoruMusic.setVolume(Math.min(game.getPreferences().getMusicVolume()*1.3f, 1));
+        explosionMusic = Gdx.audio.newMusic(Gdx.files.internal("explosion2.mp3"));
+        explosionMusic.setVolume(Math.min(game.getPreferences().getMusicVolume()*1.8f, 1));
 //        padoruMusic.setOnCompletionListener(music -> {
 //            padoruMusic.stop();
 //            bgm.play();
@@ -560,6 +570,7 @@ public class GameScreen implements Screen{
 
         currentFrameValhalla = valhallaAnimation.getKeyFrame(stateTime, true);
         currentFrameGoldenStrawb = goldenStrawbAnimation.getKeyFrame(stateTime, true);
+        currentFramePickle = pickleAnimation.getKeyFrame(stateTime, true);
 
 //        Gdx.gl.glClearColor(0.21f/* + b*/, 0.53f/* + b*/, 0.70f/* + b*/, 1);
         Gdx.gl.glClearColor(0f, 0.1f, 0.2f, 1);
@@ -627,6 +638,12 @@ public class GameScreen implements Screen{
         FontUtil.FONT_20.draw(game.getBatch(), "Menu", buttonCoords.x + 20, buttonCoords.y - menuButton.getHeight()/2.5f);
         buttonCoords = ScreenUtil.getScreenCoords(prefButton, camera);
         FontUtil.FONT_20.draw(game.getBatch(), "Prefs", buttonCoords.x + 20, buttonCoords.y - menuButton.getHeight()/2.5f);
+
+        if (pickleCount > 0){
+            for (int i = 0; i < pickleCount; i++) {
+                game.getBatch().draw(currentFramePickle, i*20, 0);
+            }
+        }
 
         if (IS_DEBUG_ENABLED){
             game.getFont().draw(game.getBatch(), "Click Milk Mod " + shop.getMilkClicksMod(),
@@ -714,7 +731,7 @@ public class GameScreen implements Screen{
             int index = shopButtons.indexOf(button) - shop.numberOfShopGroups();
             upgrade = shop.getUpgrade(index);
             if (upgrade.getName().equals("Finale")){
-                button.setIsGreyedOut(!(upgrade.getCost() < shop.getSkittles() && shop.isAllUnlocked()));
+                button.setIsGreyedOut(!(upgrade.getCost() < shop.getSkittles()));// && shop.isAllUnlocked())); //TODO
             } else {
                 button.setIsGreyedOut(upgrade.getCost() > shop.getSkittles());
             }
@@ -842,14 +859,32 @@ public class GameScreen implements Screen{
     }
 
     private void handleCheatCode(String code) {
-
+        switch (code){
+            case "nazrin" -> shop.setSkittles(shop.getSkittles() + Math.round(0.1 * shop.getSkittles()));
+            case "megumin" -> {
+//                explosionMusic.setVolume(game.getPreferences().getMusicVolume());
+                explosionMusic.play();
+            }
+            case "pickle" -> pickleCount++;
+            case "nodrip" -> pickleCount = 0;
+        }
     }
 
+    private float colorchange = 0;
+    private boolean positiveColorChange = true;
     private void renderGG() {
         float size = camera.viewportWidth/2;
+        colorchange += positiveColorChange ? 0.003f : -0.003f;
+        if (colorchange > 1){
+            positiveColorChange = false;
+        } else if (colorchange < 0){
+            positiveColorChange = true;
+        }
         game.getBatch().begin();
+        game.getBatch().setColor(colorchange,0f,1f-colorchange,1f);
         game.getBatch().draw(gSkittle, 0, 0, size, size);
         game.getBatch().draw(gSkittle, size, 0, size, size);
+        game.getBatch().setColor(1f,1f,1f,1f);
         game.getBatch().end();
     }
 

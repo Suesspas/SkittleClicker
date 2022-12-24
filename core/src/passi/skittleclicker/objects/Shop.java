@@ -269,7 +269,7 @@ public class Shop{
                         
                         +100% more skittles gained from clicking """, "upgrades/player_gold.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Diamond", 750000, 2, //TODO
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Diamond", 750000, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #4\n\n" +
                         """
                         The evil mousies have figured out a way to stop aging 
@@ -277,16 +277,16 @@ public class Shop{
                         Mousie Intergalactic Council of Knowing Everlasting Youth. 
                         Or M.I.C.K.E.Y. for short
                                                                 
-                        +300% more skittles gained from clicking""", "upgrades/player_diamond.png"));
+                        +100% more skittles gained from clicking""", "upgrades/player_diamond.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Emerald", 3000000, 2, //TODO
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Emerald", 3000000, 2,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #5\n\n" +
                         """
                         Nothing is safe from the evil mousies anymore.
                         They have taken over the universe and keep
                         making more and more skittles.
                                                                 
-                        +300% more skittles gained from clicking""", "upgrades/player_emerald.png"));
+                        +100% more skittles gained from clicking""", "upgrades/player_emerald.png"));
 
         upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Ruby", 10000000, 4,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #6\n\n" +
@@ -316,7 +316,7 @@ public class Shop{
                                                              
                         +800% more skittles gained from clicking""", "upgrades/player_amethyst.png"));
 
-        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Void", 1000000000, 42.42,
+        upgrades.add(new Upgrade(ShopGroup.Type.PLAYER,"Player Clicks Void", 1000000000, 43.42,
                 shopgroupTypeToString(ShopGroup.Type.PLAYER) + " Upgrade #9\n\n" +
                         """
                         The Mousie Council has taken over every atom 

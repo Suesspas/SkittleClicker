@@ -17,7 +17,9 @@ public class ScreenUtil {
     }
    private static final String[] cheatCodes ={
             "nazrin",
-           "megumin"
+           "megumin",
+           "pickle",
+           "nodrip"
     };
     private static int[] currentCodePosition = new int[cheatCodes.length];
     public static String checkIfCheatCodeEntered(){
@@ -32,6 +34,9 @@ public class ScreenUtil {
                     currentCodePosition[i] = 0;
                     return cheatCodes[i];
                 }
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.valueOf(
+                    code.toUpperCase().substring(0 , 1)))) {
+                currentCodePosition[i] = 1;
             } else {
                 currentCodePosition[i] = 0;
                 System.out.println("Reset code " + cheatCodes[i]);
